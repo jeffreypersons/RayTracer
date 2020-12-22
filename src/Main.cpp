@@ -1,12 +1,20 @@
-#include "RayTracer.h"
+#include "Tracer.h"
 #include <iostream>
-#include <cstdlib>
 #include <windows.h>
 #include <iomanip>
 
 
 int main()
 {
+    /*
+    RayTracer rayTracer{};
+    rayTracer.setup();
+    rayTracer.draw();
+    */
+    Tracer tracer{};
+    tracer.setup();
+    tracer.draw();
+
     const auto console = ::GetConsoleWindow();
     const auto context = ::GetDC(console);
     constexpr auto red = RGB(255, 0, 0);

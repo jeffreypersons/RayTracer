@@ -1,3 +1,4 @@
+#pragma once
 #include "Math.hpp"
 #include "Colors.hpp"
 #include "Cameras.hpp"
@@ -46,7 +47,7 @@ const Material flatYellow = Material(
 };
 
 // todo: add scene class
-class RayTracer {
+class Tracer {
 private:
     const std::string OUTPUT_FILE = "./scene";
     static constexpr Vec2 IMAGE_SIZE{ 1500, 1500 };
@@ -57,7 +58,7 @@ private:
     std::string outputFile;
 
     // core data
-    std::unique_ptr<FrameBuffer> pixels;
+    std::unique_ptr<FrameBuffer> frameBuffer;
 
     // camera viewing and rendering
     std::shared_ptr<ViewPlane> viewPlane;
@@ -68,8 +69,12 @@ private:
     std::vector<std::unique_ptr<ISceneObject>> sceneObjects;
 
 public:
-    RayTracer() {}
-    void draw();
+
+    Tracer();
+    void trace() {
+        
+    }
     void setup();
+    void draw() const;
     Color traceRay(const Ray&, size_t) const;
 };

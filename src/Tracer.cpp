@@ -1,23 +1,31 @@
+#include "Tracer.h"
 #include "Math.hpp"
-#include "Rays.hpp"
 #include "Colors.hpp"
+#include "Cameras.hpp"
 #include "Lights.hpp"
 #include "SceneObjects.hpp"
 #include "FrameBuffers.hpp"
-#include "Cameras.hpp"
 #include <omp.h>
-#include "RayTracer.h"
 
 
-void RayTracer::setup() {
+Tracer::Tracer() :
+    outputFile(),
+    frameBuffer(),
+    viewPlane(),
+    renderCam(),
+    sceneLights(),
+    sceneObjects()
+{}
+
+void Tracer::setup() {
     // == configure application window properties
     // == configure framebuffer
-    pixels = std::make_unique<FrameBuffer>(IMAGE_SIZE.x, IMAGE_SIZE.y, BACKGROUND_COLOR);
+    frameBuffer = std::make_unique<FrameBuffer>(IMAGE_SIZE.x, IMAGE_SIZE.y, BACKGROUND_COLOR);
     
     // == configure view plane in worldspace orthogonal to cam at distance z into the screen
     viewPlane = std::make_shared<ViewPlane>(10, 10, 10);
     renderCam = std::make_unique<RenderCam>(viewPlane);
-    pixels = std::make_unique<FrameBuffer>(IMAGE_SIZE.x, IMAGE_SIZE.y, BACKGROUND_COLOR);
+    frameBuffer = std::make_unique<FrameBuffer>(IMAGE_SIZE.x, IMAGE_SIZE.y, BACKGROUND_COLOR);
 
     // == initialize scene lights and objects
     sceneLights.push_back(Light(Vec3(0, 0, 10), Presets::pureWhite));
@@ -40,30 +48,30 @@ void RayTracer::setup() {
     std::cout << "Tracing scene...";
     double startTime = omp_get_wtime();
     #pragma omp for schedule(dynamic)
-    for (int i = 0; i < pixels->getWidth(); i++) {
-        for (int j = 0; j < pixels->getHeight(); j++) {
+    for (int i = 0; i < frameBuffer->getWidth(); i++) {
+        for (int j = 0; j < frameBuffer->getHeight(); j++) {
             // shoot a ray from camera position corresponding to pixel's position in viewport
             // and the directions of the camera
-            float u = (i + 0.5f) / pixels->getWidth();
-            float v = (j + 0.5f) / pixels->getHeight();
+            float u = (i + 0.5f) / frameBuffer->getWidth();
+            float v = (j + 0.5f) / frameBuffer->getHeight();
             Ray primaryRay = renderCam->getRay(u, v);
             Color color = traceRay(primaryRay, 0);
-            pixels->setColor(i, j, color);
+            frameBuffer->setColor(i, j, color);
         }
     }
     double endTime = omp_get_wtime() - startTime;
     std::cout << "finished in " << endTime << "\n";
     
     // == write each pixel to screen
-    std::cout << "Writing pixels to image file: " << OUTPUT_FILE << ".ppm`" << "\n";
-    pixels->writeToFile(OUTPUT_FILE);
+    std::cout << "Writing frameBuffer to image file: " << OUTPUT_FILE << ".ppm`" << "\n";
+    frameBuffer->writeToFile(OUTPUT_FILE);
 }
 
-void RayTracer::draw() {
+void Tracer::draw() const {
     // ??
 }
 
-Color RayTracer::traceRay(const Ray& ray, size_t iteration=0) const {
+Color Tracer::traceRay(const Ray& ray, size_t iteration=0) const {
     // find our nearest intersection
     float tClosest = std::numeric_limits<float>::infinity();
     RayHitInfo hit;
