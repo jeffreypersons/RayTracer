@@ -1,3 +1,4 @@
+#include "RayTracer.h"
 #include <iostream>
 #include <cstdlib>
 #include <windows.h>
