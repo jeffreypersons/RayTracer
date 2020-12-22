@@ -1,0 +1,49 @@
+# Project Files
+.vs/
+*.sln
+*.suo
+*.vcxproj*
+
+# Build Files
+*.exe
+x86/
+x64/
+bin/
+*/Debug/*
+*/Release/*
+
+# Debug Files
+*.db*
+*.pdb
+*.idb
+*.ipdb
+*.log
+*.tlog
+
+# Linker Files
+*.lk
+*.ilk
+
+# Precompiled Headers
+*.gch
+*.pch
+*.igch
+*.ipch
+
+# Compiled Object files
+*.o
+*.lo
+*.slo
+*.obj
+*.iobj
+
+# Compiled Dynamic libraries
+*.so
+*.dll
+*.dylib
+
+# Compiled Static libraries
+*.a
+*.la
+*.lai
+*.lib
