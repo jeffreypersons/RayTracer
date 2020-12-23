@@ -4,5 +4,5 @@
  *(click on below image to view full size in a seperate tab)*
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/jeffreypersons/Jeff-Images/master/scene.png" alt="Example Scene" width="600"/>
+  <img src="https://raw.githubusercontent.com/jeffreypersons/Jeff-Images/master/scene.png" alt="Example Scene" width="500"/>
 </p>
