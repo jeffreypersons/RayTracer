@@ -4,103 +4,76 @@
 #include "Cameras.hpp"
 #include "Lights.hpp"
 #include "SceneObjects.hpp"
+#include "Scene.hpp"
 #include "FrameBuffers.hpp"
 #include <omp.h>
 
 
 Tracer::Tracer() :
-    outputFile(),
-    frameBuffer(),
-    viewPlane(),
-    renderCam(),
-    sceneLights(),
-    sceneObjects()
+    maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS),
+    backgroundColor(DEFAULT_BACKROUND_COLOR)
+{}
+Tracer::Tracer(size_t maxNumReflections, const Color& backgroundColor) :
+    maxNumReflections(maxNumReflections),
+    backgroundColor(backgroundColor)
 {}
 
-void Tracer::setup() {
-    // == configure application window properties
-    // == configure framebuffer
-    frameBuffer = std::make_unique<FrameBuffer>(IMAGE_SIZE.x, IMAGE_SIZE.y, BACKGROUND_COLOR);
-    
-    // == configure view plane in worldspace orthogonal to cam at distance z into the screen
-    viewPlane = std::make_shared<ViewPlane>(10, 10, 10);
-    renderCam = std::make_unique<RenderCam>(viewPlane);
-    frameBuffer = std::make_unique<FrameBuffer>(IMAGE_SIZE.x, IMAGE_SIZE.y, BACKGROUND_COLOR);
+void Tracer::setMaxNumReflections(size_t maxNumReflections) {
+    this->maxNumReflections = maxNumReflections;
+}
+void Tracer::setBackgroundColor(const Color& backgroundColor) {
+    this->backgroundColor = backgroundColor;
+}
 
-    // == initialize scene lights and objects
-    sceneLights.push_back(Light(Vec3(0, 0, 10), Presets::pureWhite));
-    sceneLights[0].setAmbientIntensity(0.50f);
-    sceneLights[0].setDiffuseIntensity(0.75f);
-    sceneLights[0].setSpecularIntensity(0.50f);
-
-    // green triangle directly in front of camera a bit in front and to the right of the blue sphere
-    // blue sphere directly in front of camera
-    // small red sphere a bit off to the side
-    sceneObjects.push_back(std::make_unique<Triangle>(Vec3(-10, 5, 5), Vec3(10, 5, 5), Vec3(0, 0, -25), Presets::flatYellow));
-    sceneObjects.push_back(std::move(std::make_unique<Sphere>(Vec3( 2, -2, -10), 2.00f, Presets::smoothBlue)));
-    sceneObjects.push_back(std::move(std::make_unique<Sphere>(Vec3(-2,  5, -15), 1.25f, Presets::roughRed)));
-    sceneObjects.push_back(std::move(std::make_unique<Sphere>(Vec3(-2, 10, -15), 0.50f, Presets::smoothBlue)));
-    sceneObjects.push_back(std::move(std::make_unique<Sphere>(Vec3( 0,  5, -30), 1.00f, Presets::shinyBlue)));
-    sceneObjects.push_back(std::move(std::make_unique<Sphere>(Vec3( 0,  5, -15), 1.00f, Presets::shinyBlue)));
-
+// for each pixel in buffer trace ray from given camera through given scene,
+// and write computed color to buffer (in parallel)
+void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& frameBuffer) {
     // == trace ray for each pixel and set it to computed color
     // note that we parallelize using dynamic schedule since the time for tracing at each pixel can vary
-    std::cout << "Tracing scene...";
-    double startTime = omp_get_wtime();
     #pragma omp for schedule(dynamic)
-    for (int i = 0; i < frameBuffer->getWidth(); i++) {
-        for (int j = 0; j < frameBuffer->getHeight(); j++) {
+    for (int i = 0; i < frameBuffer.getWidth(); i++) {
+        for (int j = 0; j < frameBuffer.getHeight(); j++) {
             // shoot a ray from camera position corresponding to pixel's position in viewport
             // and the directions of the camera
-            float u = (i + 0.5f) / frameBuffer->getWidth();
-            float v = (j + 0.5f) / frameBuffer->getHeight();
-            Ray primaryRay = renderCam->getRay(u, v);
-            Color color = traceRay(primaryRay, 0);
-            frameBuffer->setColor(i, j, color);
+            float u = (i + 0.5f) / frameBuffer.getWidth();
+            float v = (j + 0.5f) / frameBuffer.getHeight();
+            Ray primaryRay = renderCam.getRay(u, v);
+            Color color = traceRay(renderCam, scene, primaryRay, 0);
+            frameBuffer.setColor(i, j, color);
         }
     }
-    double endTime = omp_get_wtime() - startTime;
-    std::cout << "finished in " << endTime << "\n";
-    
-    // == write each pixel to screen
-    std::cout << "Writing frameBuffer to image file: " << OUTPUT_FILE << ".ppm`" << "\n";
-    frameBuffer->writeToFile(OUTPUT_FILE);
 }
 
-void Tracer::draw() const {
-    // ??
-}
-
-Color Tracer::traceRay(const Ray& ray, size_t iteration=0) const {
+Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray& ray, size_t iteration=0) const {
     // find our nearest intersection
     float tClosest = std::numeric_limits<float>::infinity();
     RayHitInfo hit;
-    ISceneObject* object = nullptr;
-    for (const auto& sceneObject : sceneObjects) {
+    const ISceneObject* object = nullptr;
+    for (size_t index = 0; index < scene.getNumObjects(); index++) {
         RayHitInfo h;
-        if (sceneObject->intersect(ray, h) && h.t < tClosest) {
+        if (scene.getObject(index).intersect(ray, h) && h.t < tClosest) {
             hit      = h;
             tClosest = h.t;
-            object   = sceneObject.get();
+            object   = &scene.getObject(index);
         }
     }
     if (object == nullptr) {
-        return BACKGROUND_COLOR;
+        return backgroundColor;
     }
 
     // ==== compute reflected color
     Color reflectedColor(0, 0, 0);
     const Material& surfaceMaterial = object->getMaterial();
-    Vec3 V = Math::direction(hit.point, renderCam->getPosition());
-    if (iteration < MAX_NUM_REFLECTIONS && surfaceMaterial.reflectivity > 0.00f) {
+    Vec3 V = Math::direction(hit.point, renderCam.getPosition());
+    if (iteration < maxNumReflections && surfaceMaterial.reflectivity > 0.00f) {
         const double ERR = 1e-05;
         Vec3 reflectedVec = (-1.0f * V) + (2.0f * hit.normal) * (Math::dot(V, hit.normal));
         Ray reflectionRay(hit.point + hit.normal * ERR, Math::normalize(reflectedVec));
-        reflectedColor = traceRay(reflectionRay, iteration + 1);
+        reflectedColor = traceRay(renderCam, scene, reflectionRay, iteration + 1);
     }
 
     // extract light related data
-    Light light = sceneLights[0];
+    Light light = scene.getLight(0);
     Vec3 directionToLight = Math::direction(light.getPosition(), hit.point);
 
     // ==== compute shadow
@@ -108,9 +81,9 @@ Color Tracer::traceRay(const Ray& ray, size_t iteration=0) const {
     // object casts a shadow (occludes P) IFF it intersects ray AND 0.0001 < t < distance(P, L)
     Ray shadowRay(hit.point, directionToLight);
     float tLight = Math::distance(hit.point, light.getPosition());
-    for (const auto& sceneObject : sceneObjects) {
+    for (size_t index = 0; index < scene.getNumObjects(); index++) {
         RayHitInfo h;
-        if (sceneObject->intersect(shadowRay, h)) {
+        if (scene.getObject(index).intersect(shadowRay, h)) {
             if (h.t > 0.001 && h.t < tLight) {
                 return Color(0, 0, 0);
             }

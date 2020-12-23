@@ -30,7 +30,7 @@ public:
     Vec3 bottomRight() { return Vec3(max.x, min.y, zDepth); }
     Vec3 bottomLeft()  { return min;                        }
     // assumes viewport-point(u,v) in range[0, 1]
-    Vec3 toWorld(float u, float v) {
+    Vec3 toWorld(float u, float v) const {
         return Vec3(min.x + (u * width), min.y + (v * height), zDepth);
     }
 };
@@ -43,10 +43,10 @@ private:
     Vec3 upDir;
     Vec3 aimDir;
     Vec3 position;
-    std::shared_ptr<ViewPlane> viewPlane;
+    ViewPlane viewPlane;
 
 public:
-    RenderCam(std::shared_ptr<ViewPlane> viewPlane) :
+    RenderCam(const ViewPlane& viewPlane) :
         upDir(0, 1, 0),
         aimDir(0, 0, -1),
         position(0, 0, 0),
@@ -54,10 +54,11 @@ public:
 
     // get a ray from current cam position to (u, v) position on our viewplane
     Ray getRay(float u, float v) const {
-        Vec3 pointOnPlane = viewPlane->toWorld(u, v);
+        Vec3 pointOnPlane = viewPlane.toWorld(u, v);
         return Ray(position, Math::direction(position, pointOnPlane));
     }
-    const Vec3& getUpDir()    { return upDir;    }
-    const Vec3& getAimDir()   { return aimDir;   }
-    const Vec3& getPosition() { return position; }
+    const Vec3& getUpDir()          const { return upDir;     }
+    const Vec3& getAimDir()         const { return aimDir;    }
+    const Vec3& getPosition()       const { return position;  }
+    const ViewPlane& getViewPlane() const { return viewPlane; }
 };

@@ -3,6 +3,7 @@
 #include "Colors.hpp"
 #include "Cameras.hpp"
 #include "Lights.hpp"
+#include "Scene.hpp"
 #include "SceneObjects.hpp"
 #include "FrameBuffers.hpp"
 
@@ -46,35 +47,20 @@ const Material flatYellow = Material(
 );
 };
 
-// todo: add scene class
 class Tracer {
 private:
-    const std::string OUTPUT_FILE = "./scene";
-    static constexpr Vec2 IMAGE_SIZE{ 1500, 1500 };
-    static constexpr Color BACKGROUND_COLOR{ 0.25f, 0.25f, 0.25f };
-    static constexpr size_t MAX_NUM_REFLECTIONS = 5;
+    Color backgroundColor;
+    size_t maxNumReflections;
+    
+    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 5;
+    static constexpr Color DEFAULT_BACKROUND_COLOR{ 0, 0, 0 };
 
-    // output targets
-    std::string outputFile;
-
-    // core data
-    std::unique_ptr<FrameBuffer> frameBuffer;
-
-    // camera viewing and rendering
-    std::shared_ptr<ViewPlane> viewPlane;
-    std::unique_ptr<RenderCam> renderCam;
-
-    // lights and objects in the scene
-    std::vector<Light> sceneLights;
-    std::vector<std::unique_ptr<ISceneObject>> sceneObjects;
-
+    Color traceRay(const RenderCam& renderCam, const Scene&, const Ray&, size_t) const;
+    
 public:
-
     Tracer();
-    void trace() {
-        
-    }
-    void setup();
-    void draw() const;
-    Color traceRay(const Ray&, size_t) const;
+    Tracer(size_t, const Color&);
+    void trace(const RenderCam&, const Scene&, FrameBuffer&);
+    void setBackgroundColor(const Color&);
+    void setMaxNumReflections(size_t);
 };
