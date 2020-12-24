@@ -12,7 +12,8 @@
 Tracer::Tracer() :
     maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS),
     shadowColor(DEFAULT_SHADOW_COLOR),
-    backgroundColor(DEFAULT_BACKGROUND_COLOR)
+    backgroundColor(DEFAULT_BACKGROUND_COLOR),
+    maxReflectedColor(DEFAULT_MAX_REFLECTED_COLOR)
 {}
 
 void Tracer::setMaxNumReflections(size_t maxNumReflections) {
@@ -23,6 +24,9 @@ void Tracer::setShadowColor(const Color& shadowColor) {
 }
 void Tracer::setBackgroundColor(const Color& backgroundColor) {
     this->backgroundColor = backgroundColor;
+}
+void Tracer::setMaximumallyReflectedColor(const Color& maxReflectedColor) {
+    this->maxReflectedColor = maxReflectedColor;
 }
 
 // for each pixel in buffer trace ray from given camera through given scene,
@@ -45,6 +49,10 @@ void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& 
 }
 
 Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray& ray, size_t iteration=0) const {
+    if (iteration >= maxNumReflections) {
+        return maxReflectedColor;
+    }
+
     // find our nearest intersection
     float tClosest = std::numeric_limits<float>::infinity();
     RayHitInfo hit;
@@ -64,10 +72,9 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     // ==== compute reflected color
     Color reflectedColor(0, 0, 0);
     const Material& surfaceMaterial = object->getMaterial();
-    Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
-    if (iteration < maxNumReflections && surfaceMaterial.reflectivity > 0.00f) {
+    if (surfaceMaterial.reflectivity > 0.00f) {
         const double ERR = 1e-05;
-        Vec3 reflectedVec = (-1.0f * directionToCam) + (2.0f * hit.normal) * (Math::dot(directionToCam, hit.normal));
+        Vec3 reflectedVec = (-1.0f * ray.direction) + (2.0f * hit.normal) * (Math::dot(ray.direction, hit.normal));
         Ray reflectionRay(hit.point + hit.normal * ERR, Math::normalize(reflectedVec));
         reflectedColor = traceRay(renderCam, scene, reflectionRay, iteration + 1);
     }
@@ -84,14 +91,15 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         RayHitInfo h;
         if (scene.getObject(index).intersect(shadowRay, h)) {
-            if (h.t > 0.001 && h.t < tLight) {
-                return Color(0, 0, 0);
+            if (h.t > T_OFFSET_FROM_POINT && h.t < tLight) {
+                return shadowColor;
             }
         }
     }
 
     // ==== compute surface color
     Color surfaceColor;
+    Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
     Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
     Color ambientColor  = surfaceMaterial.ambient * light.getMaterial().ambient * light.getAmbientIntensity();
     Color diffuseColor  = Math::dot(hit.normal, directionToLight) *
