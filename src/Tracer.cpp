@@ -3,7 +3,7 @@
 #include "Colors.hpp"
 #include "Cameras.hpp"
 #include "Lights.hpp"
-#include "SceneObjects.hpp"
+#include "SceneObjects.h"
 #include "Scene.hpp"
 #include "FrameBuffers.hpp"
 #include <omp.h>

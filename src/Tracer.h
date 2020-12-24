@@ -4,7 +4,7 @@
 #include "Cameras.hpp"
 #include "Lights.hpp"
 #include "Scene.hpp"
-#include "SceneObjects.hpp"
+#include "SceneObjects.h"
 #include "FrameBuffers.hpp"
 
 
