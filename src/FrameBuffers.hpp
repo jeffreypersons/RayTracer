@@ -5,6 +5,7 @@
 #include <fstream>
 
 
+// framebuffer
 class FrameBuffer {
 private:
     const size_t width;
@@ -34,14 +35,13 @@ public:
     void setColor(size_t row, size_t col, const Color& color) noexcept { pixels[row][col] = color; }
 
     // save framebuffer as an array of 256 rgb-colored pixels, written to file at given location
+    // note that the buffer stores colors relative to top left corner, while ppm is relative to the bottom left
     void writeToFile(const std::string& filename) {
         std::ofstream ofs(filename + ".ppm", std::ios::out | std::ios::binary);
         ofs << "P6\n" << width << " " << height << "\n255\n";
-        for (size_t col = 0; col < width; col++) {
-            for (size_t row = 0; row < height; row++) {
-                // note that we 'rotate' the pixels 90 degrees counter-clockwise to get correct alignment
-                // with the writeToMesh() method
-                Color color = pixels[row][width - 1 - col];
+        for (size_t row = 0; row < height; row++) {
+            for (size_t col = 0; col < width; col++) {
+                Color color = pixels[height - 1 - row][col];
                 ofs << static_cast<unsigned char>(color.r * 255)
                     << static_cast<unsigned char>(color.g * 255)
                     << static_cast<unsigned char>(color.b * 255);

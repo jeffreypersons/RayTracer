@@ -6,7 +6,6 @@
 
 
 const std::string OUTPUT_FILE = "./scene";
-const Vec2 IMAGE_SIZE{ 1500, 1500 };
 static constexpr Color SHADOW_COLOR{ 0.05f, 0.05f, 0.05f };
 static constexpr Color BACKGROUND_COLOR{ 0.25f, 0.25f, 0.25f };
 static constexpr size_t MAX_NUM_REFLECTIONS = 5;
@@ -18,7 +17,7 @@ int main()
     Scene scene{};
     Tracer tracer{};
     RenderCam cam{ viewPlane };
-    FrameBuffer frameBuffer(IMAGE_SIZE, BACKGROUND_COLOR);
+    FrameBuffer frameBuffer(PresetResolutions::HD_1080p, BACKGROUND_COLOR);
     tracer.setShadowColor(SHADOW_COLOR);
     tracer.setBackgroundColor(BACKGROUND_COLOR);
     tracer.setMaxNumReflections(MAX_NUM_REFLECTIONS);

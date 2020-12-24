@@ -35,15 +35,15 @@ void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& 
     // == trace ray for each pixel and set it to computed color
     // note that we parallelize using dynamic schedule since the time for tracing at each pixel can vary
     #pragma omp for schedule(dynamic)
-    for (int i = 0; i < frameBuffer.getWidth(); i++) {
-        for (int j = 0; j < frameBuffer.getHeight(); j++) {
+    for (int row = 0; row < frameBuffer.getHeight(); row++) {
+        for (int col = 0; col < frameBuffer.getWidth(); col++) {
             // shoot a ray from camera position corresponding to pixel's position in viewport
             // and the directions of the camera
-            float u = (i + 0.5f) / frameBuffer.getWidth();
-            float v = (j + 0.5f) / frameBuffer.getHeight();
+            float u = (col + 0.5f) / frameBuffer.getWidth();
+            float v = (row + 0.5f) / frameBuffer.getHeight();
             Ray primaryRay = renderCam.getRay(u, v);
             Color color = traceRay(renderCam, scene, primaryRay, 0);
-            frameBuffer.setColor(i, j, color);
+            frameBuffer.setColor(row, col, color);
         }
     }
 }
