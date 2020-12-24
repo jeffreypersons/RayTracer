@@ -9,7 +9,7 @@ private:
     std::optional<double> stopTime;
     
     static std::optional<double> currentTime()       { return std::optional<double>(omp_get_wtime()); }
-    static double duration(double start, double end) { return end - start;     }
+    static double duration(double start, double end) { return end - start;                            }
 public:
     Timer() :
         startTime(std::nullopt),
