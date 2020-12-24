@@ -7,17 +7,21 @@
 
 const std::string OUTPUT_FILE = "./scene";
 const Vec2 IMAGE_SIZE{ 1500, 1500 };
+static constexpr Color SHADOW_COLOR{ 0.05f, 0.05f, 0.05f };
 static constexpr Color BACKGROUND_COLOR{ 0.25f, 0.25f, 0.25f };
 static constexpr size_t MAX_NUM_REFLECTIONS = 5;
 
 int main()
 {
     ViewPlane viewPlane{ 10, 10, 10 };
-    RenderCam cam{ viewPlane };
-    FrameBuffer frameBuffer(IMAGE_SIZE.x, IMAGE_SIZE.y, BACKGROUND_COLOR);
     Timer timer{};
     Scene scene{};
-    Tracer tracer{ MAX_NUM_REFLECTIONS, BACKGROUND_COLOR };
+    Tracer tracer{};
+    RenderCam cam{ viewPlane };
+    FrameBuffer frameBuffer(IMAGE_SIZE.x, IMAGE_SIZE.y, BACKGROUND_COLOR);
+    tracer.setShadowColor(SHADOW_COLOR);
+    tracer.setBackgroundColor(BACKGROUND_COLOR);
+    tracer.setMaxNumReflections(MAX_NUM_REFLECTIONS);
 
     // configure lighting
     Light pointLight(Vec3(0, 0, 10), Presets::pureWhite);

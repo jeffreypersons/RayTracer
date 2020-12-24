@@ -49,18 +49,19 @@ const Material flatYellow = Material(
 
 class Tracer {
 private:
+    Color shadowColor;
     Color backgroundColor;
     size_t maxNumReflections;
     
+    static constexpr Color DEFAULT_SHADOW_COLOR{ 0, 0, 0 };
+    static constexpr Color DEFAULT_BACKGROUND_COLOR{ 0, 0, 0 };
     static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 5;
-    static constexpr Color DEFAULT_BACKROUND_COLOR{ 0, 0, 0 };
-
-    Color traceRay(const RenderCam& renderCam, const Scene&, const Ray&, size_t) const;
+    Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
     
 public:
     Tracer();
-    Tracer(size_t, const Color&);
     void trace(const RenderCam&, const Scene&, FrameBuffer&);
+    void setShadowColor(const Color&);
     void setBackgroundColor(const Color&);
     void setMaxNumReflections(size_t);
 };

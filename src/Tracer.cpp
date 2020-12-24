@@ -11,15 +11,15 @@
 
 Tracer::Tracer() :
     maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS),
-    backgroundColor(DEFAULT_BACKROUND_COLOR)
-{}
-Tracer::Tracer(size_t maxNumReflections, const Color& backgroundColor) :
-    maxNumReflections(maxNumReflections),
-    backgroundColor(backgroundColor)
+    shadowColor(DEFAULT_SHADOW_COLOR),
+    backgroundColor(DEFAULT_BACKGROUND_COLOR)
 {}
 
 void Tracer::setMaxNumReflections(size_t maxNumReflections) {
     this->maxNumReflections = maxNumReflections;
+}
+void Tracer::setShadowColor(const Color& backgroundColor) {
+    this->shadowColor = backgroundColor;
 }
 void Tracer::setBackgroundColor(const Color& backgroundColor) {
     this->backgroundColor = backgroundColor;
@@ -64,10 +64,10 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     // ==== compute reflected color
     Color reflectedColor(0, 0, 0);
     const Material& surfaceMaterial = object->getMaterial();
-    Vec3 V = Math::direction(hit.point, renderCam.getPosition());
+    Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
     if (iteration < maxNumReflections && surfaceMaterial.reflectivity > 0.00f) {
         const double ERR = 1e-05;
-        Vec3 reflectedVec = (-1.0f * V) + (2.0f * hit.normal) * (Math::dot(V, hit.normal));
+        Vec3 reflectedVec = (-1.0f * directionToCam) + (2.0f * hit.normal) * (Math::dot(directionToCam, hit.normal));
         Ray reflectionRay(hit.point + hit.normal * ERR, Math::normalize(reflectedVec));
         reflectedColor = traceRay(renderCam, scene, reflectionRay, iteration + 1);
     }
@@ -92,11 +92,11 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
 
     // ==== compute surface color
     Color surfaceColor;
-    Vec3 H = Math::normalize(V + light.getPosition());
+    Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
     Color ambientColor  = surfaceMaterial.ambient * light.getMaterial().ambient * light.getAmbientIntensity();
     Color diffuseColor  = Math::dot(hit.normal, directionToLight) *
         surfaceMaterial.diffuse * light.getMaterial().diffuse * light.getDiffuseIntensity();
-    Color specularColor = Math::dot(hit.normal, H) *
+    Color specularColor = Math::dot(hit.normal, halfwayVec) *
         surfaceMaterial.specular * light.getMaterial().specular * light.getSpecularIntensity();
     surfaceColor = ambientColor + diffuseColor + specularColor;
 
