@@ -22,13 +22,13 @@ public:
         max(width *  0.50f, height *  0.50f, zDepth),
         normal(0, 0, 1) {}
 
-    float aspect()     { return width / height;             }
-    float depth()      { return zDepth;                     }
-    Vec3 center()      { return Vec3(min.x, max.y, zDepth); }
-    Vec3 topLeft()     { return Vec3(min.x, max.y, zDepth); }
-    Vec3 topRight()    { return max;                        }
-    Vec3 bottomRight() { return Vec3(max.x, min.y, zDepth); }
-    Vec3 bottomLeft()  { return min;                        }
+    float aspect()     const { return width / height;             }
+    float depth()      const { return zDepth;                     }
+    Vec3 center()      const { return Vec3(min.x, max.y, zDepth); }
+    Vec3 topLeft()     const { return Vec3(min.x, max.y, zDepth); }
+    Vec3 topRight()    const { return max;                        }
+    Vec3 bottomRight() const { return Vec3(max.x, min.y, zDepth); }
+    Vec3 bottomLeft()  const { return min;                        }
     // assumes viewport-point(u,v) in range[0, 1]
     Vec3 toWorld(float u, float v) const {
         return Vec3(min.x + (u * width), min.y + (v * height), zDepth);
