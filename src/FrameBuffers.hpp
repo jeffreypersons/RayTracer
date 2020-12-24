@@ -22,7 +22,10 @@ public:
             defaultColor(defaultColor) {
         pixels.resize(height, std::vector<Color>(width, defaultColor));
     }
-    
+    FrameBuffer(const Vec2& size, const Color& defaultColor) :
+        FrameBuffer(size.x, size.y, defaultColor)
+    {}
+
     constexpr size_t getWidth()                   const noexcept { return width;            }
     constexpr size_t getHeight()                  const noexcept { return height;           }
     constexpr size_t getNumPixels()               const noexcept { return numPixels;        }

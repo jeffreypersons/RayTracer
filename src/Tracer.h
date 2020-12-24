@@ -8,45 +8,6 @@
 #include "FrameBuffers.hpp"
 
 
-namespace Presets {
-const Material smoothBlue = Material(
-    Color(0.00f, 0.00f, 0.75f),
-    Color(0.00f, 0.00f, 0.75f),
-    Color(0.00f, 0.00f, 0.50f),
-    0.50f, 0.50f
-);
-const Material shinyBlue = Material(
-    Color(0.00f, 0.00f, 0.25f),
-    Color(0.00f, 0.00f, 0.15f),
-    Color(0.00f, 0.00f, 1.00f),
-    0.95f, 0.05f
-);
-const Material roughRed = Material(
-    Color(0.50f, 0.01f, 0.05f),
-    Color(0.50f, 0.10f, 0.05f),
-    Color(1.00f, 0.01f, 0.05f),
-    0.75f, 0.25f
-);
-const Material reflectiveGreen = Material(
-    Color(0.25f, 0.10f, 0.25f),
-    Color(0.25f, 1.00f, 0.25f),
-    Color(0.25f, 0.50f, 0.25f),
-    0.10f, 0.90f
-);
-const Material pureWhite = Material(
-    Color(0.00f, 1.00f, 1.00f),
-    Color(1.00f, 0.50f, 1.00f),
-    Color(1.00f, 1.00f, 0.50f),
-    1.00f, 0.00f
-);
-const Material flatYellow = Material(
-    Color(1.00f, 1.00f, 0.00f),
-    Color(1.00f, 1.00f, 0.00f),
-    Color(1.00f, 1.00f, 0.00f),
-    1.00f, 0.00f
-);
-};
-
 class Tracer {
 private:
     Color shadowColor;

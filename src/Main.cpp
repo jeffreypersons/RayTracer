@@ -1,8 +1,8 @@
 #include "Tracer.h"
 #include "Scene.hpp"
 #include "Timer.hpp"
+#include "Presets.hpp"
 #include <iostream>
-#include <windows.h>
 
 
 const std::string OUTPUT_FILE = "./scene";
@@ -18,25 +18,25 @@ int main()
     Scene scene{};
     Tracer tracer{};
     RenderCam cam{ viewPlane };
-    FrameBuffer frameBuffer(IMAGE_SIZE.x, IMAGE_SIZE.y, BACKGROUND_COLOR);
+    FrameBuffer frameBuffer(IMAGE_SIZE, BACKGROUND_COLOR);
     tracer.setShadowColor(SHADOW_COLOR);
     tracer.setBackgroundColor(BACKGROUND_COLOR);
     tracer.setMaxNumReflections(MAX_NUM_REFLECTIONS);
 
     // configure lighting
-    Light pointLight(Vec3(0, 0, 10), Presets::pureWhite);
+    Light pointLight(Vec3(0, 0, 10), PresetMaterials::pureWhite);
     pointLight.setAmbientIntensity(0.50f);
     pointLight.setDiffuseIntensity(0.75f);
     pointLight.setSpecularIntensity(0.50f);
     scene.addLight(pointLight);
 
     // configure scene composition
-    scene.addSceneObject(Triangle(Vec3(-10, 5, 5), Vec3(10, 5, 5), Vec3(0, 0, -25), Presets::flatYellow));
-    scene.addSceneObject(Sphere(Vec3( 2, -2, -10), 2.00f, Presets::smoothBlue));
-    scene.addSceneObject(Sphere(Vec3(-2,  5, -15), 1.25f, Presets::roughRed));
-    scene.addSceneObject(Sphere(Vec3(-2, 10, -15), 0.50f, Presets::smoothBlue));
-    scene.addSceneObject(Sphere(Vec3( 0,  5, -30), 1.00f, Presets::shinyBlue));
-    scene.addSceneObject(Sphere(Vec3( 0,  5, -15), 1.00f, Presets::shinyBlue));
+    scene.addSceneObject(Triangle(Vec3(-10, 5, 5), Vec3(10, 5, 5), Vec3(0, 0, -25), PresetMaterials::flatYellow));
+    scene.addSceneObject(Sphere(Vec3( 2, -2, -10), 2.00f, PresetMaterials::smoothBlue));
+    scene.addSceneObject(Sphere(Vec3(-2,  5, -15), 1.25f, PresetMaterials::roughRed));
+    scene.addSceneObject(Sphere(Vec3(-2, 10, -15), 0.50f, PresetMaterials::smoothBlue));
+    scene.addSceneObject(Sphere(Vec3( 0,  5, -30), 1.00f, PresetMaterials::shinyBlue));
+    scene.addSceneObject(Sphere(Vec3( 0,  5, -15), 1.00f, PresetMaterials::shinyBlue));
 
     // trace scene
     std::cout << "Tracing scene...";
