@@ -1,5 +1,4 @@
 #pragma once
-#include "Math.hpp"
 #include "Colors.hpp"
 #include <ostream>
 #include <vector>
