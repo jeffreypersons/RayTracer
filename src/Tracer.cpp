@@ -18,8 +18,8 @@ Tracer::Tracer() :
 void Tracer::setMaxNumReflections(size_t maxNumReflections) {
     this->maxNumReflections = maxNumReflections;
 }
-void Tracer::setShadowColor(const Color& backgroundColor) {
-    this->shadowColor = backgroundColor;
+void Tracer::setShadowColor(const Color& shadowColor) {
+    this->shadowColor = shadowColor;
 }
 void Tracer::setBackgroundColor(const Color& backgroundColor) {
     this->backgroundColor = backgroundColor;
