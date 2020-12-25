@@ -39,7 +39,17 @@ public:
     constexpr float getMegaPixels()               const noexcept { return megaPixels;       }
     constexpr const Color& getDefaultColor()      const noexcept { return defaultColor;     }
     const Color& getColor(size_t row, size_t col) const noexcept { return pixels[row][col]; }
-    void setColor(size_t row, size_t col, const Color& color) noexcept { pixels[row][col] = color; }
+    std::string getImageDescription() const {
+        std::stringstream ss;
+        ss << std::fixed << std::setprecision(2)
+            << width << "X" << height
+            << " (" << getMegaPixels() << " MP)";
+        return ss.str();
+    }
+
+    void setColor(size_t row, size_t col, const Color& color) noexcept {
+        pixels[row][col] = color;
+    }
 
     // save framebuffer as an array of 256 rgb-colored pixels, written to file at given location
     // note that the buffer stores colors relative to top left corner, while ppm is relative to the bottom left
@@ -56,7 +66,6 @@ public:
         }
         ofs.close();
     }
-
 };
 inline std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
     os << std::fixed << std::setprecision(2)
