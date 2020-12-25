@@ -2,6 +2,7 @@
 #include <math.h>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 
 
 struct Vec2 {
@@ -63,11 +64,14 @@ inline float sin(float degrees)                { return sinf(degToRad(degrees));
 inline float cos(float degrees)                { return cosf(degToRad(degrees));   }
 inline float tan(float degrees)                { return tanf(degToRad(degrees));   }
 inline float squareRoot(float a)               { return sqrtf(a);                  }
-inline float round(float a)                    { return std::round(a);             }
 inline constexpr float abs(float a)            { return a <= 0.0f? -a : a;         }
 inline constexpr float min(float a, float b)   { return a <= b?     a : b;         }
 inline constexpr float max(float a, float b)   { return a >= b?     a : b;         }
-
+inline float roundToNearestInt(float a)        { return std::round(a);             }
+inline float roundToNearestDigit(float a, size_t num_digits) {
+    size_t roundingMultiple = num_digits * 10;
+    return roundToNearestInt(a * roundingMultiple) / roundingMultiple;
+}
 inline constexpr Vec3 cross(const Vec3& lhs, const Vec3& rhs) {
     return Vec3( (lhs.y * rhs.z - lhs.z * rhs.y),
                 -(lhs.x * rhs.z - lhs.z * rhs.x),

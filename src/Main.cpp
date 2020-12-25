@@ -17,7 +17,7 @@ int main()
     Scene scene{};
     Tracer tracer{};
     RenderCam cam{ viewPlane };
-    FrameBuffer frameBuffer(PresetResolutions::HD_1080p, BACKGROUND_COLOR);
+    FrameBuffer frameBuffer(PresetResolutions::SD_480p, BACKGROUND_COLOR);
     tracer.setShadowColor(SHADOW_COLOR);
     tracer.setBackgroundColor(BACKGROUND_COLOR);
     tracer.setMaxNumReflections(MAX_NUM_REFLECTIONS);
@@ -45,7 +45,10 @@ int main()
     std::cout << "finished in " << timer.elapsedTime() << "\n";
     
     // output to file
-    std::cout << "Writing frameBuffer to image file: " << OUTPUT_FILE << ".ppm`" << "...";
+    std::cout << "Writing frameBuffer to a "
+               << frameBuffer.getWidth() << "X" << frameBuffer.getWidth()
+               << " (" << frameBuffer.getMegaPixels() << " MP) "
+               << "image file: " << OUTPUT_FILE << ".ppm`" << "...";
     timer.start();
       frameBuffer.writeToFile(OUTPUT_FILE);
     timer.stop();

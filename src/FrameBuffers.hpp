@@ -1,4 +1,5 @@
 #pragma once
+#include "Math.hpp"
 #include "Colors.hpp"
 #include <ostream>
 #include <vector>
@@ -11,14 +12,19 @@ private:
     const size_t width;
     const size_t height;
     const size_t numPixels;
+    const float megaPixels;
     const Color defaultColor;
     std::vector<std::vector<Color>> pixels;
 
+    float computeMegaPixels(size_t width, size_t height, size_t numDigits=2) {
+        return Math::roundToNearestDigit((width * height) / 1000000.0f, numDigits);
+    }
 public:
     FrameBuffer(size_t width, size_t height, const Color& defaultColor) :
             width(width),
             height(height),
             numPixels(width * height),
+            megaPixels(computeMegaPixels(width, height)),
             pixels(),
             defaultColor(defaultColor) {
         pixels.resize(height, std::vector<Color>(width, defaultColor));
@@ -30,6 +36,7 @@ public:
     constexpr size_t getWidth()                   const noexcept { return width;            }
     constexpr size_t getHeight()                  const noexcept { return height;           }
     constexpr size_t getNumPixels()               const noexcept { return numPixels;        }
+    constexpr float getMegaPixels()               const noexcept { return megaPixels;       }
     constexpr const Color& getDefaultColor()      const noexcept { return defaultColor;     }
     const Color& getColor(size_t row, size_t col) const noexcept { return pixels[row][col]; }
     void setColor(size_t row, size_t col, const Color& color) noexcept { pixels[row][col] = color; }
