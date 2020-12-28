@@ -30,10 +30,8 @@ void Tracer::setMaximumallyReflectedColor(const Color& maxReflectedColor) {
 }
 
 // for each pixel in buffer trace ray from given camera through given scene,
-// and write computed color to buffer (in parallel)
+// and write computed color to buffer (dynamically scheduled in parallel using openMp)
 void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& frameBuffer) {
-    // == trace ray for each pixel and set it to computed color
-    // note that we parallelize using dynamic schedule since the time for tracing at each pixel can vary
     #pragma omp for schedule(dynamic)
     for (int row = 0; row < frameBuffer.getHeight(); row++) {
         for (int col = 0; col < frameBuffer.getWidth(); col++) {
@@ -54,9 +52,9 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     }
 
     // find our nearest intersection
-    float tClosest = std::numeric_limits<float>::infinity();
     RayHitInfo hit;
     const ISceneObject* object = nullptr;
+    float tClosest = std::numeric_limits<float>::infinity();
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         RayHitInfo h;
         if (scene.getObject(index).intersect(ray, h) && h.t < tClosest) {
@@ -90,10 +88,8 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     float tLight = Math::distance(hit.point, light.getPosition());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         RayHitInfo h;
-        if (scene.getObject(index).intersect(shadowRay, h)) {
-            if (h.t > T_OFFSET_FROM_POINT && h.t < tLight) {
-                return shadowColor;
-            }
+        if (scene.getObject(index).intersect(shadowRay, h) && h.t > T_OFFSET_FROM_POINT && h.t < tLight) {
+            return shadowColor;
         }
     }
 
