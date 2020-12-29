@@ -1,6 +1,6 @@
 #include "SceneObjects.h"
 #include "Math.hpp"
-#include "Colors.hpp"
+#include "Color.hpp"
 #include "Rays.hpp"
 
 

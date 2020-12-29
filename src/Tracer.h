@@ -1,6 +1,6 @@
 #pragma once
 #include "Math.hpp"
-#include "Colors.hpp"
+#include "Color.hpp"
 #include "Cameras.hpp"
 #include "Lights.hpp"
 #include "Scene.hpp"

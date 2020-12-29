@@ -1,6 +1,6 @@
 #pragma once
 #include "Math.hpp"
-#include "Colors.hpp"
+#include "Color.hpp"
 #include <ostream>
 #include <vector>
 #include <fstream>
