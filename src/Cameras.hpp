@@ -54,8 +54,8 @@ public:
         this->position = position;
     }
 
-    void lookAt(const Vec3& target, const Vec3& worldUp) {
-        Vec3 givenUp      = worldUp;
+    void lookAt(const Vec3& target, const Vec3& relativeUp) {
+        Vec3 givenUp      = relativeUp;
         Vec3 givenForward = Math::direction(position, target);
         if (Math::isParallelDirection(givenUp, givenForward)) {
             throw std::exception("cannot look at given position - "
