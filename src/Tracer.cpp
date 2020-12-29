@@ -71,7 +71,7 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     Color reflectedColor(0, 0, 0);
     const Material& surfaceMaterial = object->getMaterial();
     if (surfaceMaterial.reflectivity > 0.00f) {
-        const float ERR = 1e-05;
+        const float ERR = 1e-05f;
         Vec3 reflectedVec = (-1.0f * ray.direction) + (2.0f * hit.normal) * (Math::dot(ray.direction, hit.normal));
         Ray reflectionRay(hit.point + hit.normal * ERR, Math::normalize(reflectedVec));
         reflectedColor = traceRay(renderCam, scene, reflectionRay, iteration + 1);
