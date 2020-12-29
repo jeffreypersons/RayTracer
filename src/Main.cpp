@@ -6,8 +6,8 @@
 
 
 const std::string OUTPUT_FILE = "./scene";
-static constexpr Color SHADOW_COLOR{ 0.05f, 0.05f, 0.05f };
-static constexpr Color BACKGROUND_COLOR{ .529f, 0.808f, 0.922f };
+static constexpr Color SHADOW_COLOR     = ColorPresets::darkGrey;
+static constexpr Color BACKGROUND_COLOR = ColorPresets::skyBlue;
 static constexpr size_t MAX_NUM_REFLECTIONS = 5;
 
 Scene createSimpleScene() {
