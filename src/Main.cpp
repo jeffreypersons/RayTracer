@@ -17,7 +17,7 @@ Scene createSimpleScene() {
     pointLight.setDiffuseIntensity(0.50f);
     pointLight.setSpecularIntensity(0.50f);
     scene.addLight(pointLight);
-    scene.addSceneObject(Sphere(Vec3(0, -5, 0), 2.00f, PresetMaterials::flatYellow));
+    scene.addSceneObject(Sphere(Vec3(0.00f, 2.50f, 10.00f), 2.00f, PresetMaterials::flatYellow));
     return scene;
 }
 
@@ -34,7 +34,10 @@ int main()
     tracer.setBackgroundColor(BACKGROUND_COLOR);
     tracer.setMaxNumReflections(MAX_NUM_REFLECTIONS);
 
-    cam.setPosition(Vec3(0, 0, -10));
+    cam.setPosition(Vec3(0, 0, 0));
+    std::cout << "camera pointed in direction " << cam.getAimDir() << ": " <<
+                 "from " << cam.getPosition() << " to " << simpleScene.getObject(0).getCentroid() << "\n";
+
     tracer.trace(cam, simpleScene, frameBuffer);
     frameBuffer.writeToFile(OUTPUT_FILE);
     timer.stop();

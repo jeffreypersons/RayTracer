@@ -76,7 +76,7 @@ public:
     
     // get a ray from current cam position to (u, v) position on our viewplane
     Ray getRay(float u, float v) const {
-        Vec3 pointOnPlane = (u * rightDir) + (v * upDir) + position + aimDir;
+        Vec3 pointOnPlane = viewport.toWorld(u, v);
         return Ray(position, Math::direction(position, pointOnPlane));
     }
 };
