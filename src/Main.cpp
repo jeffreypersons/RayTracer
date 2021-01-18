@@ -12,12 +12,13 @@ static constexpr size_t MAX_NUM_REFLECTIONS = 5;
 
 Scene createSimpleScene() {
     Scene scene{};
-    Light pointLight(Vec3(0, 5, 0), PresetMaterials::pureWhite);
+    Light pointLight(Vec3(0, 1, 0), PresetMaterials::pureWhite);
     pointLight.setAmbientIntensity(0.50f);
     pointLight.setDiffuseIntensity(0.50f);
     pointLight.setSpecularIntensity(0.50f);
     scene.addLight(pointLight);
-    scene.addSceneObject(Sphere(Vec3(0.00f, 2.50f, 10.00f), 2.00f, PresetMaterials::flatYellow));
+    scene.addSceneObject(Sphere(Vec3(0, 50, 0), 25, PresetMaterials::flatYellow));
+    scene.addSceneObject(Sphere(Vec3(0, 10, 0),  5, PresetMaterials::roughRed));
     return scene;
 }
 
@@ -27,14 +28,20 @@ int main()
     timer.start();
     std::cout << "Program started...";
     Tracer tracer{};
-    RenderCam cam{ Viewport(10, 10, 10) };
-    FrameBuffer frameBuffer(Vec2(750, 750), BACKGROUND_COLOR);
+    RenderCam cam{};
+    FrameBuffer frameBuffer(Vec2(1000, 1000), BACKGROUND_COLOR);
     Scene simpleScene = createSimpleScene();
     tracer.setShadowColor(SHADOW_COLOR);
     tracer.setBackgroundColor(BACKGROUND_COLOR);
     tracer.setMaxNumReflections(MAX_NUM_REFLECTIONS);
 
-    cam.setPosition(Vec3(0, 0, 0));
+    // manually set camera to view from below the scene pointed upwards
+    cam.setPosition(Vec3(0, -10, 0));
+    cam.setViewDistance(10);
+    cam.setViewportSize(100, 100);
+    cam.setOrientation(Vec3(0, 0, 1), Vec3(0, 1, 0), Vec3(1, 0, 0));
+
+    //cam.lookAt(simpleScene.getObject(0).getCentroid(), Vec3(0, ));
     std::cout << "camera pointed in direction " << cam.getAimDir() << ": " <<
                  "from " << cam.getPosition() << " to " << simpleScene.getObject(0).getCentroid() << "\n";
 
