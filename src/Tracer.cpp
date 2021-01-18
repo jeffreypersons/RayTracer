@@ -1,6 +1,6 @@
 #include "Tracer.h"
 #include "Math.hpp"
-#include "Colors.hpp"
+#include "Color.hpp"
 #include "Cameras.hpp"
 #include "Lights.hpp"
 #include "SceneObjects.h"
@@ -30,10 +30,8 @@ void Tracer::setMaximumallyReflectedColor(const Color& maxReflectedColor) {
 }
 
 // for each pixel in buffer trace ray from given camera through given scene,
-// and write computed color to buffer (in parallel)
+// and write computed color to buffer (dynamically scheduled in parallel using openMp)
 void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& frameBuffer) {
-    // == trace ray for each pixel and set it to computed color
-    // note that we parallelize using dynamic schedule since the time for tracing at each pixel can vary
     #pragma omp for schedule(dynamic)
     for (int row = 0; row < frameBuffer.getHeight(); row++) {
         for (int col = 0; col < frameBuffer.getWidth(); col++) {
@@ -54,9 +52,9 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     }
 
     // find our nearest intersection
-    float tClosest = std::numeric_limits<float>::infinity();
     RayHitInfo hit;
     const ISceneObject* object = nullptr;
+    float tClosest = std::numeric_limits<float>::infinity();
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         RayHitInfo h;
         if (scene.getObject(index).intersect(ray, h) && h.t < tClosest) {
@@ -73,7 +71,7 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     Color reflectedColor(0, 0, 0);
     const Material& surfaceMaterial = object->getMaterial();
     if (surfaceMaterial.reflectivity > 0.00f) {
-        const double ERR = 1e-05;
+        const float ERR = 1e-05f;
         Vec3 reflectedVec = (-1.0f * ray.direction) + (2.0f * hit.normal) * (Math::dot(ray.direction, hit.normal));
         Ray reflectionRay(hit.point + hit.normal * ERR, Math::normalize(reflectedVec));
         reflectedColor = traceRay(renderCam, scene, reflectionRay, iteration + 1);
@@ -90,10 +88,8 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     float tLight = Math::distance(hit.point, light.getPosition());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         RayHitInfo h;
-        if (scene.getObject(index).intersect(shadowRay, h)) {
-            if (h.t > T_OFFSET_FROM_POINT && h.t < tLight) {
-                return shadowColor;
-            }
+        if (scene.getObject(index).intersect(shadowRay, h) && h.t > T_OFFSET_FROM_POINT && h.t < tLight) {
+            return shadowColor;
         }
     }
 

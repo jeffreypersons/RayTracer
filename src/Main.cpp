@@ -6,72 +6,43 @@
 
 
 const std::string OUTPUT_FILE = "./scene";
-static constexpr Color SHADOW_COLOR{ 0.05f, 0.05f, 0.05f };
-static constexpr Color BACKGROUND_COLOR{ 0.25f, 0.25f, 0.25f };
+static constexpr Color SHADOW_COLOR     = ColorPresets::darkGrey;
+static constexpr Color BACKGROUND_COLOR = ColorPresets::skyBlue;
 static constexpr size_t MAX_NUM_REFLECTIONS = 5;
 
 Scene createSimpleScene() {
     Scene scene{};
-    Light pointLight(Vec3(0, 0, 10), PresetMaterials::pureWhite);
+    Light pointLight(Vec3(0, 5, 0), PresetMaterials::pureWhite);
     pointLight.setAmbientIntensity(0.50f);
-    pointLight.setDiffuseIntensity(0.75f);
+    pointLight.setDiffuseIntensity(0.50f);
     pointLight.setSpecularIntensity(0.50f);
     scene.addLight(pointLight);
-    scene.addSceneObject(Triangle(Vec3(-10, 5, 5), Vec3(10, 5, 5), Vec3(0, 0, -25), PresetMaterials::flatYellow));
-    scene.addSceneObject(Sphere(Vec3(2, -2, -10), 2.00f, PresetMaterials::smoothBlue));
-    scene.addSceneObject(Sphere(Vec3(-2, 5, -15), 1.25f, PresetMaterials::roughRed));
-    scene.addSceneObject(Sphere(Vec3(-2, 10, -15), 0.50f, PresetMaterials::smoothBlue));
-    scene.addSceneObject(Sphere(Vec3(0, 5, -30), 1.00f, PresetMaterials::shinyBlue));
-    scene.addSceneObject(Sphere(Vec3(0, 5, -15), 1.00f, PresetMaterials::shinyBlue));
-    return std::move(scene);
-}
-
-Scene createComplexScene() {
-    Scene scene{};
-    Light pointLight(Vec3(0, 0, 10), PresetMaterials::pureWhite);
-    pointLight.setAmbientIntensity(0.50f);
-    pointLight.setDiffuseIntensity(0.75f);
-    pointLight.setSpecularIntensity(0.50f);
-    scene.addLight(pointLight);
-    scene.addSceneObject(Triangle(Vec3(-10, 5, 5), Vec3(10, 5, 5), Vec3(0, 0, -25), PresetMaterials::flatYellow));
-    scene.addSceneObject(Sphere(Vec3( 2, -2, -10), 2.00f, PresetMaterials::smoothBlue));
-    scene.addSceneObject(Sphere(Vec3(-2,  5, -15), 1.25f, PresetMaterials::roughRed));
-    scene.addSceneObject(Sphere(Vec3(-2, 10, -15), 0.50f, PresetMaterials::smoothBlue));
-    scene.addSceneObject(Sphere(Vec3( 0,  5, -30), 1.00f, PresetMaterials::shinyBlue));
-    scene.addSceneObject(Sphere(Vec3( 0,  5, -15), 1.00f, PresetMaterials::shinyBlue));
-    return std::move(scene);
+    scene.addSceneObject(Sphere(Vec3(0.00f, 2.50f, 10.00f), 2.00f, PresetMaterials::flatYellow));
+    return scene;
 }
 
 int main()
 {
-    ViewPlane viewPlane{ 10, 10, 10 };
     Timer timer{};
+    timer.start();
+    std::cout << "Program started...";
     Tracer tracer{};
-    RenderCam cam{ viewPlane };
-    FrameBuffer frameBuffer(PresetResolutions::SD_480p, BACKGROUND_COLOR);
+    RenderCam cam{ Viewport(10, 10, 10) };
+    FrameBuffer frameBuffer(Vec2(750, 750), BACKGROUND_COLOR);
     Scene simpleScene = createSimpleScene();
-    Scene complexScene = createComplexScene();
-
     tracer.setShadowColor(SHADOW_COLOR);
     tracer.setBackgroundColor(BACKGROUND_COLOR);
     tracer.setMaxNumReflections(MAX_NUM_REFLECTIONS);
 
-    // trace scene
-    std::cout << "Tracing scene...";
-    timer.start();
-      tracer.trace(cam, simpleScene, frameBuffer);
-    timer.stop();
-    std::cout << "finished in " << timer.elapsedTime() << "\n";
-    
-    // output to file
-    std::cout << "Writing framebuffer to a "
-               << frameBuffer.getImageDescription() << " image file: " << OUTPUT_FILE << ".ppm`" << "...";
-    timer.start();
-      frameBuffer.writeToFile(OUTPUT_FILE);
-    timer.stop();
-    std::cout << "finished in " << timer.elapsedTime() << "\n";
+    cam.setPosition(Vec3(0, 0, 0));
+    std::cout << "camera pointed in direction " << cam.getAimDir() << ": " <<
+                 "from " << cam.getPosition() << " to " << simpleScene.getObject(0).getCentroid() << "\n";
 
-    // prompt user to 
+    tracer.trace(cam, simpleScene, frameBuffer);
+    frameBuffer.writeToFile(OUTPUT_FILE);
+    timer.stop();
+
+    std::cout << "finished in " << timer.elapsedTime() << "\n";
     std::cout << "Press ENTER to end...";
     std::cin.get();
 }

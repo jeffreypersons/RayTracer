@@ -1,6 +1,6 @@
 #pragma once
 #include "Math.hpp"
-#include "Colors.hpp"
+#include "Color.hpp"
 #include <ostream>
 #include <vector>
 #include <fstream>
@@ -30,7 +30,7 @@ public:
         pixels.resize(height, std::vector<Color>(width, defaultColor));
     }
     FrameBuffer(const Vec2& size, const Color& defaultColor) :
-        FrameBuffer(size.x, size.y, defaultColor)
+        FrameBuffer(static_cast<size_t>(size.x), static_cast<size_t>(size.y), defaultColor)
     {}
 
     constexpr size_t getWidth()                   const noexcept { return width;            }
