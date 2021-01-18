@@ -5,14 +5,25 @@
 #include <iostream>
 
 
-const std::string OUTPUT_FILE = "./scene";
-static constexpr Color SHADOW_COLOR     = ColorPresets::darkGrey;
-static constexpr Color BACKGROUND_COLOR = ColorPresets::skyBlue;
-static constexpr size_t MAX_NUM_REFLECTIONS = 5;
+RenderCam createFrontalSceneViewCam(float viewWidth, float viewHeight, float viewDist) {
+    RenderCam cam{};
+    cam.setPosition(Vec3(0.00f, 0.00f, viewDist));
+    cam.setViewDistance(viewDist);
+    cam.setViewportSize(viewWidth, viewHeight);
+    return cam;
+}
+RenderCam createBottomUpSceneViewCam(float viewWidth, float viewHeight, float viewDist) {
+    RenderCam cam{};
+    cam.setPosition(Vec3(0.00f, -viewDist, 0.00f));
+    cam.setViewDistance(viewDist);
+    cam.setViewportSize(viewWidth, viewHeight);
+    cam.setOrientation(Vec3(0, 1, 0), Vec3(1, 0, 0), Vec3(0, 0, 1));
+    return cam;
+}
 
 Scene createSimpleScene() {
     Scene scene{};
-    Light pointLight(Vec3(0, 1, 0), PresetMaterials::pureWhite);
+    Light pointLight(Vec3(0, 100, 0), PresetMaterials::pureWhite);
     pointLight.setAmbientIntensity(0.50f);
     pointLight.setDiffuseIntensity(0.50f);
     pointLight.setSpecularIntensity(0.50f);
@@ -26,29 +37,27 @@ int main()
 {
     Timer timer{};
     timer.start();
-    std::cout << "Program started...";
+    std::cout << "Program started...\n";
+
     Tracer tracer{};
-    RenderCam cam{};
-    FrameBuffer frameBuffer(Vec2(1000, 1000), BACKGROUND_COLOR);
+    tracer.setShadowColor(PresetColors::darkGrey);
+    tracer.setBackgroundColor(PresetColors::skyBlue);
+    tracer.setMaxNumReflections(10);
+    
+    FrameBuffer frameBuffer(Vec2(1000, 1000), PresetColors::skyBlue);
     Scene simpleScene = createSimpleScene();
-    tracer.setShadowColor(SHADOW_COLOR);
-    tracer.setBackgroundColor(BACKGROUND_COLOR);
-    tracer.setMaxNumReflections(MAX_NUM_REFLECTIONS);
+    RenderCam frontCam  = createFrontalSceneViewCam( 100, 100, 100);
+    RenderCam bottomCam = createBottomUpSceneViewCam(100, 100, 100);
 
-    // manually set camera to view from below the scene pointed upwards
-    cam.setPosition(Vec3(0, -10, 0));
-    cam.setViewDistance(10);
-    cam.setViewportSize(100, 100);
-    cam.setOrientation(Vec3(0, 0, 1), Vec3(0, 1, 0), Vec3(1, 0, 0));
+    std::cout << "rendering scene from frontal view...\n";
+    tracer.trace(frontCam, simpleScene, frameBuffer);
+    frameBuffer.writeToFile("./scene_front-view");
 
-    //cam.lookAt(simpleScene.getObject(0).getCentroid(), Vec3(0, ));
-    std::cout << "camera pointed in direction " << cam.getAimDir() << ": " <<
-                 "from " << cam.getPosition() << " to " << simpleScene.getObject(0).getCentroid() << "\n";
+    std::cout << "rendering scene from bottom view...\n";
+    tracer.trace(bottomCam, simpleScene, frameBuffer);
+    frameBuffer.writeToFile("./scene_bottom-view");
 
-    tracer.trace(cam, simpleScene, frameBuffer);
-    frameBuffer.writeToFile(OUTPUT_FILE);
     timer.stop();
-
     std::cout << "finished in " << timer.elapsedTime() << "\n";
     std::cout << "Press ENTER to end...";
     std::cin.get();

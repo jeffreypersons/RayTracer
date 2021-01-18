@@ -14,7 +14,7 @@ constexpr Vec2 HD_4K    = Vec2(3840, 2160);
 constexpr Vec2 HD_8K    = Vec2(7680, 4320);
 }
 
-namespace ColorPresets {
+namespace PresetColors {
 // base colors
 constexpr Color red    {1, 0, 0};
 constexpr Color green  {0, 1, 0};
@@ -166,9 +166,9 @@ constexpr Color yellowGreen          { 0.603922, 0.803922, 0.196078 };
 
 namespace PresetMaterials {
 constexpr Material smoothBlue = Material(
-    Color(0.00f, 0.00f, 0.75f),
-    Color(0.00f, 0.00f, 0.75f),
-    Color(0.00f, 0.00f, 0.50f),
+    PresetColors::darkBlue,
+    PresetColors::darkBlue,
+    PresetColors::lightBlue,
     0.50f, 0.50f
 );
 constexpr Material shinyBlue = Material(

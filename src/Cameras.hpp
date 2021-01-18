@@ -6,40 +6,40 @@
 
 class RenderCam {
 private:
-    Vec3 upDir;
+    Vec3 position;
     Vec3 aimDir;
     Vec3 rightDir;
-    Vec3 position;
+    Vec3 upDir;
     float viewportHeight;
     float viewportWidth;
     float viewportDistance;
-
+    
 public:
     RenderCam() :
-        upDir(0, 1, 0),
+        position(0, 0, 0),
         aimDir(0, 0, -1),
         rightDir(1, 0, 0),
-        position(0, 0, 0),
+        upDir(0, 1, 0),
         viewportWidth(1.00f),
         viewportHeight(1.00f),
         viewportDistance(1.00f) {}
 
     // set orientation manually
     // caution: note that no checking for orthogonality or normalization is done
-    void setOrientation(const Vec3& up, const Vec3& aim, const Vec3& right) {
-        upDir = up;
-        aimDir = aim;
-        rightDir = right;
+    void setOrientation(const Vec3& aimDir, const Vec3& rightDir, const Vec3& upDir) {
+        this->aimDir   = aimDir;
+        this->rightDir = rightDir;
+        this->upDir    = upDir;
     }
     void setPosition(const Vec3& position) {
         this->position = position;
     }
-    void setViewportSize(float width, float height) {
-        viewportWidth = width;
-        viewportHeight = height;
+    void setViewportSize(float viewportWidth, float viewportHeight) {
+        this->viewportWidth  = viewportWidth;
+        this->viewportHeight = viewportHeight;
     }
-    void setViewDistance(float distance) {
-        viewportDistance = distance;
+    void setViewDistance(float viewportDistance) {
+        this->viewportDistance = viewportDistance;
     }
 
     void lookAt(const Vec3& target, const Vec3& relativeUp) {
@@ -55,12 +55,12 @@ public:
         rightDir = Math::normalize(Math::cross(aimDir, givenUp));
         upDir    = Math::cross(rightDir, aimDir);
     }
-
-    const Vec3& getUpDir()        const { return upDir;    }
-    const Vec3& getRightDir()     const { return rightDir; }
-    const Vec3& getAimDir()       const { return aimDir;   }
-    const Vec3& getPosition()     const { return position; }
-
+    
+    const Vec3& getUpDir()    const { return upDir;    }
+    const Vec3& getRightDir() const { return rightDir; }
+    const Vec3& getAimDir()   const { return aimDir;   }
+    const Vec3& getPosition() const { return position; }
+    
     Vec3 viewportToWorld(float u, float v) const {
         float centeredU = u - 0.50f;
         float centeredV = v - 0.50f;
