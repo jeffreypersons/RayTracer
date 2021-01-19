@@ -40,10 +40,12 @@ int main()
     std::cout << "Program started...\n";
 
     Tracer tracer{};
-    tracer.setShadowColor(PresetColors::darkGrey);
+    tracer.setShadowColor(Color(0.125f, 0.125f, 0.125f));
     tracer.setBackgroundColor(PresetColors::skyBlue);
-    tracer.setMaxNumReflections(10);
-    
+    tracer.setMaximumallyReflectedColor(PresetColors::pink);
+    tracer.setMaxNumReflections(5);
+    tracer.setMinTForShadowIntersections(0.01f);
+
     FrameBuffer frameBuffer(Vec2(1000, 1000), PresetColors::skyBlue);
     Scene simpleScene = createSimpleScene();
     RenderCam frontCam  = createFrontalSceneViewCam( 100, 100, 100);

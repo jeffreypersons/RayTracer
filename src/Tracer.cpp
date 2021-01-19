@@ -9,11 +9,15 @@
 #include <omp.h>
 
 
+// todo: consider adding object.contains() call to warn about camera position if it lies within
+//       an object in the scene (thus creating strange results)
 Tracer::Tracer() :
     maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS),
     shadowColor(DEFAULT_SHADOW_COLOR),
     backgroundColor(DEFAULT_BACKGROUND_COLOR),
-    maxReflectedColor(DEFAULT_MAX_REFLECTED_COLOR)
+    maxReflectedColor(DEFAULT_MAX_REFLECTED_COLOR),
+    minTForShadowIntersections(DEFAULT_MIN_T_FOR_SHADOW_INTERSECTIONS),
+    reflectionalScalar(DEFAULT_REFLECTIONAL_SCALAR)
 {}
 
 void Tracer::setMaxNumReflections(size_t maxNumReflections) {
@@ -27,6 +31,12 @@ void Tracer::setBackgroundColor(const Color& backgroundColor) {
 }
 void Tracer::setMaximumallyReflectedColor(const Color& maxReflectedColor) {
     this->maxReflectedColor = maxReflectedColor;
+}
+void Tracer::setMinTForShadowIntersections(float minTForShadowIntersections) {
+    this->minTForShadowIntersections = minTForShadowIntersections;
+}
+void Tracer::setReflectionalScalar(float reflectionalScalar) {
+    this->reflectionalScalar = reflectionalScalar;
 }
 
 // for each pixel in buffer trace ray from given camera through given scene,
@@ -67,13 +77,13 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
         return backgroundColor;
     }
 
-    // ==== compute reflected color
+    // reflect our ray throughout the scene using a slight directional offset
+    // and iteration cap to avoid infinite reflections
     Color reflectedColor(0, 0, 0);
     const Material& surfaceMaterial = object->getMaterial();
     if (surfaceMaterial.reflectivity > 0.00f) {
-        const float ERR = 1e-05f;
         Vec3 reflectedVec = (-1.0f * ray.direction) + (2.0f * hit.normal) * (Math::dot(ray.direction, hit.normal));
-        Ray reflectionRay(hit.point + hit.normal * ERR, Math::normalize(reflectedVec));
+        Ray reflectionRay(hit.point + reflectionalScalar * hit.normal, Math::normalize(reflectedVec));
         reflectedColor = traceRay(renderCam, scene, reflectionRay, iteration + 1);
     }
 
@@ -81,19 +91,17 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     Light light = scene.getLight(0);
     Vec3 directionToLight = Math::direction(light.getPosition(), hit.point);
 
-    // ==== compute shadow
-    // find our nearest intersection
-    // object casts a shadow (occludes P) IFF it intersects ray AND 0.0001 < t < distance(P, L)
+    // check if there exists an object blocking light from reaching our hit-point
     Ray shadowRay(hit.point, directionToLight);
-    float tLight = Math::distance(hit.point, light.getPosition());
+    float tLight = Math::distance(hit.point, light.getPosition()) - minTForShadowIntersections;
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         RayHitInfo h;
-        if (scene.getObject(index).intersect(shadowRay, h) && h.t > T_OFFSET_FROM_POINT && h.t < tLight) {
+        if (scene.getObject(index).intersect(shadowRay, h) && h.t > minTForShadowIntersections && h.t < tLight) {
             return shadowColor;
         }
     }
 
-    // ==== compute surface color
+    // blend intrinsic and reflected color using our light and intersected object
     Color surfaceColor;
     Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
     Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
