@@ -14,12 +14,15 @@ private:
     Color backgroundColor;
     Color maxReflectedColor;
     size_t maxNumReflections;
-    
+    float minTForShadowIntersections;
+    float reflectionalScalar;
+
     static constexpr Color DEFAULT_SHADOW_COLOR       { 0.00f, 0.00f, 0.00f };
     static constexpr Color DEFAULT_BACKGROUND_COLOR   { 0.00f, 0.00f, 0.00f };
     static constexpr Color DEFAULT_MAX_REFLECTED_COLOR{ 0.05f, 0.05f, 0.05f };
     static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 5;
-    static constexpr float T_OFFSET_FROM_POINT = 0.001f;
+    static constexpr float DEFAULT_MIN_T_FOR_SHADOW_INTERSECTIONS = 0.01000f;
+    static constexpr float DEFAULT_REFLECTIONAL_SCALAR            = 0.00001f;
     Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
     
 public:
@@ -29,4 +32,6 @@ public:
     void setBackgroundColor(const Color&);
     void setMaximumallyReflectedColor(const Color&);
     void setMaxNumReflections(size_t);
+    void setMinTForShadowIntersections(float);
+    void setReflectionalScalar(float);
 };
