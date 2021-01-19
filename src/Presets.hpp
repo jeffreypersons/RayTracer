@@ -14,7 +14,7 @@ constexpr Vec2 HD_4K    = Vec2(3840, 2160);
 constexpr Vec2 HD_8K    = Vec2(7680, 4320);
 }
 
-namespace ColorPresets {
+namespace PresetColors {
 // base colors
 constexpr Color red    {1, 0, 0};
 constexpr Color green  {0, 1, 0};
@@ -45,7 +45,7 @@ constexpr Color cornsilk             { 1.000000, 0.972549, 0.862745 };
 constexpr Color crimson              { 0.862745, 0.078431, 0.235294 };
 constexpr Color darkBlue             { 0.000000, 0.000000, 0.545098 };
 constexpr Color darkCyan             { 0.000000, 0.545098, 0.545098 };
-constexpr Color darkGrey             { 0.662745, 0.662745, 0.662745 };
+constexpr Color darkGray             { 0.662745, 0.662745, 0.662745 };
 constexpr Color darkGreen            { 0.000000, 0.392157, 0.000000 };
 constexpr Color darkKhaki            { 0.741176, 0.717647, 0.419608 };
 constexpr Color darkMagenta          { 0.545098, 0.000000, 0.545098 };
@@ -57,13 +57,11 @@ constexpr Color darkSalmon           { 0.913725, 0.588235, 0.478431 };
 constexpr Color darkSeaGreen         { 0.560784, 0.737255, 0.560784 };
 constexpr Color darkSlateBlue        { 0.282353, 0.239216, 0.545098 };
 constexpr Color darkSlateGray        { 0.184314, 0.309804, 0.309804 };
-constexpr Color darkSlateGrey        { 0.184314, 0.309804, 0.309804 };
 constexpr Color darkTurquoise        { 0.000000, 0.807843, 0.819608 };
 constexpr Color darkViolet           { 0.580392, 0.000000, 0.827451 };
 constexpr Color deepPink             { 1.000000, 0.078431, 0.576471 };
 constexpr Color deepSkyBlue          { 0.000000, 0.749020, 1.000000 };
 constexpr Color dimGray              { 0.411765, 0.411765, 0.411765 };
-constexpr Color dimGrey              { 0.411765, 0.411765, 0.411765 };
 constexpr Color dodgerBlue           { 0.117647, 0.564706, 1.000000 };
 constexpr Color fireBrick            { 0.698039, 0.133333, 0.133333 };
 constexpr Color floralWhite          { 1.000000, 0.980392, 0.941176 };
@@ -73,7 +71,7 @@ constexpr Color gainsboro            { 0.862745, 0.862745, 0.862745 };
 constexpr Color ghostWhite           { 0.972549, 0.972549, 1.000000 };
 constexpr Color gold                 { 1.000000, 0.843137, 0.000000 };
 constexpr Color goldenRod            { 0.854902, 0.647059, 0.125490 };
-constexpr Color grey                 { 0.501961, 0.501961, 0.501961 };
+constexpr Color gray                 { 0.501961, 0.501961, 0.501961 };
 constexpr Color greenYellow          { 0.678431, 1.000000, 0.184314 };
 constexpr Color honeyDew             { 0.941176, 1.000000, 0.941176 };
 constexpr Color hotPink              { 1.000000, 0.411765, 0.705882 };
@@ -90,14 +88,12 @@ constexpr Color lightCoral           { 0.941176, 0.501961, 0.501961 };
 constexpr Color lightCyan            { 0.878431, 1.000000, 1.000000 };
 constexpr Color lightGoldenRodYellow { 0.980392, 0.980392, 0.823529 };
 constexpr Color lightGray            { 0.827451, 0.827451, 0.827451 };
-constexpr Color lightGrey            { 0.827451, 0.827451, 0.827451 };
 constexpr Color lightGreen           { 0.564706, 0.933333, 0.564706 };
 constexpr Color lightPink            { 1.000000, 0.713726, 0.756863 };
 constexpr Color lightSalmon          { 1.000000, 0.627451, 0.478431 };
 constexpr Color lightSeaGreen        { 0.125490, 0.698039, 0.666667 };
 constexpr Color lightSkyBlue         { 0.529412, 0.807843, 0.980392 };
 constexpr Color lightSlateGray       { 0.466667, 0.533333, 0.600000 };
-constexpr Color lightSlateGrey       { 0.466667, 0.533333, 0.600000 };
 constexpr Color lightSteelBlue       { 0.690196, 0.768627, 0.870588 };
 constexpr Color lightYellow          { 1.000000, 1.000000, 0.878431 };
 constexpr Color lime                 { 0.000000, 1.000000, 0.000000 };
@@ -148,7 +144,6 @@ constexpr Color silver               { 0.752941, 0.752941, 0.752941 };
 constexpr Color skyBlue              { 0.529412, 0.807843, 0.921569 };
 constexpr Color slateBlue            { 0.415686, 0.352941, 0.803922 };
 constexpr Color slateGray            { 0.439216, 0.501961, 0.564706 };
-constexpr Color slateGrey            { 0.439216, 0.501961, 0.564706 };
 constexpr Color snow                 { 1.000000, 0.980392, 0.980392 };
 constexpr Color springGreen          { 0.000000, 1.000000, 0.498039 };
 constexpr Color steelBlue            { 0.274510, 0.509804, 0.705882 };
@@ -166,9 +161,9 @@ constexpr Color yellowGreen          { 0.603922, 0.803922, 0.196078 };
 
 namespace PresetMaterials {
 constexpr Material smoothBlue = Material(
-    Color(0.00f, 0.00f, 0.75f),
-    Color(0.00f, 0.00f, 0.75f),
-    Color(0.00f, 0.00f, 0.50f),
+    PresetColors::darkBlue,
+    PresetColors::darkBlue,
+    PresetColors::lightBlue,
     0.50f, 0.50f
 );
 constexpr Material shinyBlue = Material(
