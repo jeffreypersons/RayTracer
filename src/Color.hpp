@@ -37,12 +37,12 @@ public:
 };
 inline constexpr Color operator+(const Color& lhs, const Color& rhs) { return Color(lhs.r + rhs.r, lhs.g + rhs.g, lhs.b + rhs.b); }
 inline constexpr Color operator-(const Color& lhs, const Color& rhs) { return Color(lhs.r - rhs.r, lhs.g - rhs.g, lhs.b - rhs.b); }
-inline constexpr Color operator/(const Color& lhs, float rhs)        { return Color(lhs.r / rhs,   lhs.g / rhs,   lhs.b / rhs);   }
 inline constexpr Color operator*(const Color& lhs, const Color& rhs) { return Color(lhs.r * rhs.r, lhs.g * rhs.g, lhs.b * rhs.b); }
-inline constexpr Color operator*(const Color& lhs, float rhs)        { return Color(lhs.r * rhs,   lhs.g * rhs,   lhs.b * rhs);   }
-inline constexpr Color operator*(float lhs,        const Color& rhs) { return Color(lhs   * rhs.r, lhs * rhs.g,   lhs * rhs.b);   }
+inline constexpr Color operator*(float        lhs, const Color& rhs) { return Color(lhs   * rhs.r, lhs   * rhs.g, lhs   * rhs.b); }
+inline constexpr Color operator*(const Color& lhs, float        rhs) { return Color(lhs.r * rhs,   lhs.g * rhs,   lhs.b * rhs);   }
+inline constexpr Color operator/(const Color& lhs, float        rhs) { return Color(lhs.r / rhs,   lhs.g / rhs,   lhs.b / rhs);   }
 inline std::ostream& operator<<(std::ostream& os, const Color& color) {
-    os << std::fixed << std::setprecision(2) << "Color(r:" << color.r << ",g:" << color.g << ",b:" << color.b << ")";
+    os << color.r << "," << color.g << "," << color.b;
     return os;
 }
 
