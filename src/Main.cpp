@@ -28,7 +28,7 @@ Scene createSimpleScene() {
     pointLight.setDiffuseIntensity(0.50f);
     pointLight.setSpecularIntensity(0.50f);
     scene.addLight(pointLight);
-    scene.addSceneObject(Sphere(Vec3(0, 50, 0), 25, PresetMaterials::flatYellow));
+    scene.addSceneObject(Sphere(Vec3(0, 50, 0), 50, PresetMaterials::flatYellow));
     scene.addSceneObject(Sphere(Vec3(0, 10, 0),  5, PresetMaterials::roughRed));
     return scene;
 }

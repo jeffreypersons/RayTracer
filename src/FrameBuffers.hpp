@@ -2,8 +2,8 @@
 #include "Math.hpp"
 #include "Color.hpp"
 #include <ostream>
-#include <vector>
 #include <fstream>
+#include <vector>
 
 
 // framebuffer
