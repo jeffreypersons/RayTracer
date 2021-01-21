@@ -35,13 +35,13 @@ public:
     bool isFinished() const { return startTime.has_value() && stopTime.has_value();  }
     double getStartTime() const {
         if (!startTime.has_value()) {
-            throw std::exception("startTime undefined - requires call to start() after initialization or clear()");
+            throw std::runtime_error("startTime undefined - requires call to start() after initialization or clear()");
         }
         return startTime.value();
     }
     double getStopTime() const {
         if (!stopTime.has_value()) {
-            throw std::exception("stopTime undefined - computed in stop() after calling start()");
+            throw std::runtime_error("stopTime undefined - computed in stop() after calling start()");
         }
         return stopTime.value();
     }
