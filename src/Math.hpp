@@ -53,7 +53,7 @@ inline constexpr float clamp01(float val) {
     return val;
 }
 inline constexpr float isApproximately(float a, float b, float epsilon=DEFAULT_EPSILON) {
-    return (a > b && a - b <= epsilon) || (b > a && b - a <= epsilon);
+    return (a == b) || (a > b && a - b <= epsilon) || (b > a && b - a <= epsilon);
 }
 
 constexpr float PI = 3.14159265358979323846f;
