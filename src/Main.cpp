@@ -69,7 +69,7 @@ int main()
     frameBuffer.writeToFile("./scene_bottom-view");
 
     stopWatch.stop();
-    std::cout << "finished in " << stopWatch.elapsedTime() << "\n";
+    std::cout << "Program finished in " << stopWatch.elapsedTime() << " seconds \n";
     std::cout << "Press ENTER to end...";
     std::cin.get();
 }
