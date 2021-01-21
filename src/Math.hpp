@@ -95,13 +95,6 @@ inline Vec3 direction(const Vec3& from, const Vec3& to)      { return Math::norm
 inline float distance(const Vec2& from, const Vec2& to)      { return Math::magnitude(to - from);                    }
 inline float distance(const Vec3& from, const Vec3& to)      { return Math::magnitude(to - from);                    }
 
-inline bool isNormalized(const Vec2& vec, float epsilon=DEFAULT_EPSILON) {
-    return isApproximately(magnitudeSquared(vec), 1.00f, epsilon);
-}
-inline bool isNormalized(const Vec3& vec, float epsilon=DEFAULT_EPSILON) {
-    return isApproximately(magnitudeSquared(vec), 1.00f, epsilon);
-}
-
 // compute the cosine [-1, 1] of the (shortest) angle between given vectors A and B
 inline float cosineSimilarity(const Vec2& a, const Vec2& b) {
     return dot(a, b) / squareRoot(magnitudeSquared(a) * magnitudeSquared(b));
@@ -111,6 +104,18 @@ inline float cosineSimilarity(const Vec3& a, const Vec3& b) {
     return dot(a, b) / squareRoot(magnitudeSquared(a) * magnitudeSquared(b));
 }
 
+inline bool isNormalized(const Vec2& vec, float epsilon=DEFAULT_EPSILON) {
+    return isApproximately(magnitudeSquared(vec), 1.00f, epsilon);
+}
+inline bool isNormalized(const Vec3& vec, float epsilon=DEFAULT_EPSILON) {
+    return isApproximately(magnitudeSquared(vec), 1.00f, epsilon);
+}
+inline bool isOrthogonal(const Vec2& a, const Vec2& b, float epsilon=DEFAULT_EPSILON) {
+    return isApproximately(dot(a, b), 0.00f, epsilon);
+}
+inline bool isOrthogonal(const Vec3& a, const Vec3& b, float epsilon = DEFAULT_EPSILON) {
+    return isApproximately(dot(a, b), 0.00f, epsilon);
+}
 inline bool isSameDirection(const Vec2& a, const Vec2& b, float epsilon=DEFAULT_EPSILON) {
     return isApproximately(cosineSimilarity(a, b), 1.00f, epsilon);
 }
