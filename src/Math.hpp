@@ -56,11 +56,11 @@ inline constexpr float isApproximately(float a, float b, float epsilon=DEFAULT_E
     return (a > b && a - b <= epsilon) || (b > a && b - a <= epsilon);
 }
 
-constexpr float PI_1 = 3.14159265358979323846f;
+constexpr float PI = 3.14159265358979323846f;
 constexpr float PI_2 = 1.57079632679489661923f;
 constexpr float PI_4 = 0.78539816339744830962f;
-inline constexpr float radToDeg(float radians) { return radians * (180.0f / PI_1);     }
-inline constexpr float degToRad(float radians) { return radians * (PI_1   / 180.0f);   }
+inline constexpr float radToDeg(float radians) { return radians * (180.0f / PI);     }
+inline constexpr float degToRad(float radians) { return radians * (PI   / 180.0f);   }
 inline float sin(float degrees)                { return std::sinf(degToRad(degrees));  }
 inline float cos(float degrees)                { return std::cosf(degToRad(degrees));  }
 inline float tan(float degrees)                { return std::tanf(degToRad(degrees));  }
@@ -68,6 +68,7 @@ inline float asin(float degrees)               { return std::asinf(degToRad(degr
 inline float acos(float degrees)               { return std::acosf(degToRad(degrees)); }
 inline float atan(float degrees)               { return std::atanf(degToRad(degrees)); }
 inline float squareRoot(float a)               { return std::sqrtf(a);                 }
+inline float pow(float a, float b)             { return std::powf(a, b);               }
 inline constexpr float abs(float a)            { return a <= 0.0f? -a : a;             }
 inline constexpr float min(float a, float b)   { return a <= b?     a : b;             }
 inline constexpr float max(float a, float b)   { return a >= b?     a : b;             }
@@ -101,6 +102,19 @@ inline float cosineSimilarity(const Vec2& a, const Vec2& b) {
 // compute the cosine [-1, 1] of the (shortest) angle between given vectors A and B
 inline float cosineSimilarity(const Vec3& a, const Vec3& b) {
     return dot(a, b) / squareRoot(magnitudeSquared(a) * magnitudeSquared(b));
+}
+
+inline bool isNormalized(const Vec2& vec, float epsilon=DEFAULT_EPSILON) {
+    return isApproximately(magnitudeSquared(vec), 1.00f, epsilon);
+}
+inline bool isNormalized(const Vec3& vec, float epsilon=DEFAULT_EPSILON) {
+    return isApproximately(magnitudeSquared(vec), 1.00f, epsilon);
+}
+inline bool isOrthogonal(const Vec2& a, const Vec2& b, float epsilon=DEFAULT_EPSILON) {
+    return isApproximately(dot(a, b), 0.00f, epsilon);
+}
+inline bool isOrthogonal(const Vec3& a, const Vec3& b, float epsilon = DEFAULT_EPSILON) {
+    return isApproximately(dot(a, b), 0.00f, epsilon);
 }
 inline bool isSameDirection(const Vec2& a, const Vec2& b, float epsilon=DEFAULT_EPSILON) {
     return isApproximately(cosineSimilarity(a, b), 1.00f, epsilon);
