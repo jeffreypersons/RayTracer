@@ -63,7 +63,7 @@ struct Material {
             intrinsic(Math::clamp01(intrinsic)),
             reflectivity(Math::clamp01(reflectivity)) {
         if (!Math::isApproximately(this->intrinsic + this->reflectivity, 1.00f)) {
-            static_assert (true, "weighted indices must sum to 1.00");
+            throw std::invalid_argument("weighted indices must sum to 1.00");
         }
     }
     constexpr Material(const Color& ambient, const Color& diffuse, const Color& specular, double intrinsic, double reflectivity) :
