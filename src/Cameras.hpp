@@ -51,15 +51,16 @@ public:
         setFarClip(DEFAULT_FAR_CLIP);
     }
     
-    const Vec3& getPosition() const { return position;    }
-    const Vec3& getUpDir()    const { return upDir;       }
-    const Vec3& getRightDir() const { return rightDir;    }
-    const Vec3& getAimDir()   const { return aimDir;      }
-    float getDistance()       const { return distance;    }
-    float getFieldOfView()    const { return fieldOfView; }
-    float getAspectRatio()    const { return aspectRatio; }
-    float getNearClip()       const { return nearClip;    }
-    float getFarClip()        const { return farClip;     }
+    const Vec3& getPosition()     const { return position;     }
+    const Vec3& getUpDir()        const { return upDir;        }
+    const Vec3& getRightDir()     const { return rightDir;     }
+    const Vec3& getAimDir()       const { return aimDir;       }
+    float getDistance()           const { return distance;     }
+    float getFieldOfView()        const { return fieldOfView;  }
+    float getAspectRatio()        const { return aspectRatio;  }
+    float getNearClip()           const { return nearClip;     }
+    float getFarClip()            const { return farClip;      }
+    const Vec2& getViewportSize() const { return viewportSize; }
 
     Vec3 viewportToWorld(float u, float v) const {
         float centeredU = u - 0.50f;
@@ -150,3 +151,23 @@ public:
         upDir    = Math::cross(rightDir, aimDir);
     }
 };
+inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
+    os << std::fixed << std::setprecision(2)
+       << "RenderCam("
+         << "Position:" << renderCam.getPosition() << ", "
+         << "Orientation{"
+           << "right-axis:("   << renderCam.getRightDir() << "),"
+           << "forward-axis:(" << renderCam.getAimDir()   << "),"
+           << "upward-axis:("  << renderCam.getUpDir()    << ")}, "
+         << "ImagePlane{"
+           << "aspect-ratio:"    << renderCam.getAspectRatio()    << ","
+           << "field-of-view:"   << renderCam.getFieldOfView()    << " deg,"
+           << "distance:"        << renderCam.getDistance()       << ","
+           << "viewport-width:"  << renderCam.getViewportSize().x << ","
+           << "viewport-height:" << renderCam.getViewportSize().y << "}, "
+         << "Clipping{"
+           << "near-plane-z:" << renderCam.getNearClip() << ","
+           << "far-plane-z:"  << renderCam.getFarClip()  << "} "
+         << ")";
+    return os;
+}

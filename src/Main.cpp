@@ -11,6 +11,7 @@ RenderCam createFrontalSceneViewCam(float viewWidth, float viewHeight, float vie
     cam.setNearClip(Math::abs(viewDist));
     cam.setFieldOfView(60);
     cam.setOrientation(Vec3(0, 0, -1), Vec3(1, 0, 0), Vec3(0, 1, 0));
+    std::cout << "\nfront1-" << cam << "\n";
     return cam;
 }
 RenderCam createBottomUpSceneViewCam(float viewWidth, float viewHeight, float viewDist) {
@@ -18,7 +19,7 @@ RenderCam createBottomUpSceneViewCam(float viewWidth, float viewHeight, float vi
     cam.setPosition(Vec3(0.00f, 0.00f, viewDist));
     cam.overrideViewportSize(100, 100, 100);
     cam.setOrientation(Vec3(0, 0, -1), Vec3(1, 0, 0), Vec3(0, 1, 0));
-
+    std::cout << "\nfront2-" << cam << "\n";
     /*
     RenderCam cam{};
     cam.setPosition(Vec3(0.00f, -viewDist, 0.00f));
