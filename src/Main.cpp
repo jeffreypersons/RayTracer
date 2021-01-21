@@ -1,6 +1,6 @@
 #include "Tracer.h"
 #include "Scene.hpp"
-#include "Timer.hpp"
+#include "StopWatch.hpp"
 #include "Presets.hpp"
 #include <iostream>
 
@@ -35,8 +35,8 @@ Scene createSimpleScene() {
 
 int main()
 {
-    Timer timer{};
-    timer.start();
+    StopWatch stopWatch{};
+    stopWatch.start();
     std::cout << "Program started...\n";
 
     Tracer tracer{};
@@ -59,8 +59,8 @@ int main()
     tracer.trace(bottomCam, simpleScene, frameBuffer);
     frameBuffer.writeToFile("./scene_bottom-view");
 
-    timer.stop();
-    std::cout << "finished in " << timer.elapsedTime() << "\n";
+    stopWatch.stop();
+    std::cout << "finished in " << stopWatch.elapsedTime() << "\n";
     std::cout << "Press ENTER to end...";
     std::cin.get();
 }
