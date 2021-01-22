@@ -11,7 +11,7 @@ class RenderCam {
 private:
     Vec3 position;
     Vec3 rightDir;
-    Vec3 aimDir;
+    Vec3 forwardDir;
     Vec3 upDir;
 
     float aspectRatio;
@@ -24,10 +24,10 @@ private:
     static constexpr float MIN_FIELD_OF_VIEW =   0.00f;
     static constexpr float MAX_FIELD_OF_VIEW = 180.00f;
 
-    static constexpr Vec3 DEFAULT_POSITION {  0,  0,  0  };
-    static constexpr Vec3 DEFAULT_AIM_DIR  {  0,  0, -1  };
-    static constexpr Vec3 DEFAULT_RIGHT_DIR{  1,  0,  0  };
-    static constexpr Vec3 DEFAULT_UP_DIR   {  0,  1,  0  };
+    static constexpr Vec3 DEFAULT_POSITION    {  0,  0,  0  };
+    static constexpr Vec3 DEFAULT_FORWARD_DIR {  0,  0, -1  };
+    static constexpr Vec3 DEFAULT_RIGHT_DIR   {  1,  0,  0  };
+    static constexpr Vec3 DEFAULT_UP_DIR      {  0,  1,  0  };
 
     static constexpr float DEFAULT_ASPECT_RATIO  = 4.0f / 3.0f;
     static constexpr float DEFAULT_FIELD_OF_VIEW =      60.00f;
@@ -45,7 +45,7 @@ private:
 public:
     RenderCam() {
         setPosition(DEFAULT_POSITION);
-        setOrientation(DEFAULT_RIGHT_DIR, DEFAULT_AIM_DIR, DEFAULT_UP_DIR);
+        setOrientation(DEFAULT_RIGHT_DIR, DEFAULT_FORWARD_DIR, DEFAULT_UP_DIR);
         setFieldOfView(DEFAULT_FIELD_OF_VIEW);
         setAspectRatio(DEFAULT_ASPECT_RATIO);
         setFarClip(DEFAULT_FAR_CLIP);
@@ -54,7 +54,7 @@ public:
     const Vec3& getPosition()     const { return position;     }
     const Vec3& getUpDir()        const { return upDir;        }
     const Vec3& getRightDir()     const { return rightDir;     }
-    const Vec3& getAimDir()       const { return aimDir;       }
+    const Vec3& getForwardDir()   const { return forwardDir;   }
     float getDistance()           const { return distance;     }
     float getFieldOfView()        const { return fieldOfView;  }
     float getAspectRatio()        const { return aspectRatio;  }
@@ -65,7 +65,7 @@ public:
     Vec3 viewportToWorld(float u, float v) const {
         float centeredU = u - 0.50f;
         float centeredV = v - 0.50f;
-        Vec3 viewportCenter   = position + (nearClip * aimDir);
+        Vec3 viewportCenter   = position + (nearClip * forwardDir);
         Vec3 offsetInRightDir = centeredU * viewportSize.x * rightDir;
         Vec3 offsetInUpDir    = centeredV * viewportSize.y * upDir;
         return viewportCenter + offsetInRightDir + offsetInUpDir;
@@ -80,18 +80,18 @@ public:
     void setPosition(const Vec3& position) {
         this->position = position;
     }
-    void setOrientation(const Vec3& rightDir, const Vec3& aimDir, const Vec3& upDir) {
-        if (!Math::isNormalized(aimDir) || !Math::isNormalized(rightDir) || !Math::isNormalized(upDir)) {
+    void setOrientation(const Vec3& rightDir, const Vec3& forwardDir, const Vec3& upDir) {
+        if (!Math::isNormalized(forwardDir) || !Math::isNormalized(rightDir) || !Math::isNormalized(upDir)) {
             throw std::invalid_argument("all given orientation vectors must be normalized");
         }
-        if (!Math::isOrthogonal(rightDir, aimDir) || !Math::isOrthogonal(aimDir, upDir)) {
+        if (!Math::isOrthogonal(rightDir, forwardDir) || !Math::isOrthogonal(forwardDir, upDir)) {
             throw std::invalid_argument("all given orientation vectors must be orthogonal to one another");
         }
-        if (Math::isParallelDirection(upDir, aimDir)) {
+        if (Math::isParallelDirection(upDir, forwardDir)) {
             throw std::invalid_argument("cannot have up parallel to aim direction");
         }
 
-        this->aimDir   = aimDir;
+        this->forwardDir   = forwardDir;
         this->rightDir = rightDir;
         this->upDir    = upDir;
     }
@@ -146,9 +146,9 @@ public:
             throw std::invalid_argument("cannot look in a direction parallel to given up direction");
         }
 
-        aimDir   = givenForward;
-        rightDir = Math::normalize(Math::cross(aimDir, givenUp));
-        upDir    = Math::cross(rightDir, aimDir);
+        forwardDir = givenForward;
+        rightDir   = Math::normalize(Math::cross(forwardDir, givenUp));
+        upDir      = Math::cross(rightDir, forwardDir);
     }
 };
 inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
@@ -156,9 +156,9 @@ inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
        << "RenderCam("
          << "Position:" << renderCam.getPosition() << ", "
          << "Orientation{"
-           << "right-axis:("   << renderCam.getRightDir() << "),"
-           << "forward-axis:(" << renderCam.getAimDir()   << "),"
-           << "upward-axis:("  << renderCam.getUpDir()    << ")}, "
+           << "right-axis:("   << renderCam.getRightDir()   << "),"
+           << "forward-axis:(" << renderCam.getForwardDir() << "),"
+           << "upward-axis:("  << renderCam.getUpDir()      << ")}, "
          << "ImagePlane{"
            << "aspect-ratio:"    << renderCam.getAspectRatio()    << ","
            << "field-of-view:"   << renderCam.getFieldOfView()    << " deg,"
