@@ -56,11 +56,11 @@ inline constexpr float isApproximately(float a, float b, float epsilon=DEFAULT_E
     return (a == b) || (a > b && a - b <= epsilon) || (b > a && b - a <= epsilon);
 }
 
-constexpr float PI = 3.14159265358979323846f;
+constexpr float PI   = 3.14159265358979323846f;
 constexpr float PI_2 = 1.57079632679489661923f;
 constexpr float PI_4 = 0.78539816339744830962f;
-inline constexpr float radToDeg(float radians) { return radians * (180.0f / PI);     }
-inline constexpr float degToRad(float radians) { return radians * (PI   / 180.0f);   }
+inline constexpr float radToDeg(float radians) { return radians * (180.0f / PI);       }
+inline constexpr float degToRad(float radians) { return radians * (PI     / 180.0f);   }
 inline float sin(float degrees)                { return std::sinf(degToRad(degrees));  }
 inline float cos(float degrees)                { return std::cosf(degToRad(degrees));  }
 inline float tan(float degrees)                { return std::tanf(degToRad(degrees));  }

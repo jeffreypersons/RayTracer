@@ -9,8 +9,6 @@
 #include <omp.h>
 
 
-// todo: consider adding object.contains() call to warn about camera position if it lies within
-//       an object in the scene (thus creating strange results)
 Tracer::Tracer() :
     maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS),
     shadowColor(DEFAULT_SHADOW_COLOR),
