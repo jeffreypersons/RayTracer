@@ -43,12 +43,16 @@ void Tracer::setReflectionalScalar(float reflectionalScalar) {
 // and write computed color to buffer (dynamically scheduled in parallel using openMp)
 void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& frameBuffer) {
     #pragma omp for schedule(dynamic)
+    const size_t width  = frameBuffer.getWidth();
+    const size_t height = frameBuffer.getHeight();
+    const size_t invWidth  = 1 / width;
+    const size_t invHeight = 1 / height;
     for (int row = 0; row < frameBuffer.getHeight(); row++) {
         for (int col = 0; col < frameBuffer.getWidth(); col++) {
             // shoot a ray from camera position corresponding to pixel's position in viewport
             // and the directions of the camera
-            float u = (col + 0.5f) / frameBuffer.getWidth();
-            float v = (row + 0.5f) / frameBuffer.getHeight();
+            float u = (col + 0.5f) * invWidth;
+            float v = (row + 0.5f) * invHeight;
             Ray primaryRay = renderCam.getRay(u, v);
             Color color = traceRay(renderCam, scene, primaryRay, 0);
             frameBuffer.setColor(row, col, color);
