@@ -10,7 +10,7 @@ RenderCam createFrontalSceneViewCam(float viewWidth, float viewHeight, float vie
     cam.setPosition(Vec3(0.00f, 0.00f, viewDist));
     cam.setNearClip(Math::abs(viewDist));
     cam.setFieldOfView(60);
-    cam.setOrientation(Vec3(0, 0, -1), Vec3(1, 0, 0), Vec3(0, 1, 0));
+    cam.setOrientation(Vec3(1, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0));
     std::cout << "\nfront1-" << cam << "\n";
     return cam;
 }
@@ -18,7 +18,7 @@ RenderCam createBottomUpSceneViewCam(float viewWidth, float viewHeight, float vi
     RenderCam cam{};
     cam.setPosition(Vec3(0.00f, 0.00f, viewDist));
     cam.overrideViewportSize(100, 100, 100);
-    cam.setOrientation(Vec3(0, 0, -1), Vec3(1, 0, 0), Vec3(0, 1, 0));
+    cam.setOrientation(Vec3(1, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0));
     std::cout << "\nfront2-" << cam << "\n";
     /*
     RenderCam cam{};
@@ -60,7 +60,7 @@ int main()
     RenderCam frontCam  = createFrontalSceneViewCam( 100, 100, 100);
     RenderCam bottomCam = createBottomUpSceneViewCam(100, 100, 100);
 
-    std::cout << "rendering scene from frontal view...\n";
+    std::cout << "\nrendering scene from frontal view...\n";
     tracer.trace(frontCam, simpleScene, frameBuffer);
     frameBuffer.writeToFile("./scene_front-view");
 

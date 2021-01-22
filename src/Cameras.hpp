@@ -10,8 +10,8 @@
 class RenderCam {
 private:
     Vec3 position;
-    Vec3 aimDir;
     Vec3 rightDir;
+    Vec3 aimDir;
     Vec3 upDir;
 
     float aspectRatio;
@@ -45,7 +45,7 @@ private:
 public:
     RenderCam() {
         setPosition(DEFAULT_POSITION);
-        setOrientation(DEFAULT_AIM_DIR, DEFAULT_RIGHT_DIR, DEFAULT_UP_DIR);
+        setOrientation(DEFAULT_RIGHT_DIR, DEFAULT_AIM_DIR, DEFAULT_UP_DIR);
         setFieldOfView(DEFAULT_FIELD_OF_VIEW);
         setAspectRatio(DEFAULT_ASPECT_RATIO);
         setFarClip(DEFAULT_FAR_CLIP);
@@ -80,7 +80,7 @@ public:
     void setPosition(const Vec3& position) {
         this->position = position;
     }
-    void setOrientation(const Vec3& aimDir, const Vec3& rightDir, const Vec3& upDir) {
+    void setOrientation(const Vec3& rightDir, const Vec3& aimDir, const Vec3& upDir) {
         if (!Math::isNormalized(aimDir) || !Math::isNormalized(rightDir) || !Math::isNormalized(upDir)) {
             throw std::invalid_argument("all given orientation vectors must be normalized");
         }
