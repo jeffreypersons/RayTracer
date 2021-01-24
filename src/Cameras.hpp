@@ -76,8 +76,6 @@ public:
     // get a ray from current cam position to (u, v) position on our viewplane
     // note that uv values outside of [0, 1] are outside of camera view
     Ray getRay(float u, float v) const {
-        // SOMETHING WRONG WITH MY MATH FOR TANGENTS AND DEGREES AND STUFF!!
-        // todo: take into account tangents/inverse proportion scaling along line for z value...
         return Ray(position, Math::direction(position, viewportToWorld(u, v)));
     }
 
