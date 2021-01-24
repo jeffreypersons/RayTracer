@@ -40,6 +40,7 @@ inline std::ostream& operator<<(std::ostream& os, const Vec3& vec) { os << vec.x
 
 
 // assumes any given bounds lower < upper
+// all math functions take degrees as input
 namespace Math {
 constexpr float DEFAULT_EPSILON = 0.000001f;
 inline constexpr float clamp(float val, float lower, float upper) {
@@ -64,9 +65,9 @@ inline constexpr float degToRad(float radians) { return radians * (PI     / 180.
 inline float sin(float degrees)                { return std::sinf(degToRad(degrees)); }
 inline float cos(float degrees)                { return std::cosf(degToRad(degrees)); }
 inline float tan(float degrees)                { return std::tanf(degToRad(degrees)); }
-inline float asin(float ratio)                 { return std::asinf(ratio);            }
-inline float acos(float ratio)                 { return std::acosf(ratio);            }
-inline float atan(float ratio)                 { return std::atanf(ratio);            }
+inline float asin(float ratio)                 { return radToDeg(std::asinf(ratio));  }
+inline float acos(float ratio)                 { return radToDeg(std::acosf(ratio));  }
+inline float atan(float ratio)                 { return radToDeg(std::atanf(ratio));  }
 inline float squareRoot(float a)               { return std::sqrtf(a);                }
 inline float pow(float a, float b)             { return std::powf(a, b);              }
 inline constexpr float abs(float a)            { return a <= 0.0f? -a : a;            }
