@@ -34,10 +34,15 @@ private:
     static constexpr float DEFAULT_NEAR_CLIP     =       0.25f;
     static constexpr float DEFAULT_FAR_CLIP      =    1000.00f;
     
-    // compute viewport size by solving for the triangular width in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
+    // calculate viewport size by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
+    static float computeHorizontalFieldOfView(float width, float distance) {
+        return 2.00f * Math::atan((0.50f * width) / distance);
+    }
+    // calculate viewport size by solving for the triangular width in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
     static Vec2 computeViewportSize(float horizontalFieldOfView, float aspect, float distance) {
-        float width  = (2.00f / distance) * Math::tan(0.50f * horizontalFieldOfView);
-        float height = width / aspect;
+        float halfWidth = (1.00f / distance) * Math::tan(0.50f * horizontalFieldOfView);
+        float width  = 2.00f * halfWidth * aspect;
+        float height = 2.00f * halfWidth;
         return Vec2(width, height);
     }
 
@@ -99,7 +104,7 @@ public:
     // compute field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
     void overrideViewportSize(float width, float height, float distance) {
         this->viewportSize = Vec2(width, height);
-        this->fieldOfView = 2.00f * Math::atan((0.50f * width) / distance);
+        this->fieldOfView = computeHorizontalFieldOfView(width, distance);
         this->nearClip    = distance;
         this->farClip     = 10.00f * distance;
         this->aspectRatio = width / height;
@@ -112,7 +117,7 @@ public:
         this->viewportSize = computeViewportSize(fieldOfView, aspectRatio, nearClip);
     }
     void setAspectRatio(float aspectRatio) {
-        if (aspectRatio < 0) {
+        if (aspectRatio <= 0) {
             throw std::invalid_argument("aspect-ratio must be greater than 0");
         }
         this->aspectRatio = aspectRatio;
@@ -120,8 +125,8 @@ public:
     }
 
     void setNearClip(float nearClip) {
-        if (nearClip < 0 || nearClip > farClip) {
-            throw std::invalid_argument("near-clip must be in range of [0, farClip]");
+        if (nearClip <= 0 || nearClip >= farClip) {
+            throw std::invalid_argument("near-clip must be in range of (0, farClip)");
         }
         this->nearClip = nearClip;
         this->viewportSize = computeViewportSize(fieldOfView, aspectRatio, nearClip);
@@ -164,7 +169,7 @@ inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
            << "viewport-height:" << renderCam.getViewportSize().y << "}, "
          << "Clipping{"
            << "near-plane-z:" << renderCam.getNearClip() << ","
-           << "far-plane-z:"  << renderCam.getFarClip()  << "} "
+           << "far-plane-z:"  << renderCam.getFarClip()  << "}"
          << ")";
     return os;
 }
