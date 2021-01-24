@@ -16,7 +16,6 @@ private:
 
     float aspectRatio;
     float fieldOfView;
-    float distance;
     float nearClip;
     float farClip;
     Vec2 viewportSize;
@@ -37,7 +36,7 @@ private:
     
     // compute viewport size by solving for the triangular width in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
     static Vec2 computeViewportSize(float horizontalFieldOfView, float aspect, float distance) {
-        float width  = (2 / distance) * Math::tan(horizontalFieldOfView / 2);
+        float width  = (2.00f / distance) * Math::tan(0.50f * horizontalFieldOfView);
         float height = width / aspect;
         return Vec2(width, height);
     }
@@ -55,7 +54,6 @@ public:
     const Vec3& getUpDir()        const { return upDir;        }
     const Vec3& getRightDir()     const { return rightDir;     }
     const Vec3& getForwardDir()   const { return forwardDir;   }
-    float getDistance()           const { return distance;     }
     float getFieldOfView()        const { return fieldOfView;  }
     float getAspectRatio()        const { return aspectRatio;  }
     float getNearClip()           const { return nearClip;     }
@@ -73,6 +71,7 @@ public:
     // get a ray from current cam position to (u, v) position on our viewplane
     // note that uv values outside of [0, 1] are outside of camera view
     Ray getRay(float u, float v) const {
+        // SOMETHING WRONG WITH MY MATH FOR TANGENTS AND DEGREES AND STUFF!!
         // todo: take into account tangents/inverse proportion scaling along line for z value...
         return Ray(position, Math::direction(position, viewportToWorld(u, v)));
     }
@@ -91,19 +90,18 @@ public:
             throw std::invalid_argument("cannot have up parallel to aim direction");
         }
 
-        this->forwardDir   = forwardDir;
-        this->rightDir = rightDir;
-        this->upDir    = upDir;
+        this->forwardDir = forwardDir;
+        this->rightDir   = rightDir;
+        this->upDir      = upDir;
     }
 
     // sets field of view, aspect ratio, and clipping planes
     // compute field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
     void overrideViewportSize(float width, float height, float distance) {
         this->viewportSize = Vec2(width, height);
-        this->fieldOfView = 2 * Math::atan((width * 0.50f) / distance);
-        this->distance = distance;
-        this->nearClip = distance;
-        this->farClip  = 10 * distance;
+        this->fieldOfView = 2.00f * Math::atan((0.50f * width) / distance);
+        this->nearClip    = distance;
+        this->farClip     = 10.00f * distance;
         this->aspectRatio = width / height;
     }
     void setFieldOfView(float degrees) {
@@ -162,7 +160,6 @@ inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
          << "ImagePlane{"
            << "aspect-ratio:"    << renderCam.getAspectRatio()    << ","
            << "field-of-view:"   << renderCam.getFieldOfView()    << " deg,"
-           << "distance:"        << renderCam.getDistance()       << ","
            << "viewport-width:"  << renderCam.getViewportSize().x << ","
            << "viewport-height:" << renderCam.getViewportSize().y << "}, "
          << "Clipping{"
