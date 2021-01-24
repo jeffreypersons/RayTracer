@@ -60,20 +60,20 @@ inline constexpr float isApproximately(float a, float b, float epsilon=DEFAULT_E
 constexpr float PI   = 3.14159265358979323846f;
 constexpr float PI_2 = 1.57079632679489661923f;
 constexpr float PI_4 = 0.78539816339744830962f;
-inline constexpr float radToDeg(float radians) { return radians * (180.0f / PI);      }
-inline constexpr float degToRad(float radians) { return radians * (PI     / 180.0f);  }
-inline float sin(float degrees)                { return std::sinf(degToRad(degrees)); }
-inline float cos(float degrees)                { return std::cosf(degToRad(degrees)); }
-inline float tan(float degrees)                { return std::tanf(degToRad(degrees)); }
-inline float asin(float ratio)                 { return radToDeg(std::asinf(ratio));  }
-inline float acos(float ratio)                 { return radToDeg(std::acosf(ratio));  }
-inline float atan(float ratio)                 { return radToDeg(std::atanf(ratio));  }
-inline float squareRoot(float a)               { return std::sqrtf(a);                }
-inline float pow(float a, float b)             { return std::powf(a, b);              }
-inline constexpr float abs(float a)            { return a <= 0.0f? -a : a;            }
-inline constexpr float min(float a, float b)   { return a <= b?     a : b;            }
-inline constexpr float max(float a, float b)   { return a >= b?     a : b;            }
-inline float roundToNearestInt(float a)        { return std::round(a);                }
+inline constexpr float radToDeg(float radians) { return radians * (180.00f / PI);      }
+inline constexpr float degToRad(float degrees) { return degrees * (PI      / 180.00f); }
+inline float sin(float degrees)                { return std::sinf(degToRad(degrees));  }
+inline float cos(float degrees)                { return std::cosf(degToRad(degrees));  }
+inline float tan(float degrees)                { return std::tanf(degToRad(degrees));  }
+inline float asin(float ratio)                 { return radToDeg(std::asinf(ratio));   }
+inline float acos(float ratio)                 { return radToDeg(std::acosf(ratio));   }
+inline float atan(float ratio)                 { return radToDeg(std::atanf(ratio));   }
+inline float squareRoot(float a)               { return std::sqrtf(a);                 }
+inline float pow(float a, float b)             { return std::powf(a, b);               }
+inline constexpr float abs(float a)            { return a <= 0.00f? -a : a;            }
+inline constexpr float min(float a, float b)   { return a <= b?      a : b;            }
+inline constexpr float max(float a, float b)   { return a >= b?      a : b;            }
+inline float roundToNearestInt(float a)        { return std::round(a);                 }
 inline float roundToNearestDigit(float a, size_t num_digits) {
     size_t roundingMultiple = num_digits * 10;
     return roundToNearestInt(a * roundingMultiple) / roundingMultiple;
