@@ -9,8 +9,6 @@
 #include <omp.h>
 
 
-// todo: consider adding object.contains() call to warn about camera position if it lies within
-//       an object in the scene (thus creating strange results)
 Tracer::Tracer() :
     maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS),
     shadowColor(DEFAULT_SHADOW_COLOR),
@@ -42,13 +40,17 @@ void Tracer::setReflectionalScalar(float reflectionalScalar) {
 // for each pixel in buffer trace ray from given camera through given scene,
 // and write computed color to buffer (dynamically scheduled in parallel using openMp)
 void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& frameBuffer) {
+    const int width  = static_cast<int>(frameBuffer.getWidth());
+    const int height = static_cast<int>(frameBuffer.getHeight());
+    const float invWidth  = 1.00f / width;
+    const float invHeight = 1.00f / height;
     #pragma omp for schedule(dynamic)
-    for (int row = 0; row < frameBuffer.getHeight(); row++) {
-        for (int col = 0; col < frameBuffer.getWidth(); col++) {
+    for (int row = 0; row < width; row++) {
+        for (int col = 0; col < height; col++) {
             // shoot a ray from camera position corresponding to pixel's position in viewport
             // and the directions of the camera
-            float u = (col + 0.5f) / frameBuffer.getWidth();
-            float v = (row + 0.5f) / frameBuffer.getHeight();
+            float u = (col + 0.5f) * invWidth;
+            float v = (row + 0.5f) * invHeight;
             Ray primaryRay = renderCam.getRay(u, v);
             Color color = traceRay(renderCam, scene, primaryRay, 0);
             frameBuffer.setColor(row, col, color);
@@ -56,6 +58,7 @@ void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& 
     }
 }
 
+// todo: handle multiple lights as well as zero lights (unlit scene) correctly...
 Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray& ray, size_t iteration=0) const {
     if (iteration >= maxNumReflections) {
         return maxReflectedColor;
@@ -87,13 +90,15 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
         reflectedColor = traceRay(renderCam, scene, reflectionRay, iteration + 1);
     }
 
+    // TODO: add attenuation making far lights weaker, etc...
+    // TODO: investigate exact light directions/reverse directions for diffuse calculations, it changes things alot...
     // extract light related data
     Light light = scene.getLight(0);
-    Vec3 directionToLight = Math::direction(light.getPosition(), hit.point);
+    Vec3 directionFromLight = Math::direction(light.getPosition(), hit.point);
 
     // check if there exists an object blocking light from reaching our hit-point
-    Ray shadowRay(hit.point, directionToLight);
-    float tLight = Math::distance(hit.point, light.getPosition()) - minTForShadowIntersections;
+    Ray shadowRay(hit.point, directionFromLight);
+    float tLight = Math::distance(light.getPosition(), hit.point) - minTForShadowIntersections;
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         RayHitInfo h;
         if (scene.getObject(index).intersect(shadowRay, h) && h.t > minTForShadowIntersections && h.t < tLight) {
@@ -101,12 +106,13 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
         }
     }
 
+    // note: check with https://computergraphics.stackexchange.com/questions/9065/diffuse-lighting-calculations-in-ray-tracer
     // blend intrinsic and reflected color using our light and intersected object
     Color surfaceColor;
     Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
     Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
     Color ambientColor  = surfaceMaterial.ambient * light.getMaterial().ambient * light.getAmbientIntensity();
-    Color diffuseColor  = Math::dot(hit.normal, directionToLight) *
+    Color diffuseColor  = Math::dot(hit.normal, -1.00f * directionFromLight) *
         surfaceMaterial.diffuse * light.getMaterial().diffuse * light.getDiffuseIntensity();
     Color specularColor = Math::dot(hit.normal, halfwayVec) *
         surfaceMaterial.specular * light.getMaterial().specular * light.getSpecularIntensity();
