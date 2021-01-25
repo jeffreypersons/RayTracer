@@ -14,10 +14,10 @@ private:
     Vec3 forwardDir;
     Vec3 upDir;
 
-    float aspectRatio;
-    float fieldOfView;
     float nearClip;
     float farClip;
+    float aspectRatio;
+    Vec2 fieldOfView;
     Vec2 viewportSize;
 
     static constexpr float MIN_FIELD_OF_VIEW =   0.00f;
@@ -34,16 +34,17 @@ private:
     static constexpr float DEFAULT_NEAR_CLIP     =       0.25f;
     static constexpr float DEFAULT_FAR_CLIP      =    1000.00f;
     
-    // calculate viewport size by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
-    static float computeHorizontalFieldOfView(float width, float distance) {
-        return 2.00f * Math::atan((0.50f * width) / distance);
+    // find field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * len) / dist
+    static Vec2 computeFieldOfView(Vec2 viewportSize, float distanceToPlane) {
+        float fieldOfViewHorizontal = 2.00f * Math::atan(viewportSize.x / (2.00f * distanceToPlane));
+        float fieldOfViewVertical   = 2.00f * Math::atan(viewportSize.y / (2.00f * distanceToPlane));
+        return Vec2(fieldOfViewHorizontal, fieldOfViewVertical);
     }
-    // calculate viewport size by solving for the triangular width in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
-    static Vec2 computeViewportSize(float horizontalFieldOfView, float aspect, float distance) {
-        float halfWidth = (1.00f / distance) * Math::tan(0.50f * horizontalFieldOfView);
-        float width  = 2.00f * halfWidth * aspect;
-        float height = 2.00f * halfWidth;
-        return Vec2(width, height);
+    // find viewport size by solving for the triangular len (width/height) in the equation `tan(fov * 0.5) = (0.5 * len) / dist`
+    static Vec2 computeViewplaneSize(Vec2 fieldOfView, float distanceToPlane) {
+        float viewportWidth  = 2.00f * distanceToPlane * Math::tan(0.50f * fieldOfView.x);
+        float viewportHeight = 2.00f * distanceToPlane * Math::tan(0.50f * fieldOfView.y);
+        return Vec2(viewportWidth, viewportHeight);
     }
 
 public:
@@ -55,15 +56,16 @@ public:
         setFarClip(DEFAULT_FAR_CLIP);
     }
     
-    const Vec3& getPosition()     const { return position;     }
-    const Vec3& getUpDir()        const { return upDir;        }
-    const Vec3& getRightDir()     const { return rightDir;     }
-    const Vec3& getForwardDir()   const { return forwardDir;   }
-    float getFieldOfView()        const { return fieldOfView;  }
-    float getAspectRatio()        const { return aspectRatio;  }
-    float getNearClip()           const { return nearClip;     }
-    float getFarClip()            const { return farClip;      }
-    const Vec2& getViewportSize() const { return viewportSize; }
+    const Vec3& getPosition()        const { return position;      }
+    const Vec3& getUpDir()           const { return upDir;         }
+    const Vec3& getRightDir()        const { return rightDir;      }
+    const Vec3& getForwardDir()      const { return forwardDir;    }
+    float getHorizontalFieldOfView() const { return fieldOfView.x; }
+    float getVerticalFieldOfView()   const { return fieldOfView.y; }
+    float getAspectRatio()           const { return aspectRatio;   }
+    float getNearClip()              const { return nearClip;      }
+    float getFarClip()               const { return farClip;       }
+    const Vec2& getViewportSize()    const { return viewportSize;  }
 
     Vec3 viewportToWorld(float u, float v) const {
         float centeredU = u - 0.50f;
@@ -100,34 +102,44 @@ public:
 
     // sets field of view, aspect ratio, and clipping planes
     // compute field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
-    void overrideViewportSize(float width, float height, float distance) {
-        this->viewportSize = Vec2(width, height);
-        this->fieldOfView = computeHorizontalFieldOfView(width, distance);
-        this->nearClip    = distance;
-        this->farClip     = 10.00f * distance;
-        this->aspectRatio = width / height;
+    void overrideViewportSize(Vec2 viewportSize, float distanceToViewport) {
+        if (viewportSize.x <= 0 || viewportSize.y <= 0) {
+            throw std::invalid_argument("viewport size dimensions must each be greater than 0");
+        }
+
+        this->nearClip     = distanceToViewport;
+        this->farClip      = 10.00f * distanceToViewport;
+        this->aspectRatio  = viewportSize.x / viewportSize.y;
+        this->fieldOfView  = computeFieldOfView(viewportSize, distanceToViewport);
+        this->viewportSize = viewportSize;
     }
-    void setFieldOfView(float degrees) {
-        if (degrees <= MIN_FIELD_OF_VIEW || degrees >= MAX_FIELD_OF_VIEW) {
+
+    void setFieldOfView(float horizontalDegrees) {
+        if (horizontalDegrees <= MIN_FIELD_OF_VIEW || horizontalDegrees >= MAX_FIELD_OF_VIEW) {
             throw std::invalid_argument("field-of-view must be in range (0, 180)");
         }
-        this->fieldOfView = degrees;
-        this->viewportSize = computeViewportSize(fieldOfView, aspectRatio, nearClip);
+
+        this->fieldOfView  = Vec2(horizontalDegrees, horizontalDegrees / aspectRatio);
+        this->viewportSize = computeViewplaneSize(fieldOfView, nearClip);
     }
     void setAspectRatio(float aspectRatio) {
         if (aspectRatio <= 0) {
             throw std::invalid_argument("aspect-ratio must be greater than 0");
         }
-        this->aspectRatio = aspectRatio;
-        this->viewportSize = computeViewportSize(fieldOfView, aspectRatio, nearClip);
-    }
 
+        this->aspectRatio  = aspectRatio;
+        this->fieldOfView  = Vec2(fieldOfView.x, fieldOfView.x / aspectRatio);
+        this->viewportSize = computeViewplaneSize(fieldOfView, nearClip);
+    }
+    
     void setNearClip(float nearClip) {
         if (nearClip <= 0 || nearClip >= farClip) {
             throw std::invalid_argument("near-clip must be in range of (0, farClip)");
         }
         this->nearClip = nearClip;
-        this->viewportSize = computeViewportSize(fieldOfView, aspectRatio, nearClip);
+        this->fieldOfView = computeFieldOfView(viewportSize, nearClip);
+        this->fieldOfView = Vec2(fieldOfView.x, fieldOfView.x / aspectRatio);
+        this->viewportSize = computeViewplaneSize(fieldOfView, nearClip);
     }
     void setFarClip(float farClip) {
         if (farClip < 0) {
@@ -161,10 +173,11 @@ inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
            << "forward-axis:(" << renderCam.getForwardDir() << "),"
            << "upward-axis:("  << renderCam.getUpDir()      << ")}, "
          << "ImagePlane{"
-           << "aspect-ratio:"    << renderCam.getAspectRatio()    << ","
-           << "field-of-view:"   << renderCam.getFieldOfView()    << " deg,"
-           << "viewport-width:"  << renderCam.getViewportSize().x << ","
-           << "viewport-height:" << renderCam.getViewportSize().y << "}, "
+           << "aspect-ratio:"    << renderCam.getAspectRatio()           << ","
+           << "field-of-view-x:" << renderCam.getHorizontalFieldOfView() << ","
+           << "field-of-view-y:" << renderCam.getVerticalFieldOfView()   << ","
+           << "viewport-width:"  << renderCam.getViewportSize().x        << ","
+           << "viewport-height:" << renderCam.getViewportSize().y        << "}, "
          << "Clipping{"
            << "near-plane-z:" << renderCam.getNearClip() << ","
            << "far-plane-z:"  << renderCam.getFarClip()  << "}"

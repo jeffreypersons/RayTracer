@@ -16,6 +16,7 @@ constexpr Vec2 HD_8K    = Vec2(7680, 4320);
 
 namespace PresetColors {
 // base colors
+constexpr Color white  {0, 0, 0};
 constexpr Color red    {1, 0, 0};
 constexpr Color green  {0, 1, 0};
 constexpr Color blue   {0, 0, 1};
@@ -173,9 +174,9 @@ constexpr Material shinyBlue = Material(
     0.95f, 0.05f
 );
 constexpr Material roughRed = Material(
-    Color(0.50f, 0.01f, 0.05f),
-    Color(0.50f, 0.10f, 0.05f),
-    Color(1.00f, 0.01f, 0.05f),
+    PresetColors::red,
+    PresetColors::red,
+    PresetColors::red,
     0.75f, 0.25f
 );
 constexpr Material reflectiveGreen = Material(
@@ -186,8 +187,8 @@ constexpr Material reflectiveGreen = Material(
 );
 constexpr Material pureWhite = Material(
     Color(0.00f, 1.00f, 1.00f),
-    Color(1.00f, 0.50f, 1.00f),
-    Color(1.00f, 1.00f, 0.50f),
+    Color(1.00f, 1.00f, 1.00f),
+    Color(1.00f, 1.00f, 1.00f),
     1.00f, 0.00f
 );
 constexpr Material flatYellow = Material(
