@@ -1,6 +1,6 @@
 #pragma once
 #include "Math.hpp"
-#include "Color.hpp"
+#include "Material.hpp"
 #include "Rays.hpp"
 
 

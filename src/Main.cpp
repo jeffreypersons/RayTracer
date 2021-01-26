@@ -1,7 +1,6 @@
 #include "Tracer.h"
 #include "Scene.hpp"
 #include "StopWatch.hpp"
-#include "Presets.hpp"
 #include <iostream>
 
 
@@ -28,19 +27,19 @@ RenderCam createBottomUpSceneViewCam(const Vec3& position, float fieldOfView, fl
 
 Scene createSimpleScene() {
     Material brightWhite{};
-    brightWhite.setColors(0.75 * PresetColors::white, PresetColors::gray, PresetColors::white);
+    brightWhite.setColors(0.75 * Palette::white, Palette::gray, Palette::white);
 
     Material matteBlue{};
     matteBlue.setWeights(1.00f, 0.00f);
-    matteBlue.setDiffuseColor(PresetColors::blue);
+    matteBlue.setDiffuseColor(Palette::blue);
 
     Material reflectiveGreen{};
     reflectiveGreen.setWeights(0.50f, 0.50f);
-    reflectiveGreen.setDiffuseColor(PresetColors::green);
+    reflectiveGreen.setDiffuseColor(Palette::green);
 
     Material shinyRed{};
     shinyRed.setWeights(0.95f, 0.05f);
-    shinyRed.setSpecularColor(PresetColors::red);
+    shinyRed.setSpecularColor(Palette::red);
 
     Scene scene{};
     scene.addLight(Light(Vec3(0, 55, -25), brightWhite));
@@ -58,12 +57,12 @@ int main()
 
     Tracer tracer{};
     tracer.setShadowColor(Color(0.125f, 0.125f, 0.125f));
-    tracer.setBackgroundColor(PresetColors::skyBlue);
-    tracer.setMaximumallyReflectedColor(PresetColors::pink);
+    tracer.setBackgroundColor(Palette::skyBlue);
+    tracer.setMaximumallyReflectedColor(Palette::pink);
     tracer.setMaxNumReflections(5);
     tracer.setMinTForShadowIntersections(0.01f);
 
-    FrameBuffer frameBuffer(Vec2(1000, 1000), PresetColors::skyBlue);
+    FrameBuffer frameBuffer(Vec2(1000, 1000), Palette::skyBlue);
     Scene simpleScene = createSimpleScene();
     RenderCam frontCam  = createFrontalSceneViewCam( Vec3(0, 50, 50), 90.00f, 0.10f);
     RenderCam bottomCam = createBottomUpSceneViewCam(Vec3(0, 10,  0), 90.00f, 10.00f);

@@ -1,6 +1,6 @@
 #pragma once
 #include "Math.hpp"
-#include "Color.hpp"
+#include "Material.hpp"
 
 
 // represents a point light in 3d space
