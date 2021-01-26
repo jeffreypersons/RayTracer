@@ -84,14 +84,12 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     // and iteration cap to avoid infinite reflections
     Color reflectedColor(0, 0, 0);
     const Material& surfaceMaterial = object->getMaterial();
-    if (surfaceMaterial.reflectivity > 0.00f) {
+    if (surfaceMaterial.getReflectivity() > 0.00f) {
         Vec3 reflectedVec = (-1.0f * ray.direction) + (2.0f * hit.normal) * (Math::dot(ray.direction, hit.normal));
         Ray reflectionRay(hit.point + reflectionalScalar * hit.normal, Math::normalize(reflectedVec));
         reflectedColor = traceRay(renderCam, scene, reflectionRay, iteration + 1);
     }
 
-    // TODO: add attenuation making far lights weaker, etc...
-    // TODO: investigate exact light directions/reverse directions for diffuse calculations, it changes things alot...
     // extract light related data
     Light light = scene.getLight(0);
     Vec3 directionFromLight = Math::direction(light.getPosition(), hit.point);
@@ -111,13 +109,16 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     Color surfaceColor;
     Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
     Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
-    Color ambientColor  = surfaceMaterial.ambient * light.getMaterial().ambient * light.getAmbientIntensity();
+    Color ambientColor  = surfaceMaterial.getAmbientColor() * light.getMaterial().getAmbientColor();
+
     Color diffuseColor  = Math::dot(hit.normal, -1.00f * directionFromLight) *
-        surfaceMaterial.diffuse * light.getMaterial().diffuse * light.getDiffuseIntensity();
+                          surfaceMaterial.getDiffuseColor() * light.getMaterial().getDiffuseColor();
+
     Color specularColor = Math::dot(hit.normal, halfwayVec) *
-        surfaceMaterial.specular * light.getMaterial().specular * light.getSpecularIntensity();
+                          surfaceMaterial.getSpecularColor() * light.getMaterial().getSpecularColor();
+
     surfaceColor = ambientColor + diffuseColor + specularColor;
 
-    return surfaceMaterial.reflectivity * reflectedColor +
-           surfaceMaterial.intrinsic    * surfaceColor;
+    return surfaceMaterial.getReflectivity() * reflectedColor +
+           surfaceMaterial.getIntrinsity()   * surfaceColor;
 }

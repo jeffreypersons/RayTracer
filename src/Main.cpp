@@ -5,8 +5,6 @@
 #include <iostream>
 
 
-// todo: add lookAt() calls and a target ref point in the scene a distZ past the image plane
-// todo: add directional constants like WorldUp, etc...
 RenderCam createFrontalSceneViewCam(const Vec3& position, float fieldOfView, float viewDist) {
     RenderCam cam{};
     cam.setPosition(position);
@@ -29,31 +27,29 @@ RenderCam createBottomUpSceneViewCam(const Vec3& position, float fieldOfView, fl
 }
 
 Scene createSimpleScene() {
-    Scene scene{};
-    Light pointLight(Vec3(0, 55, -25), PresetMaterials::pureWhite);
-    pointLight.setAmbientIntensity(0.25f);
-    pointLight.setDiffuseIntensity(0.50f);
-    pointLight.setSpecularIntensity(0.50f);
-    scene.addLight(pointLight);
+    Material brightWhite{};
+    brightWhite.setColors(0.75 * PresetColors::white, PresetColors::gray, PresetColors::white);
 
-    // this will be our 'ground'
-    scene.addSceneObject(Sphere(Vec3(0, -1500, 0), 1000.00f, Material(
-        Color(0.90f, 0.90f, 0.90f),
-        Color(0.90f, 0.90f, 0.90f),
-        Color(0.90f, 0.90f, 0.90f),
-        1.00f, 0.00f
-    )));
-    scene.addSceneObject(Sphere(Vec3(0, 50, 0), 20, PresetMaterials::flatYellow));
-    scene.addSceneObject(Sphere(Vec3(0, 20, 0),  5, PresetMaterials::roughRed));
+    Material matteBlue{};
+    matteBlue.setWeights(1.00f, 0.00f);
+    matteBlue.setDiffuseColor(PresetColors::blue);
+
+    Material reflectiveGreen{};
+    reflectiveGreen.setWeights(0.50f, 0.50f);
+    reflectiveGreen.setDiffuseColor(PresetColors::green);
+
+    Material shinyRed{};
+    shinyRed.setWeights(0.95f, 0.05f);
+    shinyRed.setSpecularColor(PresetColors::red);
+
+    Scene scene{};
+    scene.addLight(Light(Vec3(0, 55, -25), brightWhite));
+    scene.addSceneObject(Sphere(Vec3(0, -1500, 0), 1000, matteBlue));
+    scene.addSceneObject(Sphere(Vec3(0,    50, 0),   20, reflectiveGreen));
+    scene.addSceneObject(Sphere(Vec3(0,    20, 0),    5, shinyRed));
     return scene;
 }
 
-// TODO: LOOK INTO FIXING THE GIANT EARTH THING AND FIGURE OUT WHY IT REFLECT AT TOP, TOO!?!?!?!??!
-// todo: look into possible blending issues with colors, and get a better grasp of the best specular/diffuse/ambient
-// colors of the material, and what it really SHOULD look like vs actually looks like currently...
-// todo: look into blending shadow color instead of overriding it like we currently do...
-// todo: look into fixing shadows..you can see a hint of whats wrong by setting minT to tiny value, and the shaded part is more correct
-// tracer.setMinTForShadowIntersections(0.00000000000000000000001f);
 int main()
 {
     StopWatch stopWatch{};

@@ -6,13 +6,9 @@
 
 // virtual base class for ANY renderable (via ray-tracing) object in a scene
 class ISceneObject {
-private:
-    Vec3 DEFAULT_POSITION{ 0, 0, 0 };
-    Color DEFAULT_COLOR{ 0.00f, 0.00f, 0.00f };
-
 protected:
-    Vec3 centroid = DEFAULT_POSITION;
-    Material material{ DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, 0.50f, 0.50f };
+    Vec3 centroid{};
+    Material material{};
 
 public:
     ~ISceneObject() {}

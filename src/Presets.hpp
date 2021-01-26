@@ -16,14 +16,14 @@ constexpr Vec2 HD_8K    = Vec2(7680, 4320);
 
 namespace PresetColors {
 // base colors
-constexpr Color white  {0, 0, 0};
-constexpr Color red    {1, 0, 0};
-constexpr Color green  {0, 1, 0};
-constexpr Color blue   {0, 0, 1};
-constexpr Color cyan   {0, 1, 1};
-constexpr Color magenta{1, 0, 1};
-constexpr Color yellow {1, 1, 0};
-constexpr Color black  {0, 0, 0};
+constexpr Color white   { 0.00, 0.00, 0.00 };
+constexpr Color red     { 1.00, 0.00, 0.00 };
+constexpr Color green   { 0.00, 1.00, 0.00 };
+constexpr Color blue    { 0.00, 0.00, 1.00 };
+constexpr Color cyan    { 0.00, 1.00, 1.00 };
+constexpr Color magenta { 1.00, 0.00, 1.00 };
+constexpr Color yellow  { 1.00, 1.00, 0.00 };
+constexpr Color black   { 0.00, 0.00, 0.00 };
 
 // assorted colors tediously matching online color guides..
 constexpr Color aliceBlue            { 0.941176, 0.972549, 1.000000 };
@@ -161,40 +161,5 @@ constexpr Color yellowGreen          { 0.603922, 0.803922, 0.196078 };
 }
 
 namespace PresetMaterials {
-constexpr Material smoothBlue = Material(
-    PresetColors::darkBlue,
-    PresetColors::darkBlue,
-    PresetColors::lightBlue,
-    0.50f, 0.50f
-);
-constexpr Material shinyBlue = Material(
-    Color(0.00f, 0.00f, 0.25f),
-    Color(0.00f, 0.00f, 0.15f),
-    Color(0.00f, 0.00f, 1.00f),
-    0.95f, 0.05f
-);
-constexpr Material roughRed = Material(
-    PresetColors::red,
-    PresetColors::red,
-    PresetColors::red,
-    0.75f, 0.25f
-);
-constexpr Material reflectiveGreen = Material(
-    Color(0.25f, 0.10f, 0.25f),
-    Color(0.25f, 1.00f, 0.25f),
-    Color(0.25f, 0.50f, 0.25f),
-    0.10f, 0.90f
-);
-constexpr Material pureWhite = Material(
-    Color(0.00f, 1.00f, 1.00f),
-    Color(1.00f, 1.00f, 1.00f),
-    Color(1.00f, 1.00f, 1.00f),
-    1.00f, 0.00f
-);
-constexpr Material flatYellow = Material(
-    Color(1.00f, 1.00f, 0.00f),
-    Color(1.00f, 1.00f, 0.00f),
-    Color(1.00f, 1.00f, 0.00f),
-    1.00f, 0.00f
-);
+//constexpr Material flatYellow;
 };
