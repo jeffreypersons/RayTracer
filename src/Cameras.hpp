@@ -21,8 +21,8 @@ class RenderCam {
 private:
     Vec3 position;
     Vec3 rightDir;
-    Vec3 forwardDir;
     Vec3 upDir;
+    Vec3 forwardDir;
 
     float nearClip;
     float farClip;
@@ -33,10 +33,10 @@ private:
     static constexpr float MIN_FIELD_OF_VIEW =   0.00f;
     static constexpr float MAX_FIELD_OF_VIEW = 180.00f;
 
-    static constexpr Vec3 DEFAULT_POSITION    {  0,  0,  0  };
-    static constexpr Vec3 DEFAULT_FORWARD_DIR {  0,  0, -1  };
-    static constexpr Vec3 DEFAULT_RIGHT_DIR   {  1,  0,  0  };
-    static constexpr Vec3 DEFAULT_UP_DIR      {  0,  1,  0  };
+    static constexpr Vec3 DEFAULT_POSITION    = Vec3::zero();
+    static constexpr Vec3 DEFAULT_RIGHT_DIR   = Vec3::right();
+    static constexpr Vec3 DEFAULT_UP_DIR      = Vec3::up();
+    static constexpr Vec3 DEFAULT_FORWARD_DIR = Vec3::ahead();
 
     static constexpr float DEFAULT_ASPECT_RATIO  = 4.0f / 3.0f;
     static constexpr float DEFAULT_FIELD_OF_VIEW =      60.00f;
@@ -60,15 +60,15 @@ private:
 public:
     RenderCam() {
         setPosition(DEFAULT_POSITION);
-        setOrientation(DEFAULT_RIGHT_DIR, DEFAULT_FORWARD_DIR, DEFAULT_UP_DIR);
+        setOrientation(DEFAULT_RIGHT_DIR, DEFAULT_UP_DIR, DEFAULT_FORWARD_DIR);
         setFieldOfView(DEFAULT_FIELD_OF_VIEW);
         setAspectRatio(DEFAULT_ASPECT_RATIO);
         setFarClip(DEFAULT_FAR_CLIP);
     }
     
     const Vec3& getPosition()        const { return position;      }
-    const Vec3& getUpDir()           const { return upDir;         }
     const Vec3& getRightDir()        const { return rightDir;      }
+    const Vec3& getUpDir()           const { return upDir;         }
     const Vec3& getForwardDir()      const { return forwardDir;    }
     float getHorizontalFieldOfView() const { return fieldOfView.x; }
     float getVerticalFieldOfView()   const { return fieldOfView.y; }
@@ -94,7 +94,7 @@ public:
     void setPosition(const Vec3& position) {
         this->position = position;
     }
-    void setOrientation(const Vec3& rightDir, const Vec3& forwardDir, const Vec3& upDir) {
+    void setOrientation(const Vec3& rightDir, const Vec3& upDir, const Vec3& forwardDir) {
         if (!Math::isNormalized(forwardDir) || !Math::isNormalized(rightDir) || !Math::isNormalized(upDir)) {
             throw std::invalid_argument("all given orientation vectors must be normalized");
         }
@@ -105,9 +105,9 @@ public:
             throw std::invalid_argument("cannot have up parallel to aim direction");
         }
 
-        this->forwardDir = forwardDir;
         this->rightDir   = rightDir;
         this->upDir      = upDir;
+        this->forwardDir = forwardDir;
     }
 
     // sets field of view, aspect ratio, and clipping planes
@@ -169,9 +169,9 @@ public:
             throw std::invalid_argument("cannot look in a direction parallel to given up direction");
         }
 
-        forwardDir = givenForward;
-        rightDir   = Math::normalize(Math::cross(forwardDir, givenUp));
+        rightDir   = Math::normalize(Math::cross(givenForward, givenUp));
         upDir      = Math::cross(rightDir, forwardDir);
+        forwardDir = givenForward;
     }
 };
 inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
@@ -180,8 +180,8 @@ inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
          << "position:" << renderCam.getPosition() << ", "
          << "Orientation{"
            << "right-axis:("   << renderCam.getRightDir()   << "),"
-           << "forward-axis:(" << renderCam.getForwardDir() << "),"
-           << "upward-axis:("  << renderCam.getUpDir()      << ")}, "
+           << "upward-axis:("  << renderCam.getUpDir()      << "),"
+           << "forward-axis:(" << renderCam.getForwardDir() << ")}, "
          << "ImagePlane{"
            << "aspect-ratio:"    << renderCam.getAspectRatio()           << ","
            << "field-of-view-x:" << renderCam.getHorizontalFieldOfView() << ","
