@@ -12,24 +12,24 @@ private:
     const size_t height;
     const size_t numPixels;
     const float megaPixels;
-    const Color defaultColor;
+    const Color initialColor;
     std::vector<std::vector<Color>> pixels;
 
     float computeMegaPixels(size_t width, size_t height, size_t numDigits=2) {
         return Math::roundToNearestDigit((width * height) / 1000000.00f, numDigits);
     }
 public:
-    FrameBuffer(size_t width, size_t height, const Color& defaultColor) :
+    FrameBuffer(size_t width, size_t height, const Color& initialColor) :
             width(width),
             height(height),
             numPixels(width * height),
             megaPixels(computeMegaPixels(width, height)),
             pixels(),
-            defaultColor(defaultColor) {
-        pixels.resize(height, std::vector<Color>(width, defaultColor));
+            initialColor(initialColor) {
+        pixels.resize(height, std::vector<Color>(width, initialColor));
     }
-    FrameBuffer(const Vec2& size, const Color& defaultColor) :
-        FrameBuffer(static_cast<size_t>(size.x), static_cast<size_t>(size.y), defaultColor)
+    FrameBuffer(const Vec2& size, const Color& initialColor) :
+        FrameBuffer(static_cast<size_t>(size.x), static_cast<size_t>(size.y), initialColor)
     {}
 
     void setColor(size_t row, size_t col, const Color& color) noexcept { pixels[row][col] = color; }
@@ -54,23 +54,22 @@ public:
     constexpr size_t getHeight()                  const noexcept { return height;           }
     constexpr size_t getNumPixels()               const noexcept { return numPixels;        }
     constexpr float getMegaPixels()               const noexcept { return megaPixels;       }
-    constexpr const Color& getDefaultColor()      const noexcept { return defaultColor;     }
+    constexpr const Color& getDefaultColor()      const noexcept { return initialColor;     }
     const Color& getColor(size_t row, size_t col) const noexcept { return pixels[row][col]; }
     std::string getImageDescription() const {
         std::stringstream ss;
         ss << std::fixed << std::setprecision(2)
-            << width << "X" << height
-            << " (" << getMegaPixels() << " MP)";
+             << width << "X" << height
+             << "(" << getMegaPixels() << "MP)";
         return ss.str();
     }
 };
 inline std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
-    os << std::fixed << std::setprecision(2)
-        << "FrameBuffer("
-         << "width:"        << frameBuffer.getWidth()     << ", "
-         << "height:"       << frameBuffer.getHeight()    << ", "
-         << "numPixels:"    << frameBuffer.getNumPixels() << ", "
-         << "defaultColor:" << frameBuffer.getDefaultColor()
-        << ")";
+    os << std::fixed << std::setprecision(0)
+       << "FrameBuffer("
+          << "initial-color:("   << frameBuffer.getDefaultColor()     << "),"
+          << "image-dimensions:" << frameBuffer.getImageDescription() << ", "
+          << "num-elements:"     << frameBuffer.getNumPixels()        << ""
+       << ")";
     return os;
 }

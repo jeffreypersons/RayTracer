@@ -13,7 +13,15 @@ struct Vec2 {
     constexpr Vec2(float  x, float  y) : x(x), y(y) {}
     constexpr Vec2(int    x, int    y) : Vec2(static_cast<float>(x), static_cast<float>(y)) {}
     constexpr Vec2(double x, double y) : Vec2(static_cast<float>(x), static_cast<float>(y)) {}
+
+    static constexpr Vec2 up()    { return Vec2( 0,  1); };
+    static constexpr Vec2 down()  { return Vec2( 0, -1); };
+    static constexpr Vec2 right() { return Vec2( 1,  0); };
+    static constexpr Vec2 left()  { return Vec2(-1,  0); };
+    static constexpr Vec2 zero()  { return Vec2( 0,  0); };
+    static constexpr Vec2 one()   { return Vec2( 1,  1); };
 };
+
 inline constexpr Vec2 operator+(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x + rhs.x, lhs.y + rhs.y); }
 inline constexpr Vec2 operator-(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x - rhs.x, lhs.y - rhs.y); }
 inline constexpr Vec2 operator/(const Vec2& lhs,  float       rhs) { return Vec2(lhs.x / rhs,   lhs.y / rhs);   }
@@ -30,6 +38,15 @@ struct Vec3 {
     constexpr Vec3(float  x, float  y, float  z) : x(x), y(y), z(z) {}
     constexpr Vec3(int    x, int    y, int    z) : Vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)) {}
     constexpr Vec3(double x, double y, double z) : Vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)) {}
+
+    static constexpr Vec3 ahead()  { return Vec3( 0,  0, -1); };
+    static constexpr Vec3 behind() { return Vec3( 0,  0,  1); };
+    static constexpr Vec3 up()     { return Vec3( 0,  1,  0); };
+    static constexpr Vec3 down()   { return Vec3( 0, -1,  0); };
+    static constexpr Vec3 right()  { return Vec3( 1,  0,  0); };
+    static constexpr Vec3 left()   { return Vec3(-1,  0,  0); };
+    static constexpr Vec3 zero()   { return Vec3( 0,  0,  0); };
+    static constexpr Vec3 one()    { return Vec3( 1,  1,  1); };
 };
 inline constexpr Vec3 operator+(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
 inline constexpr Vec3 operator-(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
@@ -68,6 +85,7 @@ inline float tan(float degrees)                { return std::tanf(degToRad(degre
 inline float asin(float ratio)                 { return radToDeg(std::asinf(ratio));   }
 inline float acos(float ratio)                 { return radToDeg(std::acosf(ratio));   }
 inline float atan(float ratio)                 { return radToDeg(std::atanf(ratio));   }
+inline float square(float a)                   { return a * a;                         }
 inline float squareRoot(float a)               { return std::sqrtf(a);                 }
 inline float pow(float a, float b)             { return std::powf(a, b);               }
 inline constexpr float abs(float a)            { return a <= 0.00f? -a : a;            }

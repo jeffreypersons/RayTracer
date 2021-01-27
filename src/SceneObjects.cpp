@@ -1,6 +1,5 @@
 #include "SceneObjects.h"
 #include "Math.hpp"
-#include "Color.hpp"
 #include "Rays.hpp"
 
 
@@ -35,6 +34,18 @@ bool Sphere::intersect(const Ray& ray, RayHitInfo& result) const {
     result.normal = (result.point - this->centroid) / this->radius;
     return true;
 }
+
+std::string Sphere::getDescription() const {
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2)
+       << "Sphere("
+         << "centroid:(" << getCentroid() << "), "
+         << "material:"  << getMaterial() << ", "
+         << "radius:"    << getRadius()
+       << ")";
+    return ss.str();
+}
+
 
 Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, const Material& material) {
     // note that base class members can only be initialized in the body and not our typical initializer list
@@ -78,4 +89,15 @@ bool Triangle::intersect(const Ray& ray, RayHitInfo& result) const {
         return true;
     }
     return false;
+}
+
+std::string Triangle::getDescription() const {
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2)
+       << "Triangle("
+         << "centroid:(" << getCentroid() << "), "
+         << "material:"  << getMaterial() << ", "
+         << "verts:[v0:" << getVert0() << ",v1:" << getVert1() << ",v2:" << getVert2() << "]"
+       << ")";
+    return ss.str();
 }
