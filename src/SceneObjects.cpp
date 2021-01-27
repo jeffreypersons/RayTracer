@@ -99,4 +99,5 @@ std::string Triangle::getDescription() const {
          << "material:"  << getMaterial() << ", "
          << "verts:[v0:" << getVert0() << ",v1:" << getVert1() << ",v2:" << getVert2() << "]"
        << ")";
+    return ss.str();
 }
