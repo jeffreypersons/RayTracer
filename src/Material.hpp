@@ -78,9 +78,9 @@ inline std::ostream& operator<<(std::ostream& os, const Material& material) {
     os << std::fixed << std::setprecision(2)
        << "Material("
          << "Colors{"
-           << "ambient:"  << material.getAmbientColor()  << ","
-           << "diffuse:"  << material.getDiffuseColor()  << ","
-           << "specular:" << material.getSpecularColor() << "}, "
+           << "ambient:("  << material.getAmbientColor()  << "),"
+           << "diffuse:("  << material.getDiffuseColor()  << "),"
+           << "specular:(" << material.getSpecularColor() << ")}, "
          << "Weights{"
            << "intrinsic:"  << material.getIntrinsity()   << ","
            << "reflective:" << material.getReflectivity() << ","

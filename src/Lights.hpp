@@ -44,8 +44,8 @@ public:
 inline std::ostream& operator<<(std::ostream& os, const Light& light) {
     os << std::fixed << std::setprecision(2)
        << "Light("
-         << "position:" << light.getPosition() << ", "
-         << "material:" << light.getMaterial()
+         << "position:(" << light.getPosition() << "), "
+         << "material:"  << light.getMaterial()
        << ")";
     return os;
 }

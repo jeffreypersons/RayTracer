@@ -12,8 +12,8 @@ struct Ray {
 inline std::ostream& operator<<(std::ostream& os, const Ray& ray) {
     os << std::fixed << std::setprecision(2)
        << "Ray("
-         << "origin:"    << ray.origin     << ","
-         << "direction:" << ray.direction
+         << "origin:("    << ray.origin     << "),"
+         << "direction:(" << ray.direction  << ")"
        << ")";
     return os;
 }
@@ -31,8 +31,8 @@ struct RayHitInfo {
 inline std::ostream& operator<<(std::ostream& os, const RayHitInfo& intersectInfo) {
     os << std::fixed << std::setprecision(2)
        << "IntersectInfo("
-         << "point:"  << intersectInfo.point  << ","
-         << "normal:" << intersectInfo.normal << ","
+         << "point:("  << intersectInfo.point  << "),"
+         << "normal:(" << intersectInfo.normal << "),"
          << "t:" << intersectInfo.t
        << ")";
     return os;
