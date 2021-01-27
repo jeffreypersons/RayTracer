@@ -49,9 +49,9 @@ Scene createSimpleScene() {
     scene.addSceneObject(Sphere(Vec3(0,    50, 0),   20, reflectiveGreen));
     scene.addSceneObject(Sphere(Vec3(0,    20, 0),    5, shinyRed));
     
-    std::cout << "\n\nmatte-blue-"     << matteBlue << "\n";
+    std::cout << "\n\nmatte-blue-"     << matteBlue       << "\n";
     std::cout << "\nreflective-green-" << reflectiveGreen << "\n";
-    std::cout << "\nshiny-red-"        << shinyRed << "\n\n";
+    std::cout << "\nshiny-red-"        << shinyRed        << "\n\n";
 
     return scene;
 }
@@ -70,7 +70,7 @@ int main()
     tracer.setMinTForShadowIntersections(0.01f);
 
     FrameBuffer frameBuffer(Vec2(1000, 1000), Palette::skyBlue);
-    Scene simpleScene = createSimpleScene();
+    Scene simpleScene   = createSimpleScene();
     RenderCam frontCam  = createFrontalSceneViewCam( Vec3(0, 50, 50), 90.00f,  1.00f);
     RenderCam bottomCam = createBottomUpSceneViewCam(Vec3(0, 10,  0), 90.00f, 10.00f);
 
