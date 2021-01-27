@@ -66,12 +66,12 @@ int main()
     tracer.setShadowColor(Color(0.125f, 0.125f, 0.125f));
     tracer.setBackgroundColor(Palette::skyBlue);
     tracer.setMaximumallyReflectedColor(Palette::pink);
-    tracer.setMaxNumReflections(5);
+    tracer.setMaxNumReflections(3);
     tracer.setMinTForShadowIntersections(0.01f);
 
     FrameBuffer frameBuffer(Vec2(1000, 1000), Palette::skyBlue);
     Scene simpleScene = createSimpleScene();
-    RenderCam frontCam  = createFrontalSceneViewCam( Vec3(0, 50, 50), 90.00f, 0.10f);
+    RenderCam frontCam  = createFrontalSceneViewCam( Vec3(0, 50, 50), 90.00f,  1.00f);
     RenderCam bottomCam = createBottomUpSceneViewCam(Vec3(0, 10,  0), 90.00f, 10.00f);
 
     std::cout << "Initializing target buffer..\n  " << frameBuffer << "\n\n";
