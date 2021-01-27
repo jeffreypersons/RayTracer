@@ -177,7 +177,7 @@ public:
 inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
     os << std::fixed << std::setprecision(2)
        << "RenderCam("
-         << "position:" << renderCam.getPosition() << ", "
+         << "position:(" << renderCam.getPosition() << "), "
          << "Orientation{"
            << "right-axis:("   << renderCam.getRightDir()   << "),"
            << "upward-axis:("  << renderCam.getUpDir()      << "),"

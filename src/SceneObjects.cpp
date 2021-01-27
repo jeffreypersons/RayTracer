@@ -39,9 +39,9 @@ std::string Sphere::getDescription() const {
     std::stringstream ss;
     ss << std::fixed << std::setprecision(2)
        << "Sphere("
-         << "centroid:" << getCentroid() << ", "
-         << "material:" << getMaterial() << ", "
-         << "radius:"   << getRadius()
+         << "centroid:(" << getCentroid() << "), "
+         << "material:"  << getMaterial() << ", "
+         << "radius:"    << getRadius()
        << ")";
     return ss.str();
 }
@@ -95,8 +95,8 @@ std::string Triangle::getDescription() const {
     std::stringstream ss;
     ss << std::fixed << std::setprecision(2)
        << "Triangle("
-         << "centroid:" << getCentroid() << ", "
-         << "material:" << getMaterial() << ", "
+         << "centroid:(" << getCentroid() << "), "
+         << "material:"  << getMaterial() << ", "
          << "verts:[v0:" << getVert0() << ",v1:" << getVert1() << ",v2:" << getVert2() << "]"
        << ")";
 }

@@ -65,7 +65,7 @@ public:
     }
 };
 inline std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
-    os << std::fixed << std::setprecision(2)
+    os << std::fixed << std::setprecision(0)
        << "FrameBuffer("
           << "initial-color:("   << frameBuffer.getDefaultColor()     << "),"
           << "image-dimensions:" << frameBuffer.getImageDescription() << ", "
