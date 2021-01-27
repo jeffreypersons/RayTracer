@@ -7,16 +7,16 @@
 // color of diffuse/ambient/specular reflectance, as well as weighted intrinsic/reflectivity/refraction
 class Material {
 private:
-    Color diffuseColor;
     Color ambientColor;
+    Color diffuseColor;
     Color specularColor;
     float intrinsity;
     float reflectivity;
     float refractivity;
     float specularExponent;
 
-    static constexpr Color DEFAULT_DIFFUSE_COLOR  { 0.80f, 0.80f, 0.80f };
     static constexpr Color DEFAULT_AMBIENT_COLOR  { 0.20f, 0.20f, 0.20f };
+    static constexpr Color DEFAULT_DIFFUSE_COLOR  { 0.80f, 0.80f, 0.80f };
     static constexpr Color DEFAULT_SPECULAR_COLOR { 0.00f, 0.00f, 0.00f };
     static constexpr float DEFAULT_INTRINSITY   { 1.00f };
     static constexpr float DEFAULT_REFLECTIVITY { 0.00f };
@@ -24,25 +24,25 @@ private:
     static constexpr float DEFAULT_SPECULAR_EXPONENT { 0.80f };
 
 public:
-    Material(const Color& diffuseColor, const Color& ambientColor, const Color& specularColor,
+    Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor,
              float intrinsity, float reflectivity, float refractivity,
              float specularExponent) {
-        setColors(diffuseColor, ambientColor, specularColor);
+        setColors(ambientColor, diffuseColor, specularColor);
         setWeights(intrinsity, reflectivity, refractivity);
         setShininess(specularExponent);
     }
     Material() : Material(
-        DEFAULT_DIFFUSE_COLOR,
         DEFAULT_AMBIENT_COLOR,
+        DEFAULT_DIFFUSE_COLOR,
         DEFAULT_SPECULAR_COLOR,
         DEFAULT_INTRINSITY,
         DEFAULT_REFLECTIVITY,
         DEFAULT_REFRACTIVITY,
         DEFAULT_SPECULAR_EXPONENT) {}
 
-    void setColors(const Color& diffuseColor, const Color& ambientColor, const Color& specularColor) {
-        this->diffuseColor  = diffuseColor;
+    void setColors(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor) {
         this->ambientColor  = ambientColor;
+        this->diffuseColor  = diffuseColor;
         this->specularColor = specularColor;
     }
     void setWeights(float intrinsity, float reflectivity, float refractivity = 0.00f) {
@@ -62,16 +62,16 @@ public:
         }
         this->specularExponent = specularExponent;
     }
-    void setDiffuseColor(const Color& diffuseColor)   { this->diffuseColor  = diffuseColor;  }
     void setAmbientColor(const Color& ambientColor)   { this->ambientColor  = ambientColor;  }
+    void setDiffuseColor(const Color& diffuseColor)   { this->diffuseColor  = diffuseColor;  }
     void setSpecularColor(const Color& specularColor) { this->specularColor = specularColor; }
 
     float getShininess()            const { return specularExponent; }
     float getIntrinsity()           const { return intrinsity;       }
     float getReflectivity()         const { return reflectivity;     }
     float getRefractivity()         const { return refractivity;     }
-    const Color& getDiffuseColor()  const { return diffuseColor;     }
     const Color& getAmbientColor()  const { return ambientColor;     }
+    const Color& getDiffuseColor()  const { return diffuseColor;     }
     const Color& getSpecularColor() const { return specularColor;    }
 };
 inline std::ostream& operator<<(std::ostream& os, const Material& material) {

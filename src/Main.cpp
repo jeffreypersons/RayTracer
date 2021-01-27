@@ -27,25 +27,34 @@ RenderCam createBottomUpSceneViewCam(const Vec3& position, float fieldOfView, fl
 
 Scene createSimpleScene() {
     Material brightWhite{};
-    brightWhite.setColors(0.75 * Palette::white, Palette::gray, Palette::white);
+    brightWhite.setColors(Palette::gray, 0.75 * Palette::white, Palette::white);
 
     Material matteBlue{};
     matteBlue.setWeights(1.00f, 0.00f);
+    matteBlue.setAmbientColor(Palette::blue);
     matteBlue.setDiffuseColor(Palette::blue);
+    matteBlue.setSpecularColor(Palette::white);
+    std::cout << "\n\nmatte-blue-" << matteBlue << "\n";
 
     Material reflectiveGreen{};
     reflectiveGreen.setWeights(0.50f, 0.50f);
     reflectiveGreen.setDiffuseColor(Palette::green);
+    std::cout << "\nreflective-green-" << matteBlue << "\n";
 
     Material shinyRed{};
     shinyRed.setWeights(0.95f, 0.05f);
     shinyRed.setSpecularColor(Palette::red);
+    std::cout << "\nshiny-red-" << shinyRed << "\n\n";
 
     Scene scene{};
     scene.addLight(Light(Vec3(0, 55, -25), brightWhite));
     scene.addSceneObject(Sphere(Vec3(0, -1500, 0), 1000, matteBlue));
     scene.addSceneObject(Sphere(Vec3(0,    50, 0),   20, reflectiveGreen));
     scene.addSceneObject(Sphere(Vec3(0,    20, 0),    5, shinyRed));
+    std::cout << "\nprimary-" << scene.getLight(0) << "\n";
+    std::cout << "\nground-" << scene.getObject(0) << "\n";
+    std::cout << "\ntop-"    << scene.getObject(0) << "\n";
+    std::cout << "\ntop-"    << scene.getObject(0) << "\n";
     return scene;
 }
 

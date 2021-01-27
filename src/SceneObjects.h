@@ -12,11 +12,17 @@ protected:
 
 public:
     ~ISceneObject() {}
-    virtual bool intersect(const Ray& ray, RayHitInfo& result) const = 0;
-    const Vec3&     getCentroid() const { return centroid; }
-    const Material& getMaterial() const { return material; }
-};
 
+    const Vec3& getCentroid() const { return centroid; }
+    const Material& getMaterial() const { return material; }
+
+    virtual std::string getDescription() const = 0;
+    virtual bool intersect(const Ray& ray, RayHitInfo& result) const = 0;
+};
+inline std::ostream& operator<<(std::ostream& os, const ISceneObject& sceneObject) {
+    os << sceneObject.getDescription();
+    return os;
+}
 
 class Sphere : public ISceneObject {
 private:
@@ -24,18 +30,11 @@ private:
 
 public:
     Sphere(const Vec3&, float, const Material&);
+    virtual std::string getDescription() const override;
     virtual bool intersect(const Ray&, RayHitInfo&) const override;
     float getRadius() const { return radius; }
 };
-inline std::ostream& operator<<(std::ostream& os, const Sphere& sphere) {
-    os << std::fixed << std::setprecision(2)
-       << "Sphere("
-         << "centroid:" << sphere.getCentroid() << ", "
-         << "material:" << sphere.getMaterial() << ", "
-         << "radius:"   << sphere.getRadius()
-       << ")";
-    return os;
-}
+
 
 class Triangle : public ISceneObject {
 private:
@@ -51,18 +50,10 @@ private:
     bool isPointInTriangle(const Vec3& point) const;
 public:
     Triangle(const Vec3&, const Vec3&, const Vec3&, const Material&);
+    virtual std::string getDescription() const override;
     virtual bool intersect(const Ray& ray, RayHitInfo& result) const override;
     const Vec3& getVert0()       const { return vert0;       }
     const Vec3& getVert1()       const { return vert1;       }
     const Vec3& getVert2()       const { return vert2;       }
     const Vec3& getPlaneNormal() const { return planeNormal; }
 };
-inline std::ostream& operator<<(std::ostream& os, const Triangle& triangle) {
-    os << std::fixed << std::setprecision(2)
-       << "Triangle("
-        << "centroid:"  << triangle.getCentroid() << ", "
-        << "material:"  << triangle.getMaterial() << ", "
-        << "verts:[v0:" << triangle.getVert0() << ",v1:" << triangle.getVert1() << ",v2:" << triangle.getVert2() << "]"
-       << ")";
-    return os;
-}
