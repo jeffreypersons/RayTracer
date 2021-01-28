@@ -34,4 +34,7 @@ public:
     void setMaxNumReflections(size_t);
     void setMinTForShadowIntersections(float);
     void setReflectionalScalar(float);
+
+private:
+    Ray reflectRay(const Ray& ray, const RayHitInfo& hit) const;
 };
