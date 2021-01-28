@@ -76,7 +76,7 @@ int main()
 
     std::cout << "Initializing target buffer..\n  " << frameBuffer << "\n\n";
     std::cout << "Assembling scene..\n.."           << simpleScene << "\n\n";
-    std::cout << "Configuring frontal and bottom-up view cams  \n  " << frontCam << "\n  " << bottomCam << "\n\n";
+    std::cout << "Configuring frontal and bottom-up view cams\n  " << frontCam << "\n  " << bottomCam << "\n\n";
 
     std::cout << "Rendering scene from multiple perspectives..\n";
     tracer.trace(frontCam, simpleScene, frameBuffer);
