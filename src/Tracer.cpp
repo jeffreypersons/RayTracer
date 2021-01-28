@@ -7,7 +7,6 @@
 #include "Scene.hpp"
 #include "FrameBuffers.hpp"
 #include <omp.h>
-#include <optional>
 
 
 Tracer::Tracer() :
