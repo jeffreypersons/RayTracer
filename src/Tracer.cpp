@@ -7,6 +7,7 @@
 #include "Scene.hpp"
 #include "FrameBuffers.hpp"
 #include <omp.h>
+#include <optional>
 
 
 Tracer::Tracer() :
@@ -58,7 +59,6 @@ void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& 
     }
 }
 
-// todo: handle multiple lights as well as zero lights (unlit scene) correctly...
 Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray& ray, size_t iteration=0) const {
     if (iteration >= maxNumReflections) {
         return maxReflectedColor;
@@ -80,48 +80,53 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
         return backgroundColor;
     }
 
-    // reflect our ray throughout the scene using a slight directional offset
-    // and iteration cap to avoid infinite reflections
-    Color reflectedColor(0, 0, 0);
-    const Material& surfaceMaterial = object->getMaterial();
-    if (surfaceMaterial.getReflectivity() > 0.00f) {
+    // reflect our ray throughout the scene using a slight directional offset and iteration cap to avoid infinite reflections
+    Color reflectedColor = backgroundColor;
+    if (object->getMaterial().getReflectivity() > 0.00f) {
         reflectedColor = traceRay(renderCam, scene, reflectRay(ray, hit), iteration + 1);
     }
-
-    // extract light related data
-    Light light = scene.getLight(0);
-    Vec3 directionFromLight = Math::direction(light.getPosition(), hit.point);
-
-    // check if there exists an object blocking light from reaching our hit-point
-    Ray shadowRay(hit.point, directionFromLight);
-    float tLight = Math::distance(light.getPosition(), hit.point) - minTForShadowIntersections;
-    for (size_t index = 0; index < scene.getNumObjects(); index++) {
-        RayHitInfo h;
-        if (scene.getObject(index).intersect(shadowRay, h) && h.t > minTForShadowIntersections && h.t < tLight) {
-            return shadowColor;
-        }
+    
+    // todo: handle zero or more lights correctly, and maybe blend shadows
+    if (isInShadow(renderCam, hit, scene, scene.getLight(0))) {
+        return shadowColor;
     }
 
     // blend intrinsic and reflected color using our light and intersected object
-    Color surfaceColor;
-    Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
-    Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
-    Color ambientColor  = surfaceMaterial.getAmbientColor() * light.getMaterial().getAmbientColor();
+    Color surfaceColor = computeSurfaceColor(renderCam, hit, *object, scene.getLight(0));
 
-    Color diffuseColor  = Math::dot(hit.normal, -1.00f * directionFromLight) *
-                          surfaceMaterial.getDiffuseColor() * light.getMaterial().getDiffuseColor();
-
-    Color specularColor = Math::dot(hit.normal, halfwayVec) *
-                          surfaceMaterial.getSpecularColor() * light.getMaterial().getSpecularColor();
-
-    surfaceColor = ambientColor + diffuseColor + specularColor;
-
-    return surfaceMaterial.getReflectivity() * reflectedColor +
-           surfaceMaterial.getIntrinsity()   * surfaceColor;
+    return object->getMaterial().getReflectivity() * reflectedColor +
+           object->getMaterial().getIntrinsity()   * surfaceColor;
 }
 
 // reflect our ray using a slight direction offset to avoid infinite reflections
 Ray Tracer::reflectRay(const Ray& ray, const RayHitInfo& hit) const {
     Vec3 reflectedVec = (-1.0f * ray.direction) - (2.0f * hit.normal) * (Math::dot(ray.direction, hit.normal));
     return Ray(hit.point + reflectionalScalar * hit.normal, Math::normalize(reflectedVec));
+}
+
+// check if there exists an object blocking light from reaching our hit-point
+bool Tracer::isInShadow(const RenderCam& renderCam, const RayHitInfo& hit, const Scene& scene, const Light& light) const {
+    Ray shadowRay(hit.point, Math::direction(hit.point, light.getPosition()));
+    float tLight = Math::distance(light.getPosition(), hit.point) - minTForShadowIntersections;
+    for (size_t index = 0; index < scene.getNumObjects(); index++) {
+        RayHitInfo h;
+        if (scene.getObject(index).intersect(shadowRay, h) && h.t > minTForShadowIntersections && h.t < tLight) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// blend intrinsic and reflected color using our light and intersected object
+Color Tracer::computeSurfaceColor(const RenderCam& renderCam, const RayHitInfo& hit, const ISceneObject& object, const Light& light) const {
+    Vec3 directionToCam   = Math::direction(hit.point, renderCam.getPosition());
+    Vec3 directionToLight = Math::direction(hit.point, light.getPosition());
+    Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
+
+    Color ambientColor = object.getMaterial().getAmbientColor() * light.getAmbientColor();
+    Color diffuseColor = Math::dot(hit.normal, directionToLight) *
+        object.getMaterial().getDiffuseColor() * light.getDiffuseColor();
+    Color specularColor = Math::dot(hit.normal, halfwayVec) *
+        object.getMaterial().getSpecularColor() * light.getSpecularColor();
+    return ambientColor + diffuseColor + specularColor;
 }

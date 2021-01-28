@@ -20,10 +20,10 @@ private:
     static constexpr Color DEFAULT_SHADOW_COLOR       { 0.00f, 0.00f, 0.00f };
     static constexpr Color DEFAULT_BACKGROUND_COLOR   { 0.00f, 0.00f, 0.00f };
     static constexpr Color DEFAULT_MAX_REFLECTED_COLOR{ 0.05f, 0.05f, 0.05f };
-    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 3;
+
+    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS           = 3;
     static constexpr float DEFAULT_MIN_T_FOR_SHADOW_INTERSECTIONS = 0.01000f;
     static constexpr float DEFAULT_REFLECTIONAL_SCALAR            = 0.00001f;
-    Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
     
 public:
     Tracer();
@@ -36,5 +36,9 @@ public:
     void setReflectionalScalar(float);
 
 private:
-    Ray reflectRay(const Ray& ray, const RayHitInfo& hit) const;
+    Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
+
+    Ray reflectRay(const Ray&, const RayHitInfo&) const;
+    bool isInShadow(const RenderCam&, const RayHitInfo&, const Scene&, const Light&) const;
+    Color computeSurfaceColor(const RenderCam&, const RayHitInfo&, const ISceneObject&, const Light&) const;
 };
