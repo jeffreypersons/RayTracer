@@ -46,7 +46,7 @@ inline std::ostream& operator<<(std::ostream& os, const Color& color) { os << co
 
 namespace Palette {
 // base colors
-constexpr Color white   { 0.00, 0.00, 0.00 };
+constexpr Color white   { 1.00, 1.00, 1.00 };
 constexpr Color red     { 1.00, 0.00, 0.00 };
 constexpr Color green   { 0.00, 1.00, 0.00 };
 constexpr Color blue    { 0.00, 0.00, 1.00 };

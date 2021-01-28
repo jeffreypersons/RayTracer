@@ -17,7 +17,9 @@ RenderCam createFrontCam(const Vec3& position, float fieldOfView, float viewDist
 
 Scene createSimpleScene() {
     Material brightWhite{};
+    std::cout << "before set" << brightWhite << "\n";
     brightWhite.setColors(Palette::white, 0.75 * Palette::white, Palette::white);
+    std::cout << "after set" << brightWhite << "\n";
 
     Material reflectiveGreen{};
     reflectiveGreen.setWeights(0.50f, 0.50f);
