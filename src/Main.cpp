@@ -17,40 +17,33 @@ RenderCam createFrontCam(const Vec3& position, float fieldOfView, float viewDist
 
 Scene createSimpleScene() {
     Material brightWhite{};
-    brightWhite.setColors(Palette::gray, 0.75 * Palette::white, Palette::white);
+    brightWhite.setColors(Palette::white, 0.75 * Palette::white, Palette::white);
 
     Material reflectiveGreen{};
     reflectiveGreen.setWeights(0.50f, 0.50f);
     reflectiveGreen.setDiffuseColor(Palette::green);
     
     Scene scene{};
-    scene.addLight(Light(Vec3(0, 55, 0), brightWhite));
+    scene.addLight(Light(Vec3(0, 100, 0), brightWhite));
     scene.addSceneObject(Sphere(Vec3(0, 35, 15), 20, reflectiveGreen));
     return scene;
 }
 
 int main()
 {
-    std::cout << "Program started...\n";
+    std::cout << "Program started...\n\n";
 
     Tracer tracer{};
-    tracer.setShadowColor(Color(0.125f, 0.125f, 0.125f));
     tracer.setBackgroundColor(Palette::skyBlue);
-    tracer.setMaximumallyReflectedColor(Palette::pink);
-    tracer.setMaxNumReflections(3);
     tracer.setMinTForShadowIntersections(0.01f);
 
     FrameBuffer frameBuffer(Vec2(1250, 1250), Palette::skyBlue);
     Scene scene   = createSimpleScene();
-    RenderCam cam = createFrontCam( Vec3(0, 40, 50), 90.00f, 5.00f);
-
-    std::cout << "Assembling scene..\n.." << scene << "\n\n";
-    std::cout << "Configuring frontal-view cams\n  " << cam << "\n\n";
+    RenderCam cam = createFrontCam(Vec3(0, 40, 50), 100.00f, 5.00f);
 
     tracer.trace(cam, scene, frameBuffer);
     frameBuffer.writeToFile("./scene");
-    std::cout << "  wrote rendered scene as image output to file '" << "./scene_front-view" << "'\n";
 
-    std::cout << "Press ENTER to end...";
+    std::cout << cam << "\n\n" << scene.getLight(0) << "\n\n" << scene.getObject(0) << "\n\n" << "Program finished...\n";
     std::cin.get();
 }
