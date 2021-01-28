@@ -45,9 +45,10 @@ Scene createSimpleScene() {
 
     Scene scene{};
     scene.addLight(Light(Vec3(0, 55, -25), brightWhite));
-    scene.addSceneObject(Sphere(Vec3(0, -1500, 0), 1000, matteBlue));
-    scene.addSceneObject(Sphere(Vec3(0,    50, 0),   20, reflectiveGreen));
-    scene.addSceneObject(Sphere(Vec3(0,    20, 0),    5, shinyRed));
+    //scene.addSceneObject(Sphere(Vec3(  0, -1500,  0), 1000, matteBlue));
+    scene.addSceneObject(Sphere(Vec3(-25,    35, 10),    5, reflectiveGreen));
+    scene.addSceneObject(Sphere(Vec3(  0,    50,  0),   20, reflectiveGreen));
+    scene.addSceneObject(Sphere(Vec3(  0,    20,  0),    5, shinyRed));
     
     std::cout << "\n\nmatte-blue-"     << matteBlue       << "\n";
     std::cout << "\nreflective-green-" << reflectiveGreen << "\n";
@@ -69,10 +70,10 @@ int main()
     tracer.setMaxNumReflections(3);
     tracer.setMinTForShadowIntersections(0.01f);
 
-    FrameBuffer frameBuffer(Vec2(1000, 1000), Palette::skyBlue);
+    FrameBuffer frameBuffer(Vec2(1250, 1250), Palette::skyBlue);
     Scene simpleScene   = createSimpleScene();
-    RenderCam frontCam  = createFrontalSceneViewCam( Vec3(0, 50, 50), 90.00f,  1.00f);
-    RenderCam bottomCam = createBottomUpSceneViewCam(Vec3(0, 10,  0), 90.00f, 10.00f);
+    RenderCam frontCam  = createFrontalSceneViewCam( Vec3(0, 40, 50), 90.00f, 5.00f);
+    RenderCam bottomCam = createBottomUpSceneViewCam(Vec3(0, 10,  0), 90.00f, 5.00f);
 
     std::cout << "Initializing target buffer..\n  " << frameBuffer << "\n\n";
     std::cout << "Assembling scene..\n.."           << simpleScene << "\n\n";
