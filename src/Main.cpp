@@ -15,18 +15,18 @@ RenderCam createFrontCam(const Vec3& position, float fieldOfView, float viewDist
     return cam;
 }
 
+// TODO: look into fresnel, fall-off-effect, etc...
 Scene createSimpleScene() {
     Material brightWhite{};
-    std::cout << "before set" << brightWhite << "\n";
-    brightWhite.setColors(Palette::white, 0.75 * Palette::white, Palette::white);
-    std::cout << "after set" << brightWhite << "\n";
+    brightWhite.setColors(Palette::white, Palette::white, Palette::white);
 
     Material reflectiveGreen{};
     reflectiveGreen.setWeights(0.50f, 0.50f);
-    reflectiveGreen.setDiffuseColor(Palette::green);
-    
+    reflectiveGreen.setDiffuseColor(Palette::green); 
+    reflectiveGreen.setSpecularColor(Palette::green);
+
     Scene scene{};
-    scene.addLight(Light(Vec3(0, 100, 0), brightWhite));
+    scene.addLight(Light(Vec3(0, 75, 0), brightWhite));
     scene.addSceneObject(Sphere(Vec3(0, 35, 15), 20, reflectiveGreen));
     return scene;
 }
