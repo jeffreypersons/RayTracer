@@ -102,7 +102,6 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
         }
     }
 
-    // note: check with https://computergraphics.stackexchange.com/questions/9065/diffuse-lighting-calculations-in-ray-tracer
     // blend intrinsic and reflected color using our light and intersected object
     Color surfaceColor;
     Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
