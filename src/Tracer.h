@@ -40,5 +40,8 @@ private:
 
     Ray reflectRay(const Ray&, const RayHitInfo&) const;
     bool isInShadow(const RenderCam&, const RayHitInfo&, const Scene&, const Light&) const;
-    Color computeSurfaceColor(const RenderCam&, const RayHitInfo&, const ISceneObject&, const Light&) const;
+
+    Color computeAmbientColor (const ISceneObject&, const Light&) const;
+    Color computeDiffuseColor (const ISceneObject&, const Light&, const RayHitInfo&) const;
+    Color computeSpecularColor(const ISceneObject&, const Light&, const RayHitInfo&, const RenderCam&) const;
 };

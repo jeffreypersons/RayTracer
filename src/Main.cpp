@@ -15,19 +15,22 @@ RenderCam createFrontCam(const Vec3& position, float fieldOfView, float viewDist
     return cam;
 }
 
-// TODO: look into fresnel, fall-off-effect, etc...
+// TODO: look into fresnel, better/smoother fall-off-effect, etc...
+// TODO: look into why the specular highlights seem off center...
+// ......see https://stackoverflow.com/questions/33054399/raytracing-lighting-equations
 Scene createSimpleScene() {
     Material brightWhite{};
-    brightWhite.setColors(Palette::white, Palette::white, Palette::white);
+    brightWhite.setColors(Palette::gray, Palette::white, Palette::white);
 
-    Material reflectiveGreen{};
-    reflectiveGreen.setWeights(0.50f, 0.50f);
-    reflectiveGreen.setDiffuseColor(Palette::green); 
-    reflectiveGreen.setSpecularColor(Palette::green);
+    Material matteGreen{};
+    matteGreen.setWeights(1.00f, 0.00f);
+    matteGreen.setAmbientColor(Palette::lightGreen);
+    matteGreen.setDiffuseColor(Palette::green);
+    matteGreen.setSpecularColor(Palette::green);
 
     Scene scene{};
-    scene.addLight(Light(Vec3(0, 75, 0), brightWhite));
-    scene.addSceneObject(Sphere(Vec3(0, 35, 15), 20, reflectiveGreen));
+    scene.addLight(Light(Vec3(0, 100, 25), brightWhite));
+    scene.addSceneObject(Sphere(Vec3(0, 50, 0), 25, matteGreen));
     return scene;
 }
 
@@ -41,7 +44,7 @@ int main()
 
     FrameBuffer frameBuffer(Vec2(1250, 1250), Palette::skyBlue);
     Scene scene   = createSimpleScene();
-    RenderCam cam = createFrontCam(Vec3(0, 40, 50), 100.00f, 5.00f);
+    RenderCam cam = createFrontCam(Vec3(0, 50, 50), 100.00f, 5.00f);
 
     tracer.trace(cam, scene, frameBuffer);
     frameBuffer.writeToFile("./scene");

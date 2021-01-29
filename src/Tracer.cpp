@@ -86,15 +86,20 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     }
     
     // todo: handle zero or more lights correctly, and maybe blend shadows
+    // look into shadow color vs ambient, etc...
+    Color ambient = computeAmbientColor(*object, scene.getLight(0));
     if (isInShadow(renderCam, hit, scene, scene.getLight(0))) {
-        return shadowColor;
+        return ambient;
     }
 
-    // blend intrinsic and reflected color using our light and intersected object
-    Color surfaceColor = computeSurfaceColor(renderCam, hit, *object, scene.getLight(0));
+    Color diffuse  = computeDiffuseColor( *object, scene.getLight(0), hit);
+    Color specular = computeSpecularColor(*object, scene.getLight(0), hit, renderCam);
 
+    // blend intrinsic and reflected color using our light and intersected object
+    // todo: look into different weights for blending, etc...
+    Color nonReflectedColor = ambient + diffuse + specular;
     return object->getMaterial().getReflectivity() * reflectedColor +
-           object->getMaterial().getIntrinsity()   * surfaceColor;
+           object->getMaterial().getIntrinsity()   * nonReflectedColor;
 }
 
 // reflect our ray using a slight direction offset to avoid infinite reflections
@@ -117,15 +122,19 @@ bool Tracer::isInShadow(const RenderCam& renderCam, const RayHitInfo& hit, const
 }
 
 // blend intrinsic and reflected color using our light and intersected object
-Color Tracer::computeSurfaceColor(const RenderCam& renderCam, const RayHitInfo& hit, const ISceneObject& object, const Light& light) const {
-    Vec3 directionToCam   = Math::direction(hit.point, renderCam.getPosition());
+Color Tracer::computeAmbientColor(const ISceneObject& object, const Light& light) const {
+    return object.getMaterial().getAmbientColor() * light.getAmbientColor();
+}
+// blend intrinsic and reflected color using our light and intersected object
+Color Tracer::computeDiffuseColor(const ISceneObject& object, const Light& light, const RayHitInfo& hit) const {
     Vec3 directionToLight = Math::direction(hit.point, light.getPosition());
-    Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
-
-    Color ambientColor = object.getMaterial().getAmbientColor() * light.getAmbientColor();
-    Color diffuseColor = Math::dot(hit.normal, directionToLight) *
+    return Math::dot(hit.normal, directionToLight) *
         object.getMaterial().getDiffuseColor() * light.getDiffuseColor();
-    Color specularColor = Math::dot(hit.normal, halfwayVec) *
-        object.getMaterial().getSpecularColor() * light.getSpecularColor();
-    return ambientColor + diffuseColor + specularColor;
+}
+// blend intrinsic and reflected color using our light and intersected object
+Color Tracer::computeSpecularColor(const ISceneObject& object, const Light& light, const RayHitInfo& hit, const RenderCam& renderCam) const {
+    Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
+    Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
+    float intensity = Math::dot(hit.normal, halfwayVec);
+    return intensity * object.getMaterial().getSpecularColor() * light.getSpecularColor();
 }
