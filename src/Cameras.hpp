@@ -158,8 +158,8 @@ public:
     void lookAt(const Vec3& target) {
         // if camera is pointed straight up/down, then we choose a new orthogonal vector for computing the
         // right direction (as otherwise the cross product would be zero!)
-        Vec3 directionToTarget = Math::direction(position, target);
         Vec3 tempUp{};
+        Vec3 directionToTarget = Math::direction(position, target);
         if (!Math::isParallelDirection(directionToTarget, Vec3::up())) {
             tempUp = Vec3::up();
         } else {
