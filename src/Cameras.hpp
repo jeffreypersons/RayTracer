@@ -101,9 +101,6 @@ public:
         if (!Math::isOrthogonal(rightDir, forwardDir) || !Math::isOrthogonal(forwardDir, upDir)) {
             throw std::invalid_argument("all given orientation vectors must be orthogonal to one another");
         }
-        if (Math::isParallelDirection(upDir, forwardDir)) {
-            throw std::invalid_argument("cannot have up parallel to aim direction");
-        }
 
         this->rightDir   = rightDir;
         this->upDir      = upDir;
