@@ -45,7 +45,7 @@ public:
         this->diffuseColor  = diffuseColor;
         this->specularColor = specularColor;
     }
-    void setWeights(float intrinsity, float reflectivity, float refractivity = 0.00f) {
+    void setWeights(float intrinsity, float reflectivity, float refractivity=0.00f) {
         if (!Math::isApproximately(intrinsity + reflectivity + refractivity, 1.00f) ||
                 intrinsity   < 0.00f || intrinsity   > 1.00f ||
                 reflectivity < 0.00f || reflectivity > 1.00f ||
@@ -66,13 +66,13 @@ public:
     void setDiffuseColor(const Color& diffuseColor)   { this->diffuseColor  = diffuseColor;  }
     void setSpecularColor(const Color& specularColor) { this->specularColor = specularColor; }
 
-    float getShininess()            const { return specularExponent; }
-    float getIntrinsity()           const { return intrinsity;       }
-    float getReflectivity()         const { return reflectivity;     }
-    float getRefractivity()         const { return refractivity;     }
-    const Color& getAmbientColor()  const { return ambientColor;     }
-    const Color& getDiffuseColor()  const { return diffuseColor;     }
-    const Color& getSpecularColor() const { return specularColor;    }
+    float getShininess()     const { return specularExponent; }
+    float getIntrinsity()    const { return intrinsity;       }
+    float getReflectivity()  const { return reflectivity;     }
+    float getRefractivity()  const { return refractivity;     }
+    Color getAmbientColor()  const { return ambientColor;     }
+    Color getDiffuseColor()  const { return diffuseColor;     }
+    Color getSpecularColor() const { return specularColor;    }
 };
 inline std::ostream& operator<<(std::ostream& os, const Material& material) {
     os << std::fixed << std::setprecision(2)

@@ -17,13 +17,13 @@ private:
     float minTForShadowIntersections;
     float reflectionalScalar;
 
-    static constexpr Color DEFAULT_SHADOW_COLOR       { 0.00f, 0.00f, 0.00f };
-    static constexpr Color DEFAULT_BACKGROUND_COLOR   { 0.00f, 0.00f, 0.00f };
-    static constexpr Color DEFAULT_MAX_REFLECTED_COLOR{ 0.05f, 0.05f, 0.05f };
-    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 3;
+    static constexpr Color DEFAULT_SHADOW_COLOR        { 0.125f, 0.125f, 0.125f };
+    static constexpr Color DEFAULT_BACKGROUND_COLOR    { 0.000f, 0.000f, 0.000f };
+    static constexpr Color DEFAULT_MAX_REFLECTED_COLOR { 1.000f, 0.750f, 0.750f };
+
+    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS           = 3;
     static constexpr float DEFAULT_MIN_T_FOR_SHADOW_INTERSECTIONS = 0.01000f;
     static constexpr float DEFAULT_REFLECTIONAL_SCALAR            = 0.00001f;
-    Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
     
 public:
     Tracer();
@@ -34,4 +34,14 @@ public:
     void setMaxNumReflections(size_t);
     void setMinTForShadowIntersections(float);
     void setReflectionalScalar(float);
+
+private:
+    Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
+
+    Ray reflectRay(const Ray&, const RayHitInfo&) const;
+    bool isInShadow(const RenderCam&, const RayHitInfo&, const Scene&, const Light&) const;
+
+    Color computeAmbientColor (const ISceneObject&, const Light&) const;
+    Color computeDiffuseColor (const ISceneObject&, const Light&, const RayHitInfo&) const;
+    Color computeSpecularColor(const ISceneObject&, const Light&, const RayHitInfo&, const RenderCam&) const;
 };

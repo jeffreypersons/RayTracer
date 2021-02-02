@@ -52,8 +52,8 @@ public:
     Triangle(const Vec3&, const Vec3&, const Vec3&, const Material&);
     virtual std::string getDescription() const override;
     virtual bool intersect(const Ray& ray, RayHitInfo& result) const override;
-    const Vec3& getVert0()       const { return vert0;       }
-    const Vec3& getVert1()       const { return vert1;       }
-    const Vec3& getVert2()       const { return vert2;       }
-    const Vec3& getPlaneNormal() const { return planeNormal; }
+    Vec3 getVert0()       const { return vert0;       }
+    Vec3 getVert1()       const { return vert1;       }
+    Vec3 getVert2()       const { return vert2;       }
+    Vec3 getPlaneNormal() const { return planeNormal; }
 };
