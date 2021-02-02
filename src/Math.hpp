@@ -38,15 +38,15 @@ struct Vec3 {
     constexpr Vec3(float  x, float  y, float  z) : x(x), y(y), z(z) {}
     constexpr Vec3(int    x, int    y, int    z) : Vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)) {}
     constexpr Vec3(double x, double y, double z) : Vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)) {}
-
-    static constexpr Vec3 ahead()  { return Vec3( 0,  0, -1); };
+    
+    static constexpr Vec3 zero()   { return Vec3( 0,  0,  0); };
+    static constexpr Vec3 one()    { return Vec3( 1,  1,  1); };
     static constexpr Vec3 behind() { return Vec3( 0,  0,  1); };
+    static constexpr Vec3 ahead()  { return Vec3( 0,  0, -1); };
     static constexpr Vec3 up()     { return Vec3( 0,  1,  0); };
     static constexpr Vec3 down()   { return Vec3( 0, -1,  0); };
     static constexpr Vec3 right()  { return Vec3( 1,  0,  0); };
     static constexpr Vec3 left()   { return Vec3(-1,  0,  0); };
-    static constexpr Vec3 zero()   { return Vec3( 0,  0,  0); };
-    static constexpr Vec3 one()    { return Vec3( 1,  1,  1); };
 };
 inline constexpr Vec3 operator+(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
 inline constexpr Vec3 operator-(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
@@ -149,10 +149,10 @@ inline bool isOppositeDirection(const Vec3& a, const Vec3& b, float epsilon=DEFA
 }
 inline bool isParallelDirection(const Vec2& a, const Vec2& b, float epsilon=DEFAULT_EPSILON) {
     float cosAB = cosineSimilarity(a, b);
-    return isApproximately(cosAB, 1.00f, epsilon) && isApproximately(cosAB, -1.00f, epsilon);
+    return isApproximately(cosAB, 1.00f, epsilon) || isApproximately(cosAB, -1.00f, epsilon);
 }
 inline bool isParallelDirection(const Vec3& a, const Vec3& b, float epsilon=DEFAULT_EPSILON) {
     float cosAB = cosineSimilarity(a, b);
-    return isApproximately(cosAB, 1.00f, epsilon) && isApproximately(cosAB, -1.00f, epsilon);
+    return isApproximately(cosAB, 1.00f, epsilon) || isApproximately(cosAB, -1.00f, epsilon);
 }
 };

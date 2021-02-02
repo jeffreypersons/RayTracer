@@ -158,20 +158,20 @@ public:
         this->farClip = farClip;
     }
 
-    void lookAt(const Vec3& target, const Vec3& relativeUp) {
-        if (Math::isNormalized(relativeUp)) {
-            throw std::invalid_argument("relative up must be a normalized direction");
+    void lookAt(const Vec3& target) {
+        // if camera is pointed straight up/down, then we choose a new orthogonal vector for computing the
+        // right direction (as otherwise the cross product would be zero!)
+        Vec3 directionToTarget = Math::direction(position, target);
+        Vec3 tempUp{};
+        if (!Math::isParallelDirection(directionToTarget, Vec3::up())) {
+            tempUp = Vec3::up();
+        } else {
+            tempUp = directionToTarget.y > 0 ? Vec3::ahead() : Vec3::behind();
         }
 
-        Vec3 givenUp = relativeUp;
-        Vec3 givenForward = Math::direction(position, target);
-        if (Math::isParallelDirection(givenUp, givenForward)) {
-            throw std::invalid_argument("cannot look in a direction parallel to given up direction");
-        }
-
-        rightDir   = Math::normalize(Math::cross(givenForward, givenUp));
-        upDir      = Math::cross(rightDir, forwardDir);
-        forwardDir = givenForward;
+        this->forwardDir = directionToTarget;
+        this->rightDir   = Math::normalize(Math::cross(this->forwardDir, tempUp));
+        this->upDir      = Math::normalize(Math::cross(this->rightDir,   this->forwardDir));
     }
 };
 inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {

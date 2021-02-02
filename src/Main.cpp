@@ -4,14 +4,14 @@
 #include <iostream>
 
 
-RenderCam createFrontCam(const Vec3& position, float fieldOfView, float viewDist) {
+RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target) {
     RenderCam cam{};
     cam.setPosition(position);
     cam.setNearClip(viewDist);
     cam.setFarClip(10000.00f);
     cam.setAspectRatio(1.00f);
     cam.setFieldOfView(fieldOfView);
-    cam.setOrientation(Vec3::right(), Vec3::up(), Vec3::ahead());
+    cam.lookAt(target);
     return cam;
 }
 
@@ -42,13 +42,26 @@ int main()
     tracer.setBackgroundColor(Palette::skyBlue);
     tracer.setMinTForShadowIntersections(0.01f);
 
+    Scene scene = createSimpleScene();
     FrameBuffer frameBuffer(Vec2(1250, 1250), Palette::skyBlue);
-    Scene scene   = createSimpleScene();
-    RenderCam cam = createFrontCam(Vec3(0, 50, 50), 100.00f, 5.00f);
 
-    tracer.trace(cam, scene, frameBuffer);
-    frameBuffer.writeToFile("./scene");
+    Vec3 target = scene.getObject(0).getCentroid();
+    RenderCam frontCam  = createCam(Vec3(0,  50,  50), 100.00f, 5.00f, target);
+    RenderCam behindCam = createCam(Vec3(0,  50, -50), 100.00f, 5.00f, target);
+    RenderCam topCam    = createCam(Vec3(0, 100,   0), 100.00f, 5.00f, target);
+    RenderCam bottomCam = createCam(Vec3(0,   0,   0), 100.00f, 5.00f, target);
 
-    std::cout << cam << "\n\n" << scene.getLight(0) << "\n\n" << scene.getObject(0) << "\n\n" << "Program finished...\n";
+    std::cout << "Initializing target-" << frameBuffer << "\n\n";
+    std::cout << "Assembling "          << scene       << "\n\n";
+    std::cout << "Configuring front-"   << frontCam    << "\n\n";
+    std::cout << "Configuring behind-"  << behindCam   << "\n\n";
+    std::cout << "Configuring top-"     << topCam      << "\n\n";
+    std::cout << "Configuring bottom-"  << bottomCam   << "\n\n";
+    tracer.trace(frontCam,  scene, frameBuffer); frameBuffer.writeToFile("./scene-front");
+    tracer.trace(behindCam, scene, frameBuffer); frameBuffer.writeToFile("./scene-back");
+    tracer.trace(topCam,    scene, frameBuffer); frameBuffer.writeToFile("./scene-top");
+    tracer.trace(bottomCam, scene, frameBuffer); frameBuffer.writeToFile("./scene-bottom");
+
+    std::cout << "Press ENTER to end...";
     std::cin.get();
 }
