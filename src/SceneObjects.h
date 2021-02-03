@@ -13,8 +13,8 @@ protected:
 public:
     ~ISceneObject() {}
 
-    const Vec3& getCentroid() const { return centroid; }
-    const Material& getMaterial() const { return material; }
+    Vec3 getCentroid()     const { return centroid; }
+    Material getMaterial() const { return material; }
 
     virtual std::string getDescription() const = 0;
     virtual bool intersect(const Ray& ray, RayHitInfo& result) const = 0;

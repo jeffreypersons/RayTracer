@@ -50,12 +50,12 @@ public:
         ofs.close();
     }
     
-    constexpr size_t getWidth()              const noexcept { return width;            }
-    constexpr size_t getHeight()             const noexcept { return height;           }
-    constexpr size_t getNumPixels()          const noexcept { return numPixels;        }
-    constexpr float getMegaPixels()          const noexcept { return megaPixels;       }
-    constexpr const Color& getDefaultColor() const noexcept { return initialColor;     }
-    Color getColor(size_t row, size_t col)   const noexcept { return pixels[row][col]; }
+    constexpr size_t getWidth()            const noexcept { return width;            }
+    constexpr size_t getHeight()           const noexcept { return height;           }
+    constexpr size_t getNumPixels()        const noexcept { return numPixels;        }
+    constexpr float getMegaPixels()        const noexcept { return megaPixels;       }
+    constexpr Color getDefaultColor()      const noexcept { return initialColor;     }
+    Color getColor(size_t row, size_t col) const noexcept { return pixels[row][col]; }
     std::string getImageDescription() const {
         std::stringstream ss;
         ss << std::fixed << std::setprecision(2)

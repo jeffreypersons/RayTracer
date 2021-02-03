@@ -66,16 +66,16 @@ public:
         setFarClip(DEFAULT_FAR_CLIP);
     }
     
-    const Vec3& getPosition()        const { return position;      }
-    const Vec3& getRightDir()        const { return rightDir;      }
-    const Vec3& getUpDir()           const { return upDir;         }
-    const Vec3& getForwardDir()      const { return forwardDir;    }
+    Vec3 getPosition()               const { return position;      }
+    Vec3 getRightDir()               const { return rightDir;      }
+    Vec3 getUpDir()                  const { return upDir;         }
+    Vec3 getForwardDir()             const { return forwardDir;    }
     float getHorizontalFieldOfView() const { return fieldOfView.x; }
     float getVerticalFieldOfView()   const { return fieldOfView.y; }
     float getAspectRatio()           const { return aspectRatio;   }
     float getNearClip()              const { return nearClip;      }
     float getFarClip()               const { return farClip;       }
-    const Vec2& getViewportSize()    const { return viewportSize;  }
+    Vec2 getViewportSize()           const { return viewportSize;  }
 
     Vec3 viewportToWorld(float u, float v) const {
         float centeredU = u - 0.50f;
