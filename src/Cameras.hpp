@@ -44,25 +44,27 @@ private:
     static constexpr float DEFAULT_NEAR_CLIP     =       0.25f;
     static constexpr float DEFAULT_FAR_CLIP      =    1000.00f;
     
-    // find field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * len) / dist
-    static Vec2 computeFieldOfView(Vec2 viewportSize, float distanceToPlane) {
-        float fieldOfViewHorizontal = 2.00f * Math::atan(viewportSize.x / (2.00f * distanceToPlane));
-        float fieldOfViewVertical   = 2.00f * Math::atan(viewportSize.y / (2.00f * distanceToPlane));
-        return Vec2(fieldOfViewHorizontal, fieldOfViewVertical);
-    }
     // find viewport size by solving for the triangular len (width/height) in the equation `tan(fov * 0.5) = (0.5 * len) / dist`
-    static Vec2 computeViewplaneSize(Vec2 fieldOfView, float distanceToPlane) {
-        float viewportWidth  = 2.00f * distanceToPlane * Math::tan(0.50f * fieldOfView.x);
-        float viewportHeight = 2.00f * distanceToPlane * Math::tan(0.50f * fieldOfView.y);
+    Vec2 computeSizeFromHorizontalFov(float horizontalFieldOfView, float distanceToPlane) {
+        float viewportWidth = 2.00f * distanceToPlane * Math::tan(0.50f * fieldOfView.x);
+        float viewportHeight = viewportWidth / aspectRatio;
         return Vec2(viewportWidth, viewportHeight);
+    }
+    // find field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * len) / dist
+    void setupPerspectiveFromSize(const Vec2& viewportSize, float distanceToPlane) {
+        this->nearClip      = distanceToPlane;
+        this->farClip       = 10.00f * distanceToPlane;
+        this->viewportSize  = viewportSize;
+        this->aspectRatio   = viewportSize.x / viewportSize.y;
+        this->fieldOfView.x = 2.00f * Math::atan(viewportSize.x / (2.00f * distanceToPlane));
+        this->fieldOfView.y = 2.00f * Math::atan(viewportSize.y / (2.00f * distanceToPlane));
     }
 
 public:
     RenderCam() {
         setPosition(DEFAULT_POSITION);
         setOrientation(DEFAULT_RIGHT_DIR, DEFAULT_UP_DIR, DEFAULT_FORWARD_DIR);
-        setFieldOfView(DEFAULT_FIELD_OF_VIEW);
-        setAspectRatio(DEFAULT_ASPECT_RATIO);
+        setupPerspectiveFromSize(computeSizeFromHorizontalFov(DEFAULT_FIELD_OF_VIEW, DEFAULT_NEAR_CLIP), DEFAULT_NEAR_CLIP);
         setFarClip(DEFAULT_FAR_CLIP);
     }
     
@@ -81,8 +83,8 @@ public:
         float centeredU = u - 0.50f;
         float centeredV = v - 0.50f;
         Vec3 viewportCenter   = position + (nearClip * forwardDir);
-        Vec3 offsetInRightDir = centeredU * viewportSize.x * rightDir;
-        Vec3 offsetInUpDir    = centeredV * viewportSize.y * upDir;
+        Vec3 offsetInRightDir = (centeredU * viewportSize.x * rightDir);
+        Vec3 offsetInUpDir    = (centeredV * viewportSize.y * upDir);
         return viewportCenter + offsetInRightDir + offsetInUpDir;
     }
     // get a ray from current cam position to (u, v) position on our viewplane
@@ -101,52 +103,40 @@ public:
         if (!Math::isOrthogonal(rightDir, forwardDir) || !Math::isOrthogonal(forwardDir, upDir)) {
             throw std::invalid_argument("all given orientation vectors must be orthogonal to one another");
         }
-
         this->rightDir   = rightDir;
         this->upDir      = upDir;
         this->forwardDir = forwardDir;
     }
 
-    // sets field of view, aspect ratio, and clipping planes
+    // overrides field of view, aspect ratio, and clipping planes to match given viewport dimensions
     // compute field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
     void overrideViewportSize(Vec2 viewportSize, float distanceToViewport) {
         if (viewportSize.x <= 0 || viewportSize.y <= 0) {
             throw std::invalid_argument("viewport size dimensions must each be greater than 0");
         }
-
-        this->nearClip     = distanceToViewport;
-        this->farClip      = 10.00f * distanceToViewport;
-        this->aspectRatio  = viewportSize.x / viewportSize.y;
-        this->fieldOfView  = computeFieldOfView(viewportSize, distanceToViewport);
-        this->viewportSize = viewportSize;
+        setupPerspectiveFromSize(viewportSize, distanceToViewport);
     }
 
     void setFieldOfView(float horizontalDegrees) {
         if (horizontalDegrees <= MIN_FIELD_OF_VIEW || horizontalDegrees >= MAX_FIELD_OF_VIEW) {
             throw std::invalid_argument("field-of-view must be in range (0, 180)");
         }
-
-        this->fieldOfView  = Vec2(horizontalDegrees, horizontalDegrees / aspectRatio);
-        this->viewportSize = computeViewplaneSize(fieldOfView, nearClip);
+        Vec2 adjustedSize = computeSizeFromHorizontalFov(horizontalDegrees, this->nearClip);
+        setupPerspectiveFromSize(adjustedSize, this->nearClip);
     }
     void setAspectRatio(float aspectRatio) {
         if (aspectRatio <= 0) {
             throw std::invalid_argument("aspect-ratio must be greater than 0");
         }
-
-        this->aspectRatio  = aspectRatio;
-        this->fieldOfView  = Vec2(fieldOfView.x, fieldOfView.x / aspectRatio);
-        this->viewportSize = computeViewplaneSize(fieldOfView, nearClip);
+        Vec2 adjustedSize = Vec2(viewportSize.x, viewportSize.x / this->aspectRatio);
+        setupPerspectiveFromSize(adjustedSize, this->nearClip);
     }
     
     void setNearClip(float nearClip) {
         if (nearClip <= 0 || nearClip >= farClip) {
             throw std::invalid_argument("near-clip must be in range of (0, farClip)");
         }
-        this->nearClip = nearClip;
-        this->fieldOfView = computeFieldOfView(viewportSize, nearClip);
-        this->fieldOfView = Vec2(fieldOfView.x, fieldOfView.x / aspectRatio);
-        this->viewportSize = computeViewplaneSize(fieldOfView, nearClip);
+        setupPerspectiveFromSize(this->viewportSize, this->nearClip);
     }
     void setFarClip(float farClip) {
         if (farClip < 0) {
