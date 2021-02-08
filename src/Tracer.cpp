@@ -37,27 +37,31 @@ void Tracer::setReflectionalScalar(float reflectionalScalar) {
     this->reflectionalScalar = reflectionalScalar;
 }
 
-// for each pixel in buffer trace ray from given camera through given scene,
-// and write computed color to buffer (dynamically scheduled in parallel using openMp)
+// for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
+// trace it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
 void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& frameBuffer) {
-    const int width  = static_cast<int>(frameBuffer.getWidth());
-    const int height = static_cast<int>(frameBuffer.getHeight());
-    const float invWidth  = 1.00f / width;
-    const float invHeight = 1.00f / height;
+    const int width        = static_cast<int>(frameBuffer.getWidth());
+    const int height       = static_cast<int>(frameBuffer.getHeight());
+    const float invWidth   = 1.00f / width;
+    const float invHeight  = 1.00f / height;
+    const float nearZ      = renderCam.getNearClip();
+    const Vec3 eyePosition = renderCam.getPosition();
     #pragma omp for schedule(dynamic)
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
-            // shoot a ray from camera position corresponding to pixel's position in viewport
-            // and the directions of the camera
-            float u = (col + 0.5f) * invWidth;
-            float v = (row + 0.5f) * invHeight;
-            Ray primaryRay = renderCam.getRay(u, v);
-            Color color = traceRay(renderCam, scene, primaryRay, 0);
-            frameBuffer.setPixel(row, col, color);
+            const Vec3 pixelWorldPosition = renderCam.viewportToWorld(Vec3(
+                (col + 0.50f) * invWidth,
+                (row + 0.50f) * invHeight,
+                nearZ
+            ));
+            Ray primaryRay{ eyePosition, Math::direction(eyePosition, pixelWorldPosition) };
+            Color pixelColor = traceRay(renderCam, scene, primaryRay, 0);
+            frameBuffer.setPixel(row, col, pixelColor);
         }
     }
 }
 
+// todo: account for farClip
 Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray& ray, size_t iteration=0) const {
     if (iteration >= maxNumReflections) {
         return maxReflectedColor;
@@ -105,7 +109,7 @@ Ray Tracer::reflectRay(const Ray& ray, const IntersectInfo& hit) const {
 
 // check if there exists an object blocking light from reaching our hit-point
 bool Tracer::isInShadow(const IntersectInfo& hit, const Light& light, const RenderCam& renderCam, const Scene& scene) const {
-    Ray shadowRay(hit.point, Math::direction(hit.point, light.getPosition()));
+    Ray shadowRay{ hit.point, Math::direction(hit.point, light.getPosition()) };
     float tLight = Math::distance(light.getPosition(), hit.point) - minTForShadowIntersections;
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         IntersectInfo h;

@@ -24,10 +24,9 @@ RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, con
     RenderCam cam{};
     cam.setPosition(position);
     cam.setNearClip(viewDist);
-    cam.setFarClip(10000.00f);
     cam.setAspectRatio(aspectRatio);
     cam.setFieldOfView(fieldOfView);
-    cam.overrideViewportSize(Vec2(110.0, 27.5), 20.00f);
+    cam.overrideViewportSize(Vec2(100, 25), 20.00f, 1000.00f);
     cam.lookAt(target);
     return cam;
 }
