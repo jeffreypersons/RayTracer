@@ -4,22 +4,6 @@
 #include <iostream>
 
 
-/*
-Configuring bottom-RenderCam(
-    position:(0.00,-50.00,0.00),
-    Orientation{
-        right-axis:(-1.00,0.00,0.00),
-        upward-axis:(0.00,0.00,-1.00),
-        forward-axis:(0.00,1.00,0.00)},
-    ImagePlane{
-        aspect-ratio:4.00,
-        field-of-view-x:140.03,
-        field-of-view-y:69.02,
-        viewport-width:110.00,
-        viewport-height:27.50
-     },
-     Clipping{near-plane-z:20.00,far-plane-z:200.00})
-*/
 RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target, float aspectRatio) {
     RenderCam cam{};
     cam.setPosition(position);
@@ -53,7 +37,7 @@ int main()
     Tracer tracer{}; tracer.setBackgroundColor(Palette::skyBlue);
 
     Scene scene = createSimpleScene();
-    FrameBuffer frameBuffer{ Vec2(1000, 1000), Palette::skyBlue };
+    FrameBuffer frameBuffer{ CommonResolutions::HD_5K, Palette::skyBlue };
     Vec3 target = scene.getObject(0).getCentroid();
     RenderCam frontCam  = createCam(Vec3(0,  50,  50), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
     RenderCam behindCam = createCam(Vec3(0,  50, -50), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());

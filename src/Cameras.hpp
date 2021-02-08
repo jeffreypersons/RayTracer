@@ -11,7 +11,10 @@ constexpr Vec2 HD_720p  = Vec2(1280,  720);
 constexpr Vec2 HD_1080p = Vec2(1920, 1080);
 constexpr Vec2 HD_2K    = Vec2(2560, 1440);
 constexpr Vec2 HD_4K    = Vec2(3840, 2160);
+constexpr Vec2 HD_5K    = Vec2(5120, 2880);
 constexpr Vec2 HD_8K    = Vec2(7680, 4320);
+constexpr Vec2 HD_10K   = Vec2(10328, 7760);
+constexpr Vec2 HD_12K   = Vec2(12288, 6480);
 }
 
 // z-axis-aligned perspective 3d camera (rectangular-pinhole cam without lens)
@@ -126,7 +129,7 @@ public:
         if (aspectRatio <= 0) {
             throw std::invalid_argument("aspect-ratio must be greater than 0");
         }
-        Vec2 adjustedSize = Vec2(viewportSize.x, viewportSize.x / aspectRatio);
+        Vec2 adjustedSize{ viewportSize.x, viewportSize.x / aspectRatio };
         setupPerspectiveFromSize(adjustedSize, this->nearClip, this->farClip);
     }
     
