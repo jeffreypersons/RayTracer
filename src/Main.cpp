@@ -4,20 +4,34 @@
 #include <iostream>
 
 
-RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target) {
+/*
+Configuring bottom-RenderCam(
+    position:(0.00,-50.00,0.00),
+    Orientation{
+        right-axis:(-1.00,0.00,0.00),
+        upward-axis:(0.00,0.00,-1.00),
+        forward-axis:(0.00,1.00,0.00)},
+    ImagePlane{
+        aspect-ratio:4.00,
+        field-of-view-x:140.03,
+        field-of-view-y:69.02,
+        viewport-width:110.00,
+        viewport-height:27.50
+     },
+     Clipping{near-plane-z:20.00,far-plane-z:200.00})
+*/
+RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target, float aspectRatio) {
     RenderCam cam{};
     cam.setPosition(position);
     cam.setNearClip(viewDist);
     cam.setFarClip(10000.00f);
-    cam.setAspectRatio(1.00f);
+    cam.setAspectRatio(aspectRatio);
     cam.setFieldOfView(fieldOfView);
+    cam.overrideViewportSize(Vec2(110.0, 27.5), 20.00f);
     cam.lookAt(target);
     return cam;
 }
 
-// TODO: look into fresnel, better/smoother fall-off-effect, etc...
-// TODO: look into why the specular highlights seem off center...
-// ......see https://stackoverflow.com/questions/33054399/raytracing-lighting-equations
 Scene createSimpleScene() {
     Material brightWhite{};
     brightWhite.setColors(Palette::gray, Palette::white, Palette::white);
@@ -34,34 +48,21 @@ Scene createSimpleScene() {
     return scene;
 }
 
+
 int main()
 {
     std::cout << "Program started...\n\n";
-
-    Tracer tracer{};
-    tracer.setBackgroundColor(Palette::skyBlue);
-    tracer.setMinTForShadowIntersections(0.01f);
+    Tracer tracer{}; tracer.setBackgroundColor(Palette::skyBlue);
 
     Scene scene = createSimpleScene();
-    FrameBuffer frameBuffer(Vec2(1250, 1250), Palette::skyBlue);
-
-    Vec3 target = scene.getObject(0).getCentroid();
-    RenderCam frontCam  = createCam(Vec3(0,  50,  50), 100.00f, 5.00f, target);
-    RenderCam behindCam = createCam(Vec3(0,  50, -50), 100.00f, 5.00f, target);
-    RenderCam topCam    = createCam(Vec3(0, 100,   0), 100.00f, 5.00f, target);
-    RenderCam bottomCam = createCam(Vec3(0,   0,   0), 100.00f, 5.00f, target);
-
+    FrameBuffer frameBuffer{ CommonResolutions::HD_1080p, Palette::skyBlue };
+    RenderCam frontCam  = createCam(Vec3(0,  50,  50), 110.00f, 5.00f, scene.getObject(0).getCentroid(), frameBuffer.getAspectRatio());
+    
     std::cout << "Initializing target-" << frameBuffer << "\n\n";
     std::cout << "Assembling "          << scene       << "\n\n";
-    std::cout << "Configuring front-"   << frontCam    << "\n\n";
-    std::cout << "Configuring behind-"  << behindCam   << "\n\n";
-    std::cout << "Configuring top-"     << topCam      << "\n\n";
-    std::cout << "Configuring bottom-"  << bottomCam   << "\n\n";
-    tracer.trace(frontCam,  scene, frameBuffer); frameBuffer.writeToFile("./scene-front");
-    tracer.trace(behindCam, scene, frameBuffer); frameBuffer.writeToFile("./scene-back");
-    tracer.trace(topCam,    scene, frameBuffer); frameBuffer.writeToFile("./scene-top");
-    tracer.trace(bottomCam, scene, frameBuffer); frameBuffer.writeToFile("./scene-bottom");
-
+    std::cout << "Configuring cam-"     << frontCam    << "\n\n";
+    tracer.trace(frontCam,  scene, frameBuffer); frameBuffer.writeToFile("./scene");
+    
     std::cout << "Press ENTER to end...";
     std::cin.get();
 }
