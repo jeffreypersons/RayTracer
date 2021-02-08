@@ -4,15 +4,15 @@
 
 
 namespace CommonResolutions {
-constexpr Vec2 SD_240p  = Vec2( 426,  240);
-constexpr Vec2 SD_360p  = Vec2( 640,  360);
-constexpr Vec2 SD_480p  = Vec2( 854,  480);
-constexpr Vec2 HD_720p  = Vec2(1280,  720);
-constexpr Vec2 HD_1080p = Vec2(1920, 1080);
-constexpr Vec2 HD_2K    = Vec2(2560, 1440);
-constexpr Vec2 HD_4K    = Vec2(3840, 2160);
-constexpr Vec2 HD_5K    = Vec2(5120, 2880);
-constexpr Vec2 HD_8K    = Vec2(7680, 4320);
+constexpr Vec2 SD_240p  = Vec2(  426,  240);
+constexpr Vec2 SD_360p  = Vec2(  640,  360);
+constexpr Vec2 SD_480p  = Vec2(  854,  480);
+constexpr Vec2 HD_720p  = Vec2( 1280,  720);
+constexpr Vec2 HD_1080p = Vec2( 1920, 1080);
+constexpr Vec2 HD_2K    = Vec2( 2560, 1440);
+constexpr Vec2 HD_4K    = Vec2( 3840, 2160);
+constexpr Vec2 HD_5K    = Vec2( 5120, 2880);
+constexpr Vec2 HD_8K    = Vec2( 7680, 4320);
 constexpr Vec2 HD_10K   = Vec2(10328, 7760);
 constexpr Vec2 HD_12K   = Vec2(12288, 6480);
 }
