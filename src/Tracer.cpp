@@ -45,15 +45,15 @@ void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& 
     const float invWidth  = 1.00f / width;
     const float invHeight = 1.00f / height;
     #pragma omp for schedule(dynamic)
-    for (int row = 0; row < width; row++) {
-        for (int col = 0; col < height; col++) {
+    for (int row = 0; row < height; row++) {
+        for (int col = 0; col < width; col++) {
             // shoot a ray from camera position corresponding to pixel's position in viewport
             // and the directions of the camera
             float u = (col + 0.5f) * invWidth;
             float v = (row + 0.5f) * invHeight;
             Ray primaryRay = renderCam.getRay(u, v);
             Color color = traceRay(renderCam, scene, primaryRay, 0);
-            frameBuffer.setColor(row, col, color);
+            frameBuffer.setPixel(row, col, color);
         }
     }
 }
@@ -64,56 +64,51 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     }
 
     // find our nearest intersection
-    RayHitInfo hit;
-    const ISceneObject* object = nullptr;
+    IntersectInfo hit{};
     float tClosest = std::numeric_limits<float>::infinity();
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
-        RayHitInfo h;
+        IntersectInfo h;
         if (scene.getObject(index).intersect(ray, h) && h.t < tClosest) {
             hit      = h;
             tClosest = h.t;
-            object   = &scene.getObject(index);
         }
     }
-    if (object == nullptr) {
+    if (hit.object == nullptr) {
         return backgroundColor;
     }
 
     // reflect our ray throughout the scene using a slight directional offset and iteration cap to avoid infinite reflections
     Color reflectedColor = backgroundColor;
-    if (object->getMaterial().getReflectivity() > 0.00f) {
+    if (hit.object->getMaterial().getReflectivity() > 0.00f) {
         reflectedColor = traceRay(renderCam, scene, reflectRay(ray, hit), iteration + 1);
     }
     
-    // todo: handle zero or more lights correctly, and maybe blend shadows
-    // look into shadow color vs ambient, etc...
-    Color ambient = computeAmbientColor(*object, scene.getLight(0));
-    if (isInShadow(renderCam, hit, scene, scene.getLight(0))) {
+    Color ambient = computeAmbientColor(hit, scene.getLight(0));
+    if (isInShadow(hit, scene.getLight(0), renderCam, scene)) {
         return ambient;
     }
 
-    Color diffuse  = computeDiffuseColor( *object, scene.getLight(0), hit);
-    Color specular = computeSpecularColor(*object, scene.getLight(0), hit, renderCam);
+    Color diffuse  = computeDiffuseColor( hit, scene.getLight(0));
+    Color specular = computeSpecularColor(hit, scene.getLight(0), renderCam);
 
     // blend intrinsic and reflected color using our light and intersected object
-    // todo: look into different weights for blending, etc...
     Color nonReflectedColor = ambient + diffuse + specular;
-    return object->getMaterial().getReflectivity() * reflectedColor +
-           object->getMaterial().getIntrinsity()   * nonReflectedColor;
+    return hit.object->getMaterial().getReflectivity() * reflectedColor +
+           hit.object->getMaterial().getIntrinsity()   * nonReflectedColor;
 }
 
 // reflect our ray using a slight direction offset to avoid infinite reflections
-Ray Tracer::reflectRay(const Ray& ray, const RayHitInfo& hit) const {
+Ray Tracer::reflectRay(const Ray& ray, const IntersectInfo& hit) const {
     Vec3 reflectedVec = (-1.0f * ray.direction) - (2.0f * hit.normal) * (Math::dot(ray.direction, hit.normal));
     return Ray(hit.point + reflectionalScalar * hit.normal, Math::normalize(reflectedVec));
 }
 
 // check if there exists an object blocking light from reaching our hit-point
-bool Tracer::isInShadow(const RenderCam& renderCam, const RayHitInfo& hit, const Scene& scene, const Light& light) const {
+bool Tracer::isInShadow(const IntersectInfo& hit, const Light& light, const RenderCam& renderCam, const Scene& scene) const {
     Ray shadowRay(hit.point, Math::direction(hit.point, light.getPosition()));
     float tLight = Math::distance(light.getPosition(), hit.point) - minTForShadowIntersections;
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
-        RayHitInfo h;
+        IntersectInfo h;
         if (scene.getObject(index).intersect(shadowRay, h) && h.t > minTForShadowIntersections && h.t < tLight) {
             return true;
         }
@@ -122,19 +117,18 @@ bool Tracer::isInShadow(const RenderCam& renderCam, const RayHitInfo& hit, const
 }
 
 // blend intrinsic and reflected color using our light and intersected object
-Color Tracer::computeAmbientColor(const ISceneObject& object, const Light& light) const {
-    return object.getMaterial().getAmbientColor() * light.getAmbientColor();
+Color Tracer::computeAmbientColor(const IntersectInfo& hit, const Light& light) const {
+    return hit.object->getMaterial().getAmbientColor() * light.getAmbientColor();
 }
 // blend intrinsic and reflected color using our light and intersected object
-Color Tracer::computeDiffuseColor(const ISceneObject& object, const Light& light, const RayHitInfo& hit) const {
+Color Tracer::computeDiffuseColor(const IntersectInfo& hit, const Light& light) const {
     Vec3 directionToLight = Math::direction(hit.point, light.getPosition());
-    return Math::dot(hit.normal, directionToLight) *
-        object.getMaterial().getDiffuseColor() * light.getDiffuseColor();
+    return Math::dot(hit.normal, directionToLight) * hit.object->getMaterial().getDiffuseColor() * light.getDiffuseColor();
 }
 // blend intrinsic and reflected color using our light and intersected object
-Color Tracer::computeSpecularColor(const ISceneObject& object, const Light& light, const RayHitInfo& hit, const RenderCam& renderCam) const {
+Color Tracer::computeSpecularColor(const IntersectInfo& hit, const Light& light, const RenderCam& renderCam) const {
     Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
     Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
     float intensity = Math::dot(hit.normal, halfwayVec);
-    return intensity * object.getMaterial().getSpecularColor() * light.getSpecularColor();
+    return intensity * hit.object->getMaterial().getSpecularColor() * light.getSpecularColor();
 }

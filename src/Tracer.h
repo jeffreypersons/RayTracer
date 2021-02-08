@@ -38,10 +38,10 @@ public:
 private:
     Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
 
-    Ray reflectRay(const Ray&, const RayHitInfo&) const;
-    bool isInShadow(const RenderCam&, const RayHitInfo&, const Scene&, const Light&) const;
-
-    Color computeAmbientColor (const ISceneObject&, const Light&) const;
-    Color computeDiffuseColor (const ISceneObject&, const Light&, const RayHitInfo&) const;
-    Color computeSpecularColor(const ISceneObject&, const Light&, const RayHitInfo&, const RenderCam&) const;
+    Ray reflectRay(const Ray&, const IntersectInfo&) const;
+    bool isInShadow(const IntersectInfo&, const Light&, const RenderCam&, const Scene&) const;
+    
+    Color computeAmbientColor (const IntersectInfo&, const Light&) const;
+    Color computeDiffuseColor (const IntersectInfo&, const Light&) const;
+    Color computeSpecularColor(const IntersectInfo&, const Light&, const RenderCam&) const;
 };

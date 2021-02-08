@@ -13,7 +13,7 @@ Sphere::Sphere(const Vec3& center, float radius, const Material& material) {
 // given ray [X(t) = P + t] intersects sphere [| X – C | = r] IFF there exists
 // at least one real number t [t = - D.M +/- sqrt((D.M)^2 – ( |M|^2 – r^2 ))]
 // (that is, if above discriminant >= 0, then there exists a point along ray that also lies along sphere's surface)
-bool Sphere::intersect(const Ray& ray, RayHitInfo& result) const {
+bool Sphere::intersect(const Ray& ray, IntersectInfo& result) const {
     Vec3 M = ray.origin - this->centroid;
     float dDotM = Math::dot(ray.direction, M);
     float discriminant = (dDotM * dDotM) - (Math::magnitudeSquared(M) - radius * radius);
@@ -27,11 +27,12 @@ bool Sphere::intersect(const Ray& ray, RayHitInfo& result) const {
         closestT = - dDotM;
     } else {
         float sqrtOfDiscriminant = Math::squareRoot(discriminant);
-        closestT = Math::min(- dDotM + sqrtOfDiscriminant, - dDotM - sqrtOfDiscriminant);
+        closestT = Math::min(-dDotM + sqrtOfDiscriminant, -dDotM - sqrtOfDiscriminant);
     }
     result.t      = closestT;
     result.point  = ray.origin + ray.direction * result.t;
     result.normal = (result.point - this->centroid) / this->radius;
+    result.object = this;
     return true;
 }
 
@@ -49,7 +50,6 @@ std::string Sphere::getDescription() const {
 
 Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, const Material& material) {
     // note that base class members can only be initialized in the body and not our typical initializer list
-    this->centroid = computeCentroid();
     this->material = material;
     this->vert0 = vert0;
     this->vert1 = vert1;
@@ -57,6 +57,7 @@ Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, cons
     this->edge0 = vert1 - vert0;
     this->edge1 = vert2 - vert1;
     this->edge2 = vert0 - vert2;
+    this->centroid    = computeCentroid();
     this->planeNormal = Math::normalize(Math::cross(edge0, edge1));
 }
 
@@ -78,7 +79,7 @@ bool Triangle::isPointInTriangle(const Vec3& point) const {
 // given ray intersects triangle IFF given ray [X(t) = P + tD] intersects the plane [P.n = k] in a way such that
 // our intersection point is always to the LEFT side of EVERY edge
 // (aka our plane intersection point @[t = (k – P.n)/(D.n)] lies in between our triangle vertices)
-bool Triangle::intersect(const Ray& ray, RayHitInfo& result) const {
+bool Triangle::intersect(const Ray& ray, IntersectInfo& result) const {
     float k = Math::dot(vert0, planeNormal);
     float t = (k - Math::dot(ray.origin, planeNormal)) / Math::dot(ray.direction, planeNormal);
     Vec3 pointIntersectingPlane = ray.origin + ray.direction * t;
@@ -86,6 +87,7 @@ bool Triangle::intersect(const Ray& ray, RayHitInfo& result) const {
         result.t      = t;
         result.point  = pointIntersectingPlane;
         result.normal = planeNormal;
+        result.object = this;
         return true;
     }
     return false;
@@ -95,9 +97,10 @@ std::string Triangle::getDescription() const {
     std::stringstream ss;
     ss << std::fixed << std::setprecision(2)
        << "Triangle("
-         << "centroid:(" << getCentroid() << "), "
-         << "material:"  << getMaterial() << ", "
-         << "verts:[v0:" << getVert0() << ",v1:" << getVert1() << ",v2:" << getVert2() << "]"
+         << "centroid:("        << getCentroid()    << "), "
+         << "plane-normal:(v0:" << getPlaneNormal() << "), "
+         << "material:"   << getMaterial()          << ", "
+         << "verts:[v0:(" << getVert0() << "),v1:(" << getVert1() << "),v2:(" << getVert2() << ")]"
        << ")";
     return ss.str();
 }
