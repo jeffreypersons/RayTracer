@@ -45,8 +45,8 @@ private:
     static constexpr float DEFAULT_FAR_CLIP      =    1000.00f;
     
     // find viewport size by solving for the triangular len (width/height) in the equation `tan(fov * 0.5) = (0.5 * len) / dist`
-    Vec2 computeSizeFromHorizontalFov(float horizontalFieldOfView, float distanceToPlane) {
-        float viewportWidth  = 2.00f * distanceToPlane * Math::tan(0.50f * fieldOfView.x);
+    static Vec2 computeSizeFromHorizontalFov(float horizontalFieldOfView, float distanceToPlane, float aspectRatio) {
+        float viewportWidth  = 2.00f * distanceToPlane * Math::tan(0.50f * horizontalFieldOfView);
         float viewportHeight = viewportWidth / aspectRatio;
         return Vec2(viewportWidth, viewportHeight);
     }
@@ -62,7 +62,7 @@ private:
     
 public:
     RenderCam() {
-        Vec2 size = computeSizeFromHorizontalFov(DEFAULT_FIELD_OF_VIEW, DEFAULT_NEAR_CLIP);
+        Vec2 size = computeSizeFromHorizontalFov(DEFAULT_FIELD_OF_VIEW, DEFAULT_NEAR_CLIP, DEFAULT_ASPECT_RATIO);
         setPosition(DEFAULT_POSITION);
         setOrientation(DEFAULT_RIGHT_DIR, DEFAULT_UP_DIR, DEFAULT_FORWARD_DIR);
         setupPerspectiveFromSize(size, DEFAULT_NEAR_CLIP, DEFAULT_FAR_CLIP);
@@ -119,14 +119,14 @@ public:
         if (horizontalDegrees <= MIN_FIELD_OF_VIEW || horizontalDegrees >= MAX_FIELD_OF_VIEW) {
             throw std::invalid_argument("field-of-view must be in range (0, 180)");
         }
-        Vec2 adjustedSize = computeSizeFromHorizontalFov(horizontalDegrees, this->nearClip);
+        Vec2 adjustedSize = computeSizeFromHorizontalFov(horizontalDegrees, this->nearClip, this->aspectRatio);
         setupPerspectiveFromSize(adjustedSize, this->nearClip, this->farClip);
     }
     void setAspectRatio(float aspectRatio) {
         if (aspectRatio <= 0) {
             throw std::invalid_argument("aspect-ratio must be greater than 0");
         }
-        Vec2 adjustedSize = Vec2(viewportSize.x, viewportSize.x / this->aspectRatio);
+        Vec2 adjustedSize = Vec2(viewportSize.x, viewportSize.x / aspectRatio);
         setupPerspectiveFromSize(adjustedSize, this->nearClip, this->farClip);
     }
     
@@ -159,7 +159,6 @@ public:
         this->upDir      = Math::normalize(Math::cross(this->rightDir,   this->forwardDir));
     }
 };
-// todo: add a frustum info section...
 inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
     os << std::fixed << std::setprecision(2)
        << "RenderCam("
@@ -176,7 +175,7 @@ inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
            << "viewport-height:" << renderCam.getViewportSize().y        << "}, "
          << "Clipping{"
            << "near-plane-z:" << renderCam.getNearClip() << ","
-           << "far-plane-z:" << renderCam.getFarClip() << "}"
+           << "far-plane-z:"  << renderCam.getFarClip() << "}"
          << ")";
     return os;
 }
