@@ -66,23 +66,14 @@ void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& 
     }
 }
 
-// todo: account for farClip
+// todo: account for near and far clip culling (probably need to determine z dist pf object to camera and clamp on that)
 Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray& ray, size_t iteration=0) const {
     if (iteration >= maxNumReflections) {
         return maxReflectedColor;
     }
 
-    // find our nearest intersection
     IntersectInfo hit{};
-    float tClosest = std::numeric_limits<float>::infinity();
-    for (size_t index = 0; index < scene.getNumObjects(); index++) {
-        IntersectInfo h;
-        if (scene.getObject(index).intersect(ray, h) && h.t < tClosest) {
-            hit      = h;
-            tClosest = h.t;
-        }
-    }
-    if (hit.object == nullptr) {
+    if (!findNearestIntersection(scene, ray, hit)) {
         return backgroundColor;
     }
 
@@ -110,6 +101,25 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
 Ray Tracer::reflectRay(const Ray& ray, const IntersectInfo& hit) const {
     Vec3 reflectedVec = (-1.0f * ray.direction) - (2.0f * hit.normal) * (Math::dot(ray.direction, hit.normal));
     return Ray(hit.point + reflectionalBias * hit.normal, Math::normalize(reflectedVec));
+}
+
+bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, IntersectInfo& result) const {
+    float tClosest = Math::INF;
+    IntersectInfo closestIntersection{};
+    for (size_t index = 0; index < scene.getNumObjects(); index++) {
+        IntersectInfo intersection;
+        if (scene.getObject(index).intersect(ray, intersection) && intersection.t < tClosest) {
+            tClosest = intersection.t;
+            closestIntersection = intersection;
+        }
+    }
+
+    if (closestIntersection.object == nullptr) {
+        return false;
+    } else {
+        result = closestIntersection;
+        return true;
+    }
 }
 
 // check if there exists an object blocking light from reaching our hit-point
@@ -147,7 +157,6 @@ Color Tracer::computeDiffuseColor(const IntersectInfo& hit, const Light& light) 
 Color Tracer::computeSpecularColor(const IntersectInfo& hit, const Light& light, const RenderCam& renderCam) const {
     Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
     Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
-    float intensity = Math::dot(hit.normal, halfwayVec);
+    float intensity = Math::max(0.00f, Math::dot(hit.normal, halfwayVec));
     return intensity * hit.object->getMaterial().getSpecularColor() * light.getColor();
 }
-

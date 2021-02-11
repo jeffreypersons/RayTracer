@@ -44,6 +44,7 @@ private:
     Ray reflectRay(const Ray&, const IntersectInfo&) const;
     bool isInShadow(const IntersectInfo&, const Light&, const RenderCam&, const Scene&) const;
     
+    bool findNearestIntersection(const Scene&, const Ray&, IntersectInfo&) const;
     Color computeAmbientColor (const IntersectInfo&, const Light&) const;
     Color computeDiffuseColor (const IntersectInfo&, const Light&) const;
     Color computeSpecularColor(const IntersectInfo&, const Light&, const RenderCam&) const;

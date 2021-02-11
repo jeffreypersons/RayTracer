@@ -16,7 +16,7 @@ RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, con
 
 Scene createSimpleScene() {
     Material matteGreen{};
-    matteGreen.setWeights(1.00f, 0.00f);
+    matteGreen.setWeights(0.90f, 0.10f);
     matteGreen.setAmbientColor(Palette::lightGreen);
     matteGreen.setDiffuseColor(Palette::green);
     matteGreen.setSpecularColor(Palette::green);
@@ -30,7 +30,7 @@ Scene createSimpleScene() {
 
 int main() {
     std::cout << "Program started...\n\n";
-    Tracer tracer{}; tracer.setBackgroundColor(Palette::skyBlue);
+    Tracer tracer{}; tracer.setBackgroundColor(Palette::skyBlue); tracer.setMaximumallyReflectedColor(Palette::black);
 
     Scene scene = createSimpleScene();
     FrameBuffer frameBuffer{ CommonResolutions::HD_1080p, Palette::skyBlue };
