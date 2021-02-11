@@ -1,51 +1,51 @@
 #pragma once
 #include "Math.hpp"
-#include "Material.hpp"
 
 
 // represents a point light in 3d space
-// note: only diffuse/ambient/specular colors from material are used, other values are ignored
 class Light {
 private:
     Vec3 position;
-    Material material;
-
-    static constexpr Vec3 DEFAULT_POSITION { 0, 0, 0 };
-    static constexpr Color DEFAULT_AMBIENT_COLOR  { 0.20f, 0.20f, 0.20f };
-    static constexpr Color DEFAULT_DIFFUSE_COLOR  { 1.00f, 1.00f, 1.00f };
-    static constexpr Color DEFAULT_SPECULAR_COLOR { 1.00f, 1.00f, 1.00f };
-
-public:
-    Light(const Vec3& position, const Color& ambientColor, const Color& diffuseColor, const Color& specularColor) :
-        position(position),
-        material(ambientColor, diffuseColor, specularColor, 1.00f, 0.00f, 0.00f, 1.00f) {}
-
-    Light(const Vec3& position, const Material& material) :
-        Light(position, material.getAmbientColor(), material.getDiffuseColor(), material.getSpecularColor()) {}
+    Color color;
+    float intensity;
     
-    Light(const Vec3& position=Vec3(0, 0, 0)) :
-        Light(position, DEFAULT_AMBIENT_COLOR, DEFAULT_DIFFUSE_COLOR, DEFAULT_SPECULAR_COLOR) {}
+    static constexpr Vec3 DEFAULT_POSITION { 0, 0, 0 };
+    static constexpr float DEFAULT_INTENSITY { 0.50f };
+    static constexpr Color DEFAULT_COLOR { 0.85f, 0.85f, 0.85f };
+    
+public:
+    Light(const Vec3& position, const Color& color, float intensity) :
+        position(position),
+        color(DEFAULT_COLOR),
+        intensity(DEFAULT_INTENSITY) {}
 
-    void setColors(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor) {
-        this->material.setAmbientColor(ambientColor);
-        this->material.setDiffuseColor(diffuseColor);
-        this->material.setSpecularColor(specularColor);
+    // shade given point
+    void illuminate(const Vec3& point, Vec3& lightDir, Vec3& lightIntensity, float& distance) const {
+        float distanceSquared = Math::magnitudeSquared(point - this->position);
+        lightDir = Math::direction(this->position, point);
+        distance = Math::square(distanceSquared);
+        lightIntensity = Vec3(color.r, color.g, color.b) * (intensity / (4 * Math::PI * distanceSquared));
     }
-    void setAmbientColor(const Color& ambientColor)   { this->material.setAmbientColor(ambientColor);   }
-    void setDiffuseColor(const Color& diffuseColor)   { this->material.setDiffuseColor(diffuseColor);   }
-    void setSpecularColor(const Color& specularColor) { this->material.setSpecularColor(specularColor); }
 
-    const Vec3&     getPosition()   const { return position;                    }
-    const Material& getMaterial()   const { return material;                    }
-    const Color& getAmbientColor()  const { return material.getAmbientColor();  }
-    const Color& getDiffuseColor()  const { return material.getDiffuseColor();  }
-    const Color& getSpecularColor() const { return material.getSpecularColor(); }
+    void setPosition(const Vec3& position) { this->position = position; }
+    void setColor(const Color& color)      { this->color    = color;    }
+    void setIntensity(float intensity) {
+        if (intensity < 0.00f || intensity > 1.00f) {
+            throw std::invalid_argument("light intensity must be in range [0.00, 1.00]");
+        }
+        this->intensity = intensity;
+    }
+
+    Vec3 getPosition()   const { return position;  }
+    Color getColor()     const { return color;     }
+    float getIntensity() const { return intensity; }
 };
 inline std::ostream& operator<<(std::ostream& os, const Light& light) {
     os << std::fixed << std::setprecision(2)
        << "Light("
          << "position:(" << light.getPosition() << "), "
-         << "material:"  << light.getMaterial()
+         << "color:("    << light.getColor()    << "), "
+         << "intensity:" << light.getColor()
        << ")";
     return os;
 }

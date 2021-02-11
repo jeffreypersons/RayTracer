@@ -15,29 +15,25 @@ RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, con
 }
 
 Scene createSimpleScene() {
-    Material brightWhite{};
-    brightWhite.setColors(Palette::gray, Palette::white, Palette::white);
-
     Material matteGreen{};
     matteGreen.setWeights(1.00f, 0.00f);
     matteGreen.setAmbientColor(Palette::lightGreen);
     matteGreen.setDiffuseColor(Palette::green);
     matteGreen.setSpecularColor(Palette::green);
-
+    
     Scene scene{};
-    scene.addLight(Light(Vec3(0, 100, 25), brightWhite));
+    scene.addLight(Light(Vec3(0, 100, 25), Palette::white, 1.00f));
     scene.addSceneObject(Sphere(Vec3(0, 50, 0), 25, matteGreen));
     return scene;
 }
 
 
-int main()
-{
+int main() {
     std::cout << "Program started...\n\n";
     Tracer tracer{}; tracer.setBackgroundColor(Palette::skyBlue);
 
     Scene scene = createSimpleScene();
-    FrameBuffer frameBuffer{ CommonResolutions::HD_5K, Palette::skyBlue };
+    FrameBuffer frameBuffer{ CommonResolutions::HD_1080p, Palette::skyBlue };
     Vec3 target = scene.getObject(0).getCentroid();
     RenderCam frontCam  = createCam(Vec3(0,  50,  50), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
     RenderCam behindCam = createCam(Vec3(0,  50, -50), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());

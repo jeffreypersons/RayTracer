@@ -4,6 +4,7 @@
 #include "Color.hpp"
 
 
+// todo: add albedo
 // color of diffuse/ambient/specular reflectance, as well as weighted intrinsic/reflectivity/refraction
 class Material {
 private:
