@@ -16,7 +16,7 @@ private:
     const Color initialColor;
     Color* pixels;
 
-    float computeMegaPixels(size_t width, size_t height, size_t numDigits=2) {
+    static float computeMegaPixels(size_t width, size_t height, size_t numDigits=2) {
         return Math::roundToNearestDigit((width * height) / 1000000.00f, numDigits);
     }
 
