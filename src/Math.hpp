@@ -21,12 +21,14 @@ struct Vec2 {
     static constexpr Vec2 zero()  { return Vec2( 0,  0); };
     static constexpr Vec2 one()   { return Vec2( 1,  1); };
 };
-
 inline constexpr Vec2 operator+(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x + rhs.x, lhs.y + rhs.y); }
 inline constexpr Vec2 operator-(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x - rhs.x, lhs.y - rhs.y); }
-inline constexpr Vec2 operator/(const Vec2& lhs,  float       rhs) { return Vec2(lhs.x / rhs,   lhs.y / rhs);   }
+inline constexpr Vec2 operator*(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x * rhs.x, lhs.y * rhs.y); }
 inline constexpr Vec2 operator*(const Vec2& lhs,  float       rhs) { return Vec2(lhs.x * rhs,   lhs.y * rhs);   }
 inline constexpr Vec2 operator*(float       lhs,  const Vec2& rhs) { return Vec2(lhs   * rhs.x, lhs   * rhs.y); }
+inline constexpr Vec2 operator/(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x / rhs.x, lhs.y / rhs.y); }
+inline constexpr Vec2 operator/(const Vec2& lhs,  float       rhs) { return Vec2(lhs.x / rhs,   lhs.y / rhs);   }
+inline constexpr Vec2 operator/(float       lhs,  const Vec2& rhs) { return Vec2(lhs   / rhs.x, lhs   / rhs.y); }
 inline std::ostream& operator<<(std::ostream& os, const Vec2& vec) { os << vec.x << "," << vec.y; return os;    }
 
 struct Vec3 {
@@ -48,11 +50,14 @@ struct Vec3 {
     static constexpr Vec3 right()  { return Vec3( 1,  0,  0); };
     static constexpr Vec3 left()   { return Vec3(-1,  0,  0); };
 };
-inline constexpr Vec3 operator+(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
-inline constexpr Vec3 operator-(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
-inline constexpr Vec3 operator*(float       lhs,  const Vec3& rhs) { return Vec3(lhs   * rhs.x, lhs   * rhs.y, lhs   * rhs.z); }
-inline constexpr Vec3 operator*(const Vec3& lhs,  float       rhs) { return Vec3(lhs.x * rhs,   lhs.y * rhs,   lhs.z * rhs);   }
-inline constexpr Vec3 operator/(const Vec3& lhs,  float       rhs) { return Vec3(lhs.x / rhs,   lhs.y / rhs,   lhs.z / rhs);   }
+inline constexpr Vec3 operator+(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.y + rhs.y); }
+inline constexpr Vec3 operator-(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.y - rhs.y); }
+inline constexpr Vec3 operator*(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x * rhs.x, lhs.y * rhs.y, lhs.y * rhs.y); }
+inline constexpr Vec3 operator*(const Vec3& lhs,  float       rhs) { return Vec3(lhs.x * rhs,   lhs.y * rhs,   lhs.y * rhs);   }
+inline constexpr Vec3 operator*(float       lhs,  const Vec3& rhs) { return Vec3(lhs   * rhs.x, lhs   * rhs.y, lhs * rhs.y);   }
+inline constexpr Vec3 operator/(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x / rhs.x, lhs.y / rhs.y, lhs.y / rhs.y); }
+inline constexpr Vec3 operator/(const Vec3& lhs,  float       rhs) { return Vec3(lhs.x / rhs,   lhs.y / rhs,   lhs.y / rhs);   }
+inline constexpr Vec3 operator/(float       lhs,  const Vec3& rhs) { return Vec3(lhs   / rhs.x, lhs   / rhs.y, lhs   / rhs.y); }
 inline std::ostream& operator<<(std::ostream& os, const Vec3& vec) { os << vec.x << "," << vec.y << "," << vec.z; return os;   }
 
 
