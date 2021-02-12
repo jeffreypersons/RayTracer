@@ -11,12 +11,11 @@
 
 Tracer::Tracer() :
     maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS),
-    shadowColor(DEFAULT_SHADOW_COLOR),
-    backgroundColor(DEFAULT_BACKGROUND_COLOR),
+    shadowColor      (DEFAULT_SHADOW_COLOR),
+    backgroundColor  (DEFAULT_BACKGROUND_COLOR),
     maxReflectedColor(DEFAULT_MAX_REFLECTED_COLOR),
-    minTForShadowIntersections(DEFAULT_MIN_T_FOR_SHADOW_INTERSECTIONS),
-    reflectionalBias(DEFAULT_REFLECTIONAL_BIAS),
-    shadowBias(DEFAULT_SHADOW_BIAS)
+    reflectionalBias (DEFAULT_REFLECTIONAL_BIAS),
+    shadowBias       (DEFAULT_SHADOW_BIAS)
 {}
 
 void Tracer::setMaxNumReflections(size_t maxNumReflections) {
@@ -30,9 +29,6 @@ void Tracer::setBackgroundColor(const Color& backgroundColor) {
 }
 void Tracer::setMaximumallyReflectedColor(const Color& maxReflectedColor) {
     this->maxReflectedColor = maxReflectedColor;
-}
-void Tracer::setMinTForShadowIntersections(float minTForShadowIntersections) {
-    this->minTForShadowIntersections = minTForShadowIntersections;
 }
 void Tracer::setReflectionalBias(float reflectionalBias) {
     this->reflectionalBias = reflectionalBias;
@@ -125,15 +121,17 @@ bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Interse
 // check if there exists an object blocking light from reaching our hit-point
 bool Tracer::isInShadow(const IntersectInfo& hit, const PointLight& light, const Scene& scene) const {
     Ray shadowRay{ hit.point + (hit.normal * shadowBias), Math::direction(hit.point, light.getPosition()) };
-    float tLight = Math::distance(light.getPosition(), hit.point) - minTForShadowIntersections;
+    float distanceToLight = Math::distance(shadowRay.origin, light.getPosition());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         IntersectInfo h;
-        if (scene.getObject(index).intersect(shadowRay, h) && h.t > minTForShadowIntersections && h.t < tLight) {
+        if (scene.getObject(index).intersect(shadowRay, h) &&
+                (Math::distance(h.point, light.getPosition()) < distanceToLight)) {
             return true;
         }
     }
     return false;
 }
+
 Color Tracer::computeDiffuseColor(const IntersectInfo& hit, const PointLight& light) const {
     Vec3 directionToLight = Math::direction(hit.point, light.getPosition());
     float strengthAtAngle = Math::max(0.00f, Math::dot(hit.normal, directionToLight));

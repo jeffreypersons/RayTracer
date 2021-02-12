@@ -30,7 +30,10 @@ Scene createSimpleScene() {
 
 int main() {
     std::cout << "Program started...\n\n";
-    Tracer tracer{}; tracer.setBackgroundColor(Palette::skyBlue); tracer.setMaximumallyReflectedColor(Palette::black);
+    Tracer tracer{};
+    tracer.setBackgroundColor(Palette::skyBlue);
+    tracer.setShadowColor(Color(0.125f, 0.125f, 0.125f));
+    tracer.setMaximumallyReflectedColor(Palette::black);
 
     Scene scene = createSimpleScene();
     FrameBuffer frameBuffer{ CommonResolutions::HD_1080p, Palette::skyBlue };

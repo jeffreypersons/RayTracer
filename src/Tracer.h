@@ -14,7 +14,6 @@ private:
     Color backgroundColor;
     Color maxReflectedColor;
     size_t maxNumReflections;
-    float minTForShadowIntersections;
     float reflectionalBias;
     float shadowBias;
 
@@ -25,7 +24,7 @@ private:
     static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS           = 3;
     static constexpr float DEFAULT_MIN_T_FOR_SHADOW_INTERSECTIONS = 0.01000f;
     static constexpr float DEFAULT_REFLECTIONAL_BIAS              = 0.00001f;
-    static constexpr float DEFAULT_SHADOW_BIAS                    = 0.00010f;
+    static constexpr float DEFAULT_SHADOW_BIAS                    = 0.01000f;
 
 public:
     Tracer();
@@ -34,7 +33,6 @@ public:
     void setBackgroundColor(const Color&);
     void setMaximumallyReflectedColor(const Color&);
     void setMaxNumReflections(size_t);
-    void setMinTForShadowIntersections(float);
     void setReflectionalBias(float);
     void setShadowBias(float);
 
