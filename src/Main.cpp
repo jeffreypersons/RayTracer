@@ -19,10 +19,10 @@ Scene createSimpleScene() {
     matteGreen.setWeights(0.90f, 0.10f);
     matteGreen.setAmbientColor(Palette::lightGreen);
     matteGreen.setDiffuseColor(Palette::green);
-    matteGreen.setSpecularColor(Palette::green);
+    matteGreen.setSpecularColor(Palette::yellow);
     
     Scene scene{};
-    scene.addLight(Light(Vec3(0, 100, 25), Palette::white, 1.00f));
+    scene.addLight(PointLight(Vec3(0, 100, 25), Palette::white, -1, 0, 0));
     scene.addSceneObject(Sphere(Vec3(0, 50, 0), 25, matteGreen));
     return scene;
 }

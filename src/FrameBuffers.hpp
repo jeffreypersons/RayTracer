@@ -66,17 +66,17 @@ public:
         ofs << "P6\n" << width << " " << height << "\n255\n";
         for (size_t row = 0; row < height; row++) {
             for (size_t col = 0; col < width; col++) {
-                Color color = getPixel(height - 1 - row, col);
-                ofs << static_cast<unsigned char>(color.r * 255)
-                    << static_cast<unsigned char>(color.g * 255)
-                    << static_cast<unsigned char>(color.b * 255);
+                Color intensity = getPixel(height - 1 - row, col);
+                ofs << static_cast<unsigned char>(intensity.r * 255)
+                    << static_cast<unsigned char>(intensity.g * 255)
+                    << static_cast<unsigned char>(intensity.b * 255);
             }
         }
         ofs.close();
     }
 
-    void setPixel(size_t i, const Color& color)               noexcept { pixels[i] = color;                 }
-    void setPixel(size_t row, size_t col, const Color& color) noexcept { pixels[width * row + col] = color; }
+    void setPixel(size_t i, const Color& intensity)               noexcept { pixels[i] = intensity;                 }
+    void setPixel(size_t row, size_t col, const Color& intensity) noexcept { pixels[width * row + col] = intensity; }
     
     constexpr Color getPixel(size_t i)               const noexcept { return pixels[i];                 }
     constexpr Color getPixel(size_t row, size_t col) const noexcept { return pixels[width * row + col]; }
@@ -97,7 +97,7 @@ public:
 inline std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
     os << std::fixed << std::setprecision(3)
        << "FrameBuffer("
-          << "initial-color:("   << frameBuffer.getDefaultColor()     << "),"
+          << "initial-intensity:("   << frameBuffer.getDefaultColor()     << "),"
           << "image-dimensions:" << frameBuffer.getImageDescription() << ", "
           << "num-elements:"     << frameBuffer.getNumPixels()        << ","
           << "aspect-ratio:"     << frameBuffer.getAspectRatio()

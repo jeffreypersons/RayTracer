@@ -83,16 +83,18 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
         reflectedColor = traceRay(renderCam, scene, reflectRay(ray, hit), iteration + 1);
     }
     
-    Color ambient = computeAmbientColor(hit, scene.getLight(0));
-    if (isInShadow(hit, scene.getLight(0), renderCam, scene)) {
+    PointLight light = scene.getLight(0);
+    Color ambient = hit.object->getMaterial().getAmbientColor();
+    if (isInShadow(hit, light, scene)) {
         return ambient;
     }
 
-    Color diffuse  = computeDiffuseColor( hit, scene.getLight(0));
-    Color specular = computeSpecularColor(hit, scene.getLight(0), renderCam);
+    Color lightIntensityAtPoint = light.computeIntensityAtPoint(hit.point);
+    Color diffuse  = computeDiffuseColor(hit, light);
+    Color specular = computeSpecularColor(hit, light, renderCam);
 
     // blend intrinsic and reflected color using our light and intersected object
-    Color nonReflectedColor = ambient + diffuse + specular;
+    Color nonReflectedColor = ambient + lightIntensityAtPoint * (diffuse + specular);
     return hit.object->getMaterial().getReflectivity() * reflectedColor +
            hit.object->getMaterial().getIntrinsity()   * nonReflectedColor;
 }
@@ -102,7 +104,6 @@ Ray Tracer::reflectRay(const Ray& ray, const IntersectInfo& hit) const {
     Vec3 reflectedVec = (-1.0f * ray.direction) - (2.0f * hit.normal) * (Math::dot(ray.direction, hit.normal));
     return Ray(hit.point + reflectionalBias * hit.normal, Math::normalize(reflectedVec));
 }
-
 bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, IntersectInfo& result) const {
     float tClosest = Math::INF;
     IntersectInfo closestIntersection{};
@@ -121,9 +122,8 @@ bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Interse
         return true;
     }
 }
-
 // check if there exists an object blocking light from reaching our hit-point
-bool Tracer::isInShadow(const IntersectInfo& hit, const Light& light, const RenderCam& renderCam, const Scene& scene) const {
+bool Tracer::isInShadow(const IntersectInfo& hit, const PointLight& light, const Scene& scene) const {
     Ray shadowRay{ hit.point + (hit.normal * shadowBias), Math::direction(hit.point, light.getPosition()) };
     float tLight = Math::distance(light.getPosition(), hit.point) - minTForShadowIntersections;
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
@@ -134,29 +134,15 @@ bool Tracer::isInShadow(const IntersectInfo& hit, const Light& light, const Rend
     }
     return false;
 }
-
-// blend intrinsic and reflected color using our light and intersected object
-Color Tracer::computeAmbientColor(const IntersectInfo& hit, const Light& light) const {
-    return hit.object->getMaterial().getAmbientColor() * light.getColor();
-}
-// blend intrinsic and reflected color using our light and intersected object
-Color Tracer::computeDiffuseColor(const IntersectInfo& hit, const Light& light) const {
-    Vec3 lightDirection;
-    Vec3 lightIntensity;
-    float distance;
-
-    light.illuminate(hit.point, lightDirection, lightIntensity, distance);
-    Vec3 result = Math::max(0.00f, Math::dot(hit.normal, -1 * lightDirection)) *
-        Vec3(hit.object->getMaterial().getDiffuseColor().r * lightIntensity.x,
-             hit.object->getMaterial().getDiffuseColor().g * lightIntensity.y,
-             hit.object->getMaterial().getDiffuseColor().b * lightIntensity.z);
-    return Color(result.x, result.y, result.z);
+Color Tracer::computeDiffuseColor(const IntersectInfo& hit, const PointLight& light) const {
+    Vec3 directionToLight = Math::direction(hit.point, light.getPosition());
+    float strengthAtAngle = Math::max(0.00f, Math::dot(hit.normal, directionToLight));
+    return strengthAtAngle * hit.object->getMaterial().getDiffuseColor();
 }
 
-// blend intrinsic and reflected color using our light and intersected object
-Color Tracer::computeSpecularColor(const IntersectInfo& hit, const Light& light, const RenderCam& renderCam) const {
+Color Tracer::computeSpecularColor(const IntersectInfo& hit, const PointLight& light, const RenderCam& renderCam) const {
     Vec3 directionToCam = Math::direction(hit.point, renderCam.getPosition());
     Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
-    float intensity = Math::max(0.00f, Math::dot(hit.normal, halfwayVec));
-    return intensity * hit.object->getMaterial().getSpecularColor() * light.getColor();
+    float strengthAtAngle = Math::max(0.00f, Math::dot(hit.normal, halfwayVec));
+    return Math::pow(strengthAtAngle, hit.object->getMaterial().getShininess()) * hit.object->getMaterial().getSpecularColor();
 }
