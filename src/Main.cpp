@@ -21,13 +21,14 @@ Scene createSimpleScene() {
     matteGreen.setShininess(5);
 
     Material reflectiveGreen{};
-    reflectiveGreen.setWeights(0.50f, 0.50f);
+    reflectiveGreen.setWeights(0, 1);
     reflectiveGreen.setColors(Palette::darkGreen, Palette::green, Palette::lightGreen);
     reflectiveGreen.setShininess(5);
 
     Scene scene{};
     scene.addLight(PointLight(Vec3(0, 100, 25), Palette::white, 1.50f, 1e-10f, 1e-20f));
-    scene.addSceneObject(Sphere(Vec3(0, 50, 0), 25, reflectiveGreen));
+    scene.addSceneObject(Sphere(Vec3(0, 50, 0), 10, matteGreen));
+    scene.addSceneObject(Sphere(Vec3(0, 25, 0),  5, reflectiveGreen));
     return scene;
 }
 
@@ -38,6 +39,7 @@ int main() {
     tracer.setBackgroundColor(Palette::skyBlue);
     tracer.setShadowColor(Color(0.125f, 0.125f, 0.125f));
     tracer.setMaxNumReflections(3);
+    tracer.setTracingBias(1e-02f);
 
     Scene scene = createSimpleScene();
     FrameBuffer frameBuffer{ CommonResolutions::HD_1080p, Palette::skyBlue };

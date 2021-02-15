@@ -12,18 +12,14 @@ class Tracer {
 private:
     Color shadowColor;
     Color backgroundColor;
-    Color maxReflectedColor;
+    float tracingBias;
     size_t maxNumReflections;
-    float reflectionalBias;
-    float shadowBias;
 
     static constexpr Color DEFAULT_SHADOW_COLOR     { 0.125f, 0.125f, 0.125f };
-    static constexpr Color DEFAULT_BACKGROUND_COLOR { 0.000f, 0.000f, 0.000f };
-
-    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS           = 3;
-    static constexpr float DEFAULT_MIN_T_FOR_SHADOW_INTERSECTIONS = 0.01000f;
-    static constexpr float DEFAULT_REFLECTIONAL_BIAS              = 0.00001f;
-    static constexpr float DEFAULT_SHADOW_BIAS                    = 0.01000f;
+    static constexpr Color DEFAULT_BACKGROUND_COLOR { 0.500f, 0.500f, 0.500f };
+    
+    static constexpr float DEFAULT_TRACING_BIAS = 1e-02f;
+    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 3;
 
 public:
     Tracer();
@@ -31,8 +27,7 @@ public:
     void setShadowColor(const Color&);
     void setBackgroundColor(const Color&);
     void setMaxNumReflections(size_t);
-    void setReflectionalBias(float);
-    void setShadowBias(float);
+    void setTracingBias(float);
 
 private:
     Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
