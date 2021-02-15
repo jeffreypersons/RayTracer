@@ -19,7 +19,6 @@ private:
 
     static constexpr Color DEFAULT_SHADOW_COLOR        { 0.125f, 0.125f, 0.125f };
     static constexpr Color DEFAULT_BACKGROUND_COLOR    { 0.000f, 0.000f, 0.000f };
-    static constexpr Color DEFAULT_MAX_REFLECTED_COLOR { 1.000f, 0.750f, 0.750f };
 
     static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS           = 3;
     static constexpr float DEFAULT_MIN_T_FOR_SHADOW_INTERSECTIONS = 0.01000f;
@@ -31,7 +30,6 @@ public:
     void trace(const RenderCam&, const Scene&, FrameBuffer&);
     void setShadowColor(const Color&);
     void setBackgroundColor(const Color&);
-    void setMaximumallyReflectedColor(const Color&);
     void setMaxNumReflections(size_t);
     void setReflectionalBias(float);
     void setShadowBias(float);

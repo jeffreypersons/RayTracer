@@ -35,8 +35,9 @@ public:
     // falloff in range [0.0, 1.0], with 0 being least amount of fall off and 1 being the most
     // todo: add PROPER range checks with exceptions and then call in constructor...(research valid values)
     void setAttenuation(float constant, float linear, float quadratic) {
-        if (constant < 0.00f || constant > 10000.00f) {
-            throw std::invalid_argument("light intensity must be in range [0.00, 1.00]");
+        if (constant < 0.00f || linear < 0.00f || quadratic < 0.00f ||
+                Math::isApproximately(constant + linear + quadratic, 0.00f)) {
+            throw std::invalid_argument("attenuation coefficients must be greater than zero and sum to greater than zero");
         }
         this->attenuationConstant  = constant;
         this->attenuationLinear    = linear;

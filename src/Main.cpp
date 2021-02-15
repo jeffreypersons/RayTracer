@@ -17,13 +17,17 @@ RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, con
 Scene createSimpleScene() {
     Material matteGreen{};
     matteGreen.setWeights(0.90f, 0.10f);
-    matteGreen.setAmbientColor(Palette::lightGreen);
-    matteGreen.setDiffuseColor(Palette::green);
-    matteGreen.setSpecularColor(Palette::yellow);
-    
+    matteGreen.setColors(Palette::darkGreen, Palette::green, Palette::lightGreen);
+    matteGreen.setShininess(5);
+
+    Material reflectiveGreen{};
+    reflectiveGreen.setWeights(0.50f, 0.50f);
+    reflectiveGreen.setColors(Palette::darkGreen, Palette::green, Palette::lightGreen);
+    reflectiveGreen.setShininess(5);
+
     Scene scene{};
-    scene.addLight(PointLight(Vec3(0, 100, 25), Palette::white, -1, 0, 0));
-    scene.addSceneObject(Sphere(Vec3(0, 50, 0), 25, matteGreen));
+    scene.addLight(PointLight(Vec3(0, 100, 25), Palette::white, 1.50f, 1e-10f, 1e-20f));
+    scene.addSceneObject(Sphere(Vec3(0, 50, 0), 25, reflectiveGreen));
     return scene;
 }
 
@@ -33,7 +37,7 @@ int main() {
     Tracer tracer{};
     tracer.setBackgroundColor(Palette::skyBlue);
     tracer.setShadowColor(Color(0.125f, 0.125f, 0.125f));
-    tracer.setMaximumallyReflectedColor(Palette::black);
+    tracer.setMaxNumReflections(3);
 
     Scene scene = createSimpleScene();
     FrameBuffer frameBuffer{ CommonResolutions::HD_1080p, Palette::skyBlue };
@@ -41,7 +45,7 @@ int main() {
     RenderCam frontCam  = createCam(Vec3(0,  50,  50), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
     RenderCam behindCam = createCam(Vec3(0,  50, -50), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
     RenderCam topCam    = createCam(Vec3(0, 100,   0), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
-    RenderCam bottomCam = createCam(Vec3(0, -50,   0), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
+    RenderCam bottomCam = createCam(Vec3(0, -25,   0), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
 
     std::cout << "Initializing target-" << frameBuffer << "\n\n";
     std::cout << "Assembling "          << scene       << "\n\n";

@@ -13,7 +13,6 @@ Tracer::Tracer() :
     maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS),
     shadowColor      (DEFAULT_SHADOW_COLOR),
     backgroundColor  (DEFAULT_BACKGROUND_COLOR),
-    maxReflectedColor(DEFAULT_MAX_REFLECTED_COLOR),
     reflectionalBias (DEFAULT_REFLECTIONAL_BIAS),
     shadowBias       (DEFAULT_SHADOW_BIAS)
 {}
@@ -26,9 +25,6 @@ void Tracer::setShadowColor(const Color& shadowColor) {
 }
 void Tracer::setBackgroundColor(const Color& backgroundColor) {
     this->backgroundColor = backgroundColor;
-}
-void Tracer::setMaximumallyReflectedColor(const Color& maxReflectedColor) {
-    this->maxReflectedColor = maxReflectedColor;
 }
 void Tracer::setReflectionalBias(float reflectionalBias) {
     this->reflectionalBias = reflectionalBias;
@@ -65,7 +61,7 @@ void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& 
 // todo: account for near and far clip culling (probably need to determine z dist pf object to camera and clamp on that)
 Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray& ray, size_t iteration=0) const {
     if (iteration >= maxNumReflections) {
-        return maxReflectedColor;
+        return Color(0, 0, 0);
     }
 
     IntersectInfo hit{};
