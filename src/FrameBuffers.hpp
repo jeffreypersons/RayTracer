@@ -61,15 +61,16 @@ public:
 
     // save framebuffer as an array of 256 rgb-colored pixels, written to file at given location
     // note that the buffer stores colors relative to top left corner, while ppm is relative to the bottom left
-    void writeToFile(const std::string& filename) {
+    void writeToFile(const std::string& filename, float gammaCorrection=2.20f) {
+        const float invGamma = 1.00f / gammaCorrection;
         std::ofstream ofs(filename + ".ppm", std::ios::out | std::ios::binary);
         ofs << "P6\n" << width << " " << height << "\n255\n";
         for (size_t row = 0; row < height; row++) {
             for (size_t col = 0; col < width; col++) {
-                Color intensity = getPixel(height - 1 - row, col);
-                ofs << static_cast<unsigned char>(intensity.r * 255)
-                    << static_cast<unsigned char>(intensity.g * 255)
-                    << static_cast<unsigned char>(intensity.b * 255);
+                Color color = getPixel(height - 1 - row, col);
+                ofs << static_cast<unsigned char>(static_cast<int>((Math::pow(color.r, invGamma) * 255) + 0.50f))
+                    << static_cast<unsigned char>(static_cast<int>((Math::pow(color.g, invGamma) * 255) + 0.50f))
+                    << static_cast<unsigned char>(static_cast<int>((Math::pow(color.b, invGamma) * 255) + 0.50f));
             }
         }
         ofs.close();
@@ -97,10 +98,10 @@ public:
 inline std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
     os << std::fixed << std::setprecision(3)
        << "FrameBuffer("
-          << "initial-intensity:("   << frameBuffer.getDefaultColor()     << "),"
-          << "image-dimensions:" << frameBuffer.getImageDescription() << ", "
-          << "num-elements:"     << frameBuffer.getNumPixels()        << ","
-          << "aspect-ratio:"     << frameBuffer.getAspectRatio()
+          << "initial-intensity:(" << frameBuffer.getDefaultColor()     << "),"
+          << "image-dimensions:"   << frameBuffer.getImageDescription() << ", "
+          << "num-elements:"       << frameBuffer.getNumPixels()        << ","
+          << "aspect-ratio:"       << frameBuffer.getAspectRatio()
        << ")";
     return os;
 }
