@@ -98,7 +98,7 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
 // reflect our ray using a slight direction offset to avoid infinite reflections
 Ray Tracer::reflectRay(const Ray& ray, const IntersectInfo& hit) const {
     Vec3 reflectedVec = (-1.0f * ray.direction) - (2.0f * hit.normal) * (Math::dot(ray.direction, hit.normal));
-    return Ray(hit.point + reflectionalBias * hit.normal, Math::normalize(reflectedVec));
+    return Ray(hit.point + (reflectionalBias * hit.normal), Math::normalize(reflectedVec));
 }
 bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, IntersectInfo& result) const {
     float tClosest = Math::INF;
@@ -120,7 +120,7 @@ bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Interse
 }
 // check if there exists an object blocking light from reaching our hit-point
 bool Tracer::isInShadow(const IntersectInfo& hit, const PointLight& light, const Scene& scene) const {
-    Ray shadowRay{ hit.point + (hit.normal * shadowBias), Math::direction(hit.point, light.getPosition()) };
+    Ray shadowRay{ hit.point + (shadowBias * hit.normal), Math::direction(hit.point, light.getPosition()) };
     float distanceToLight = Math::distance(shadowRay.origin, light.getPosition());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         IntersectInfo h;
