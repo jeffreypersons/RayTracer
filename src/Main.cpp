@@ -16,12 +16,12 @@ RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, con
 
 Scene createSimpleScene() {
     Material matteGreen{};
-    matteGreen.setWeights(0.90f, 0.10f);
+    matteGreen.setWeights(1.00f, 0.00f);
     matteGreen.setColors(Palette::darkGreen, Palette::green, Palette::lightGreen);
     matteGreen.setShininess(5);
 
     Material reflectiveGreen{};
-    reflectiveGreen.setWeights(0, 1);
+    reflectiveGreen.setWeights(0.00f, 1.00f);
     reflectiveGreen.setColors(Palette::darkGreen, Palette::green, Palette::lightGreen);
     reflectiveGreen.setShininess(5);
 

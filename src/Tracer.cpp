@@ -72,7 +72,7 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     PointLight light = scene.getLight(0);
     Color ambient = intersection.object->getMaterial().getAmbientColor();
     if (isInShadow(intersection, light, scene)) {
-        return ambient;
+        return shadowColor;
     }
 
     Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
@@ -117,7 +117,7 @@ bool Tracer::isInShadow(const IntersectInfo& intersection, const PointLight& lig
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         IntersectInfo occlusion;
         if (scene.getObject(index).intersect(shadowRay, occlusion) &&
-                occlusion.object == intersection.object &&
+                occlusion.object != intersection.object &&
                 Math::distance(occlusion.point, light.getPosition()) < distanceToLight) {
             return true;
         }
