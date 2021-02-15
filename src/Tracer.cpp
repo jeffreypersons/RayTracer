@@ -69,7 +69,6 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
         return backgroundColor;
     }
 
-    // reflect our ray throughout the scene using a slight directional offset and iteration cap to avoid infinite reflections
     Color reflectedColor = backgroundColor;
     if (hit.object->getMaterial().getReflectivity() > 0.00f) {
         reflectedColor = traceRay(renderCam, scene, reflectRay(ray, hit), iteration + 1);
