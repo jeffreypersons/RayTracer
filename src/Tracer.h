@@ -17,8 +17,8 @@ private:
     float reflectionalBias;
     float shadowBias;
 
-    static constexpr Color DEFAULT_SHADOW_COLOR        { 0.125f, 0.125f, 0.125f };
-    static constexpr Color DEFAULT_BACKGROUND_COLOR    { 0.000f, 0.000f, 0.000f };
+    static constexpr Color DEFAULT_SHADOW_COLOR     { 0.125f, 0.125f, 0.125f };
+    static constexpr Color DEFAULT_BACKGROUND_COLOR { 0.000f, 0.000f, 0.000f };
 
     static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS           = 3;
     static constexpr float DEFAULT_MIN_T_FOR_SHADOW_INTERSECTIONS = 0.01000f;
