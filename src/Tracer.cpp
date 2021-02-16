@@ -69,6 +69,9 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
         reflectedColor = traceRay(renderCam, scene, reflectRay(ray, intersection), iteration + 1);
     }
     
+    // todo: account for kS, kD, research diffuse-reflection/pure reflection, etc...
+    // todo: determine if diffuse component is same as albedo for material class
+    // todo: call with reflected ray for specular/diffuse light reflections
     Color nonReflectedColor = intersection.object->getMaterial().getAmbientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
        const PointLight light = scene.getLight(index);
