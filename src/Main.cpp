@@ -46,22 +46,25 @@ int main() {
     Vec3 localOrigin{ 0, 50, 0 };
     Scene scene = createSimpleScene(localOrigin);
     FrameBuffer frameBuffer{ CommonResolutions::HD_1080p, Palette::skyBlue };
-    RenderCam frontCam  = createCam(localOrigin + Vec3(0,   0,  50), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
-    RenderCam behindCam = createCam(localOrigin + Vec3(0,   0, -50), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
-    RenderCam topCam    = createCam(localOrigin + Vec3(0,  50,   0), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
-    RenderCam bottomCam = createCam(localOrigin + Vec3(0, -50,   0), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
-
-    std::cout << "Initializing target-" << frameBuffer << "\n\n";
-    std::cout << "Initializing ray-"    << tracer      << "\n\n";
-    std::cout << "Assembling "          << scene       << "\n\n";
-    std::cout << "Configuring front-"   << frontCam    << "\n\n";
-    std::cout << "Configuring behind-"  << behindCam   << "\n\n";
-    std::cout << "Configuring top-"     << topCam      << "\n\n";
-    std::cout << "Configuring bottom-"  << bottomCam   << "\n\n";
-    tracer.trace(frontCam,  scene, frameBuffer); frameBuffer.writeToFile("./scene-front");
-    tracer.trace(behindCam, scene, frameBuffer); frameBuffer.writeToFile("./scene-back");
-    tracer.trace(topCam,    scene, frameBuffer); frameBuffer.writeToFile("./scene-top");
-    tracer.trace(bottomCam, scene, frameBuffer); frameBuffer.writeToFile("./scene-bottom");
+    RenderCam frontCam    = createCam(localOrigin + Vec3(0,   0,  50), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
+    RenderCam frontTopCam = createCam(localOrigin + Vec3(0,  50,  25), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
+    RenderCam behindCam   = createCam(localOrigin + Vec3(0,   0, -50), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
+    RenderCam topCam      = createCam(localOrigin + Vec3(0,  50,   0), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
+    RenderCam bottomCam   = createCam(localOrigin + Vec3(0, -50,   0), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
+    
+    std::cout << "Initializing target-"   << frameBuffer << "\n\n";
+    std::cout << "Initializing ray-"      << tracer      << "\n\n";
+    std::cout << "Assembling "            << scene       << "\n\n";
+    std::cout << "Configuring front-"     << frontCam    << "\n\n";
+    std::cout << "Configuring front-top-" << frontTopCam << "\n\n";
+    std::cout << "Configuring behind-"    << behindCam   << "\n\n";
+    std::cout << "Configuring top-"       << topCam      << "\n\n";
+    std::cout << "Configuring bottom-"    << bottomCam   << "\n\n";
+    tracer.trace(frontCam,    scene, frameBuffer); frameBuffer.writeToFile("./scene-front");
+    tracer.trace(frontTopCam, scene, frameBuffer); frameBuffer.writeToFile("./scene-front-top");
+    tracer.trace(behindCam,   scene, frameBuffer); frameBuffer.writeToFile("./scene-back");
+    tracer.trace(topCam,      scene, frameBuffer); frameBuffer.writeToFile("./scene-top");
+    tracer.trace(bottomCam,   scene, frameBuffer); frameBuffer.writeToFile("./scene-bottom");
     std::cout << "Press ENTER to end...";
     std::cin.get();
 }
