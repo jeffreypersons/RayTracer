@@ -33,7 +33,6 @@ public:
     void setIntensity(const Color& intensity) { this->intensity = intensity; }
 
     // falloff in range [0.0, 1.0], with 0 being least amount of fall off and 1 being the most
-    // todo: add PROPER range checks with exceptions and then call in constructor...(research valid values)
     void setAttenuation(float constant, float linear, float quadratic) {
         if (constant < 0.00f || linear < 0.00f || quadratic < 0.00f ||
                 Math::isApproximately(constant + linear + quadratic, 0.00f)) {
