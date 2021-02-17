@@ -72,15 +72,12 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     Color nonReflectedColor = intersection.object->getMaterial().getAmbientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
        const PointLight light = scene.getLight(index);
-       /*
-       if (isInShadow(intersection, light, scene)) {
-           return shadowColor;
+       if (!isInShadow(intersection, light, scene)) {
+           Color diffuse  = computeDiffuseColor(intersection, light);
+           Color specular = computeSpecularColor(intersection, light, renderCam);
+           Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
+           nonReflectedColor = nonReflectedColor + lightIntensityAtPoint * (diffuse + specular);
        }
-       */
-       Color diffuse  = computeDiffuseColor(intersection, light);
-       Color specular = computeSpecularColor(intersection, light, renderCam);
-       Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
-       nonReflectedColor = nonReflectedColor + lightIntensityAtPoint * (diffuse + specular);
     }
     
     // blend intrinsic and reflected color using our light and intersected object
