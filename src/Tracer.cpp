@@ -64,7 +64,7 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
         return backgroundColor;
     }
 
-    Color reflectedColor = backgroundColor;
+    Color reflectedColor{};
     if (intersection.object->getMaterial().getReflectivity() > 0.00f) {
         reflectedColor = traceRay(renderCam, scene, reflectRay(ray, intersection), iteration + 1);
     }
@@ -78,7 +78,6 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
        if (isInShadow(intersection, light, scene)) {
            return shadowColor;
        }
-
        Color diffuse  = computeDiffuseColor(intersection, light);
        Color specular = computeSpecularColor(intersection, light, renderCam);
        Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
