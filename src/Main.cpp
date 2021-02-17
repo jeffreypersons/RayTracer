@@ -26,8 +26,8 @@ Scene createSimpleScene(const Vec3& localOrigin) {
     reflectiveGreen.setShininess(5);
 
     Scene scene{};
-    scene.addLight(PointLight(localOrigin + Vec3(0, 100,  25), Palette::white, 1.50f, 1e-10f, 1e-20f));
-    scene.addLight(PointLight(localOrigin + Vec3(0,   0, -25), Palette::white, 1.50f, 1e-10f, 1e-20f));
+    scene.addLight(PointLight(localOrigin + Vec3(0, 100, 25), Palette::white, 1.50f, 1e-10f, 1e-20f));
+    scene.addLight(PointLight(localOrigin + Vec3(0,   0, 25), Palette::white, 1.50f, 1e-10f, 1e-20f));
     scene.addSceneObject(Sphere(localOrigin + Vec3(0,  20, 0), 10.0, matteGreen));
     scene.addSceneObject(Sphere(localOrigin + Vec3(0,   0, 0),  5.0, reflectiveGreen));
     scene.addSceneObject(Sphere(localOrigin + Vec3(0, -20, 0), 12.5, reflectiveGreen));
@@ -52,6 +52,7 @@ int main() {
     RenderCam bottomCam = createCam(localOrigin + Vec3(0, -50,   0), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
 
     std::cout << "Initializing target-" << frameBuffer << "\n\n";
+    std::cout << "Initializing ray-"    << tracer      << "\n\n";
     std::cout << "Assembling "          << scene       << "\n\n";
     std::cout << "Configuring front-"   << frontCam    << "\n\n";
     std::cout << "Configuring behind-"  << behindCam   << "\n\n";

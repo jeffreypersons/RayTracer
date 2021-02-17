@@ -50,8 +50,7 @@ public:
     float getAttenuationQuadratic() const { return attenuationConstant; }
 };
 inline std::ostream& operator<<(std::ostream& os, const PointLight& light) {
-    os << std::fixed << std::setprecision(2)
-       << "PointLight("
+    os << "PointLight("
          << "position:("  << light.getPosition()  << "),"
          << "intensity:(" << light.getIntensity() << "),"
        << "Attenuation{"

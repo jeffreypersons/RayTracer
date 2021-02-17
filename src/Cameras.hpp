@@ -163,8 +163,7 @@ public:
     }
 };
 inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
-    os << std::fixed << std::setprecision(2)
-       << "RenderCam("
+    os << "RenderCam("
          << "position:(" << renderCam.getPosition() << "), "
          << "Orientation{"
            << "right-axis:("   << renderCam.getRightDir()   << "),"
@@ -179,6 +178,6 @@ inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
          << "Clipping{"
            << "near-plane-z:" << renderCam.getNearClip() << ","
            << "far-plane-z:"  << renderCam.getFarClip() << "}"
-         << ")";
+       << ")";
     return os;
 }

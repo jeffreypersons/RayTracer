@@ -26,8 +26,13 @@ public:
     void trace(const RenderCam&, const Scene&, FrameBuffer&);
     void setShadowColor(const Color&);
     void setBackgroundColor(const Color&);
-    void setMaxNumReflections(size_t);
     void setTracingBias(float);
+    void setMaxNumReflections(size_t);
+
+    Color getShadowColor()        const { return shadowColor;       }
+    Color getBackgroundColor()    const { return backgroundColor;   }
+    float getTracingBias()        const { return tracingBias;       }
+    size_t getMaxNumReflections() const { return maxNumReflections; }
 
 private:
     Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
@@ -39,3 +44,13 @@ private:
     Color computeDiffuseColor (const IntersectInfo&, const PointLight&) const;
     Color computeSpecularColor(const IntersectInfo&, const PointLight&, const RenderCam&) const;
 };
+
+inline std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
+    os << "Tracer("
+         << "shadow-color:("       << tracer.getShadowColor()       << "), "
+         << "background-color:("   << tracer.getBackgroundColor()   << "), "
+         << "tracing-bias:"        << tracer.getTracingBias()       << ", "
+         << "max-num-reflections:" << tracer.getMaxNumReflections()
+       << ")";
+    return os;
+}

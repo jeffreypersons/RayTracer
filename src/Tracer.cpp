@@ -16,9 +16,6 @@ Tracer::Tracer() :
     maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS)
 {}
 
-void Tracer::setMaxNumReflections(size_t maxNumReflections) {
-    this->maxNumReflections = maxNumReflections;
-}
 void Tracer::setShadowColor(const Color& shadowColor) {
     this->shadowColor = shadowColor;
 }
@@ -27,6 +24,9 @@ void Tracer::setBackgroundColor(const Color& backgroundColor) {
 }
 void Tracer::setTracingBias(float tracingBias) {
     this->tracingBias = tracingBias;
+}
+void Tracer::setMaxNumReflections(size_t maxNumReflections) {
+    this->maxNumReflections = maxNumReflections;
 }
 
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
