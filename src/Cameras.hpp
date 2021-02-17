@@ -137,7 +137,7 @@ public:
         if (nearClip <= 0 || nearClip >= farClip) {
             throw std::invalid_argument("near-clip must be in range of (0, farClip)");
         }
-        setupPerspectiveFromSize(this->viewportSize, this->nearClip, this->farClip);
+        setupPerspectiveFromSize(this->viewportSize, nearClip, this->farClip);
     }
     void setFarClip(float farClip) {
         if (farClip < 0) {
