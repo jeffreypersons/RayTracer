@@ -12,13 +12,15 @@ class Tracer {
 private:
     Color shadowColor;
     Color backgroundColor;
-    float tracingBias;
+    float shadowBias;
+    float reflectionBias;
     size_t maxNumReflections;
 
     static constexpr Color DEFAULT_SHADOW_COLOR     { 0.125f, 0.125f, 0.125f };
     static constexpr Color DEFAULT_BACKGROUND_COLOR { 0.500f, 0.500f, 0.500f };
     
-    static constexpr float DEFAULT_TRACING_BIAS = 1e-02f;
+    static constexpr float DEFAULT_SHADOW_BIAS     = 1e-02f;
+    static constexpr float DEFAULT_REFLECTION_BIAS = 1e-02f;
     static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 3;
 
 public:
@@ -26,12 +28,14 @@ public:
     void trace(const RenderCam&, const Scene&, FrameBuffer&);
     void setShadowColor(const Color&);
     void setBackgroundColor(const Color&);
-    void setTracingBias(float);
+    void setShadowBias(float);
+    void setReflectionBias(float);
     void setMaxNumReflections(size_t);
-
+    
     Color getShadowColor()        const { return shadowColor;       }
     Color getBackgroundColor()    const { return backgroundColor;   }
-    float getTracingBias()        const { return tracingBias;       }
+    float getShadowBias()         const { return shadowBias;        }
+    float getReflectionBias()     const { return reflectionBias;    }
     size_t getMaxNumReflections() const { return maxNumReflections; }
 
 private:
@@ -49,7 +53,8 @@ inline std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
     os << "Tracer("
          << "shadow-color:("       << tracer.getShadowColor()       << "),"
          << "background-color:("   << tracer.getBackgroundColor()   << "),"
-         << "tracing-bias:"        << tracer.getTracingBias()       << ", "
+         << "shadow-bias:"         << tracer.getShadowBias()        << ","
+         << "reflection-bias:"     << tracer.getReflectionBias()    << ","
          << "max-num-reflections:" << tracer.getMaxNumReflections()
        << ")";
     return os;

@@ -12,7 +12,8 @@
 Tracer::Tracer() :
     shadowColor      (DEFAULT_SHADOW_COLOR),
     backgroundColor  (DEFAULT_BACKGROUND_COLOR),
-    tracingBias      (DEFAULT_TRACING_BIAS),
+    shadowBias       (DEFAULT_SHADOW_BIAS),
+    reflectionBias   (DEFAULT_REFLECTION_BIAS),
     maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS)
 {}
 
@@ -22,8 +23,11 @@ void Tracer::setShadowColor(const Color& shadowColor) {
 void Tracer::setBackgroundColor(const Color& backgroundColor) {
     this->backgroundColor = backgroundColor;
 }
-void Tracer::setTracingBias(float tracingBias) {
-    this->tracingBias = tracingBias;
+void Tracer::setShadowBias(float shadowBias) {
+    this->shadowBias = shadowBias;
+}
+void Tracer::setReflectionBias(float reflectionBias) {
+    this->reflectionBias = reflectionBias;
 }
 void Tracer::setMaxNumReflections(size_t maxNumReflections) {
     this->maxNumReflections = maxNumReflections;
@@ -73,10 +77,12 @@ Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray
     for (size_t index = 0; index < scene.getNumLights(); index++) {
        const PointLight light = scene.getLight(index);
        if (!isInShadow(intersection, light, scene)) {
-           Color diffuse  = computeDiffuseColor(intersection, light);
+           Color diffuse = computeDiffuseColor(intersection, light);
            Color specular = computeSpecularColor(intersection, light, renderCam);
            Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
            nonReflectedColor = nonReflectedColor + lightIntensityAtPoint * (diffuse + specular);
+       } else {
+           nonReflectedColor = nonReflectedColor + shadowColor;
        }
     }
     
@@ -90,7 +96,7 @@ Ray Tracer::reflectRay(const Ray& ray, const IntersectInfo& intersection) const 
     Vec3 reflectedDirection = Math::normalize(
         (-1 * ray.direction) + (2 * Math::dot(ray.direction, intersection.normal) * intersection.normal)
     );
-    return Ray(intersection.point + (tracingBias * intersection.normal), reflectedDirection);
+    return Ray(intersection.point + (reflectionBias * reflectedDirection), reflectedDirection);
 }
 bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, IntersectInfo& result) const {
     float tClosest = Math::INF;
@@ -112,7 +118,7 @@ bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Interse
 }
 // check if there exists another object blocking light from reaching our hit-point
 bool Tracer::isInShadow(const IntersectInfo& intersection, const PointLight& light, const Scene& scene) const {
-    Ray shadowRay{ intersection.point + (tracingBias * intersection.normal), Math::direction(intersection.point, light.getPosition()) };
+    Ray shadowRay{ intersection.point + (shadowBias * intersection.normal), Math::direction(intersection.point, light.getPosition()) };
     float distanceToLight = Math::distance(shadowRay.origin, light.getPosition());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         IntersectInfo occlusion;
