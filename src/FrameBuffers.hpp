@@ -98,10 +98,10 @@ public:
 inline std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
     os << std::fixed << std::setprecision(3)
        << "FrameBuffer("
-          << "initial-intensity:(" << frameBuffer.getDefaultColor()     << "),"
-          << "image-dimensions:"   << frameBuffer.getImageDescription() << ", "
-          << "num-elements:"       << frameBuffer.getNumPixels()        << ","
-          << "aspect-ratio:"       << frameBuffer.getAspectRatio()
+          << "initial-color:("   << frameBuffer.getDefaultColor()     << "),"
+          << "image-dimensions:" << frameBuffer.getImageDescription() << ", "
+          << "num-elements:"     << frameBuffer.getNumPixels()        << ","
+          << "aspect-ratio:"     << frameBuffer.getAspectRatio()
        << ")";
     return os;
 }
