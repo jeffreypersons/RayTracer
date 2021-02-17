@@ -14,21 +14,23 @@ RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, con
     return cam;
 }
 
-Scene createSimpleScene() {
+Scene createSimpleScene(const Vec3& localOrigin) {
     Material matteGreen{};
     matteGreen.setWeights(1.00f, 0.00f);
     matteGreen.setColors(Palette::darkGreen, Palette::green, Palette::lightGreen);
     matteGreen.setShininess(5);
 
     Material reflectiveGreen{};
-    reflectiveGreen.setWeights(0.00f, 1.00f);
+    reflectiveGreen.setWeights(0.10f, 0.90f);
     reflectiveGreen.setColors(Palette::darkGreen, Palette::green, Palette::lightGreen);
     reflectiveGreen.setShininess(5);
 
     Scene scene{};
-    scene.addLight(PointLight(Vec3(0, 100, 25), Palette::white, 1.50f, 1e-10f, 1e-20f));
-    scene.addSceneObject(Sphere(Vec3(0, 50, 0), 10, matteGreen));
-    scene.addSceneObject(Sphere(Vec3(0, 25, 0),  5, reflectiveGreen));
+    scene.addLight(PointLight(localOrigin + Vec3(0, 100,  25), Palette::white, 1.50f, 1e-10f, 1e-20f));
+    scene.addLight(PointLight(localOrigin + Vec3(0,   0, -25), Palette::white, 1.50f, 1e-10f, 1e-20f));
+    scene.addSceneObject(Sphere(localOrigin + Vec3(0,  20, 0), 10.0, matteGreen));
+    scene.addSceneObject(Sphere(localOrigin + Vec3(0,   0, 0),  5.0, reflectiveGreen));
+    scene.addSceneObject(Sphere(localOrigin + Vec3(0, -20, 0), 12.5, reflectiveGreen));
     return scene;
 }
 
@@ -41,13 +43,13 @@ int main() {
     tracer.setMaxNumReflections(3);
     tracer.setTracingBias(1e-02f);
 
-    Scene scene = createSimpleScene();
+    Vec3 localOrigin{ 0, 50, 0 };
+    Scene scene = createSimpleScene(localOrigin);
     FrameBuffer frameBuffer{ CommonResolutions::HD_1080p, Palette::skyBlue };
-    Vec3 target = scene.getObject(0).getCentroid();
-    RenderCam frontCam  = createCam(Vec3(0,  50,  50), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
-    RenderCam behindCam = createCam(Vec3(0,  50, -50), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
-    RenderCam topCam    = createCam(Vec3(0, 100,   0), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
-    RenderCam bottomCam = createCam(Vec3(0, -25,   0), 110.00f, 5.00f, target, frameBuffer.getAspectRatio());
+    RenderCam frontCam  = createCam(localOrigin + Vec3(0,   0,  50), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
+    RenderCam behindCam = createCam(localOrigin + Vec3(0,   0, -50), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
+    RenderCam topCam    = createCam(localOrigin + Vec3(0,  50,   0), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
+    RenderCam bottomCam = createCam(localOrigin + Vec3(0, -50,   0), 110.00f, 1.00f, localOrigin, frameBuffer.getAspectRatio());
 
     std::cout << "Initializing target-" << frameBuffer << "\n\n";
     std::cout << "Assembling "          << scene       << "\n\n";
