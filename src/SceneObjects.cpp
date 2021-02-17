@@ -3,6 +3,7 @@
 #include "Rays.hpp"
 
 
+// assumes radius greater than zero
 Sphere::Sphere(const Vec3& center, float radius, const Material& material) {
     // note that base class members can only be initialized in the body and not our typical initializer list
     this->centroid = center;
@@ -38,10 +39,9 @@ bool Sphere::intersect(const Ray& ray, IntersectInfo& result) const {
 
 std::string Sphere::getDescription() const {
     std::stringstream ss;
-    ss << std::fixed << std::setprecision(2)
-       << "Sphere("
-         << "centroid:(" << getCentroid() << "), "
-         << "material:"  << getMaterial() << ", "
+    ss << "Sphere("
+         << "centroid:(" << getCentroid() << "),"
+         << "material:"  << getMaterial() << ","
          << "radius:"    << getRadius()
        << ")";
     return ss.str();
@@ -95,11 +95,10 @@ bool Triangle::intersect(const Ray& ray, IntersectInfo& result) const {
 
 std::string Triangle::getDescription() const {
     std::stringstream ss;
-    ss << std::fixed << std::setprecision(2)
-       << "Triangle("
-         << "centroid:("        << getCentroid()    << "), "
-         << "plane-normal:(v0:" << getPlaneNormal() << "), "
-         << "material:"   << getMaterial()          << ", "
+    ss << "Triangle("
+         << "centroid:("        << getCentroid()    << "),"
+         << "plane-normal:(v0:" << getPlaneNormal() << "),"
+         << "material:"         << getMaterial()    << ","
          << "verts:[v0:(" << getVert0() << "),v1:(" << getVert1() << "),v2:(" << getVert2() << ")]"
        << ")";
     return ss.str();

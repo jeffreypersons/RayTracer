@@ -10,10 +10,9 @@ struct Ray {
     constexpr Ray(const Vec3& origin, const Vec3& direction) : origin(origin), direction(direction) {}
 };
 inline std::ostream& operator<<(std::ostream& os, const Ray& ray) {
-    os << std::fixed << std::setprecision(2)
-       << "Ray("
-         << "origin:("    << ray.origin     << "),"
-         << "direction:(" << ray.direction  << ")"
+    os << "Ray("
+         << "origin:("    << ray.origin    << "),"
+         << "direction:(" << ray.direction << ")"
        << ")";
     return os;
 }

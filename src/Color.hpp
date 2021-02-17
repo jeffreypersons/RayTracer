@@ -41,7 +41,7 @@ inline constexpr Color operator*(const Color& lhs, const Color& rhs)  { return C
 inline constexpr Color operator*(float        lhs, const Color& rhs)  { return Color(lhs   * rhs.r, lhs   * rhs.g, lhs   * rhs.b);     }
 inline constexpr Color operator*(const Color& lhs, float        rhs)  { return Color(lhs.r * rhs,   lhs.g * rhs,   lhs.b * rhs);       }
 inline constexpr Color operator/(const Color& lhs, float        rhs)  { return Color(lhs.r / rhs,   lhs.g / rhs,   lhs.b / rhs);       }
-inline std::ostream& operator<<(std::ostream& os, const Color& intensity) { os << intensity.r << "," << intensity.g << "," << intensity.b;  return os; }
+inline std::ostream& operator<<(std::ostream& os, const Color& intensity) { os << intensity.r << "," << intensity.g << "," << intensity.b; return os; }
 
 
 namespace Palette {

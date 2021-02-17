@@ -76,8 +76,7 @@ public:
     Color getSpecularColor() const { return specularColor;    }
 };
 inline std::ostream& operator<<(std::ostream& os, const Material& material) {
-    os << std::fixed << std::setprecision(2)
-       << "Material("
+    os << "Material("
          << "Colors{"
            << "ambient:("  << material.getAmbientColor()  << "),"
            << "diffuse:("  << material.getDiffuseColor()  << "),"

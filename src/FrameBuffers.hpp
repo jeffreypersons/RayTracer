@@ -88,18 +88,14 @@ public:
     constexpr float getMegaPixels()                  const noexcept { return megaPixels;                }
     constexpr Color getDefaultColor()                const noexcept { return initialColor;              }
     std::string getImageDescription() const {
-        std::stringstream ss;
-        ss << std::fixed << std::setprecision(2)
-             << width << "X" << height
-             << "(" << getMegaPixels() << "MP)";
-        return ss.str();
+        return std::to_string(width) + "X" + std::to_string(height) +
+            "(" + std::to_string(getMegaPixels()) + "MP)";
     }
 };
 inline std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
-    os << std::fixed << std::setprecision(3)
-       << "FrameBuffer("
+    os << "FrameBuffer("
           << "initial-color:("   << frameBuffer.getDefaultColor()     << "),"
-          << "image-dimensions:" << frameBuffer.getImageDescription() << ", "
+          << "image-dimensions:" << frameBuffer.getImageDescription() << ","
           << "num-elements:"     << frameBuffer.getNumPixels()        << ","
           << "aspect-ratio:"     << frameBuffer.getAspectRatio()
        << ")";

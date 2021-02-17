@@ -47,8 +47,8 @@ private:
 
 inline std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
     os << "Tracer("
-         << "shadow-color:("       << tracer.getShadowColor()       << "), "
-         << "background-color:("   << tracer.getBackgroundColor()   << "), "
+         << "shadow-color:("       << tracer.getShadowColor()       << "),"
+         << "background-color:("   << tracer.getBackgroundColor()   << "),"
          << "tracing-bias:"        << tracer.getTracingBias()       << ", "
          << "max-num-reflections:" << tracer.getMaxNumReflections()
        << ")";

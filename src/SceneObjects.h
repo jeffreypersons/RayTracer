@@ -21,8 +21,7 @@ struct IntersectInfo {
     {}
 };
 inline std::ostream& operator<<(std::ostream& os, const IntersectInfo& intersectInfo) {
-    os << std::fixed << std::setprecision(2)
-       << "IntersectInfo("
+    os << "IntersectInfo("
          << "point:("  << intersectInfo.point  << "),"
          << "normal:(" << intersectInfo.normal << "),"
          << "t:"       << intersectInfo.t
