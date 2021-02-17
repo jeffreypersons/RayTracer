@@ -56,7 +56,7 @@ void Tracer::trace(const RenderCam& renderCam, const Scene& scene, FrameBuffer& 
 // todo: account for near and far clip culling (probably need to determine z dist pf object to camera and clamp on that)
 Color Tracer::traceRay(const RenderCam& renderCam, const Scene& scene, const Ray& ray, size_t iteration=0) const {
     if (iteration >= maxNumReflections) {
-        return backgroundColor;
+        return Color{ 0, 0, 0 };
     }
 
     IntersectInfo intersection{};
