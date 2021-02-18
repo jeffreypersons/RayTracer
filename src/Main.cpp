@@ -40,6 +40,7 @@ Scene createSimpleScene(const Vec3& localOrigin) {
 }
 
 
+// todo: figure out inverted reflection issue...
 int main() {
     std::cout << "Program started...\n\n";
     Tracer tracer{};
@@ -52,7 +53,7 @@ int main() {
     Vec3 eyeTarget{ 0, 50, 0 };
     Vec3 sceneOrigin{ 0, 0, 0 };
     Scene scene = createSimpleScene(sceneOrigin);
-    FrameBuffer frameBuffer{ CommonResolutions::HD_4K, Palette::skyBlue };
+    FrameBuffer frameBuffer{ CommonResolutions::HD_720p, Palette::skyBlue };
     RenderCam frontCam    = createCam(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
     RenderCam frontTopCam = createCam(eyeTarget + Vec3(0,  50,  25), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
     RenderCam behindCam   = createCam(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
