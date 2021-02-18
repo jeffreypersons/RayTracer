@@ -4,6 +4,31 @@
 #include "Rays.hpp"
 
 
+class ISceneObject;
+
+struct IntersectInfo {
+    Vec3 point;
+    Vec3 normal;
+    float t;
+    const ISceneObject* object;
+
+    constexpr IntersectInfo() : IntersectInfo(Vec3(), Vec3(), -1.00f, nullptr) {}
+    constexpr IntersectInfo(const Vec3& point, const Vec3& normal, float t, ISceneObject* object) :
+        point(point),
+        normal(normal),
+        t(t),
+        object(object)
+    {}
+};
+inline std::ostream& operator<<(std::ostream& os, const IntersectInfo& intersectInfo) {
+    os << "IntersectInfo("
+         << "point:("  << intersectInfo.point  << "),"
+         << "normal:(" << intersectInfo.normal << "),"
+         << "t:"       << intersectInfo.t
+       << ")";
+    return os;
+}
+
 // virtual base class for ANY renderable (via ray-tracing) object in a scene
 class ISceneObject {
 protected:
@@ -13,16 +38,17 @@ protected:
 public:
     ~ISceneObject() {}
 
-    const Vec3& getCentroid() const { return centroid; }
-    const Material& getMaterial() const { return material; }
+    Vec3 getCentroid()     const { return centroid; }
+    Material getMaterial() const { return material; }
 
     virtual std::string getDescription() const = 0;
-    virtual bool intersect(const Ray& ray, RayHitInfo& result) const = 0;
+    virtual bool intersect(const Ray& ray, IntersectInfo& result) const = 0;
 };
 inline std::ostream& operator<<(std::ostream& os, const ISceneObject& sceneObject) {
     os << sceneObject.getDescription();
     return os;
 }
+
 
 class Sphere : public ISceneObject {
 private:
@@ -31,7 +57,7 @@ private:
 public:
     Sphere(const Vec3&, float, const Material&);
     virtual std::string getDescription() const override;
-    virtual bool intersect(const Ray&, RayHitInfo&) const override;
+    virtual bool intersect(const Ray&, IntersectInfo&) const override;
     float getRadius() const { return radius; }
 };
 
@@ -51,7 +77,7 @@ private:
 public:
     Triangle(const Vec3&, const Vec3&, const Vec3&, const Material&);
     virtual std::string getDescription() const override;
-    virtual bool intersect(const Ray& ray, RayHitInfo& result) const override;
+    virtual bool intersect(const Ray& ray, IntersectInfo& result) const override;
     Vec3 getVert0()       const { return vert0;       }
     Vec3 getVert1()       const { return vert1;       }
     Vec3 getVert2()       const { return vert2;       }

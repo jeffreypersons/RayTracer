@@ -74,6 +74,7 @@ inline constexpr float isApproximately(float a, float b, float epsilon=DEFAULT_E
     return (a == b) || (a > b && a - b <= epsilon) || (b > a && b - a <= epsilon);
 }
 
+constexpr float INF = std::numeric_limits<float>::infinity();
 constexpr float PI   = 3.14159265358979323846f;
 constexpr float PI_2 = 1.57079632679489661923f;
 constexpr float PI_4 = 0.78539816339744830962f;

@@ -27,7 +27,7 @@ public:
     constexpr Color(double r, double g, double b) : r(static_cast<float>(r)),  g(static_cast<float>(g)),  b(static_cast<float>(b))  {}
     constexpr Color(int    r, int    g, int    b) : r(intToFloat(r)),          g(intToFloat(g)),          b(intToFloat(b))          {}
     constexpr Color(int hex)                      : r(extractRedByte(hex)),    g(extractGreenByte(hex)),  b(extractBlueByte(hex))   {}
-    constexpr Color(const Color& color)           : r(Math::clamp01(color.r)), g(Math::clamp01(color.g)), b(Math::clamp01(color.b)) {}
+    constexpr Color(const Color& intensity)           : r(Math::clamp01(intensity.r)), g(Math::clamp01(intensity.g)), b(Math::clamp01(intensity.b)) {}
 
     constexpr unsigned int getHex() {
         return ( (0xff & static_cast<unsigned char>(floatToInt(r))) << 16 ) |
@@ -41,7 +41,7 @@ inline constexpr Color operator*(const Color& lhs, const Color& rhs)  { return C
 inline constexpr Color operator*(float        lhs, const Color& rhs)  { return Color(lhs   * rhs.r, lhs   * rhs.g, lhs   * rhs.b);     }
 inline constexpr Color operator*(const Color& lhs, float        rhs)  { return Color(lhs.r * rhs,   lhs.g * rhs,   lhs.b * rhs);       }
 inline constexpr Color operator/(const Color& lhs, float        rhs)  { return Color(lhs.r / rhs,   lhs.g / rhs,   lhs.b / rhs);       }
-inline std::ostream& operator<<(std::ostream& os, const Color& color) { os << color.r << "," << color.g << "," << color.b;  return os; }
+inline std::ostream& operator<<(std::ostream& os, const Color& intensity) { os << intensity.r << "," << intensity.g << "," << intensity.b; return os; }
 
 
 namespace Palette {
