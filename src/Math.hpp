@@ -55,7 +55,7 @@ inline constexpr Vec3 operator/(const Vec3& lhs,  float       rhs) { return Vec3
 inline std::ostream& operator<<(std::ostream& os, const Vec3& vec) { os << vec.x << "," << vec.y << "," << vec.z; return os;   }
 
 
-// assumes any given bounds lower < upper
+// assumes that for any given bounds lower < upper
 // all math functions take degrees as input
 namespace Math {
 constexpr float DEFAULT_EPSILON = 0.000001f;

@@ -1,10 +1,10 @@
 #pragma once
 #include "Math.hpp"
-#include "Color.hpp"
 #include "Ray.hpp"
+#include "Color.hpp"
 #include "Camera.hpp"
-#include "Lights.hpp"
-#include "SceneObjects.h"
+#include "Lights.h"
+#include "Objects.h"
 #include "Scene.hpp"
 #include "FrameBuffer.hpp"
 
@@ -43,11 +43,11 @@ private:
     Color traceRay(const Camera&, const Scene&, const Ray&, size_t) const;
 
     Ray reflectRay(const Ray&, const Intersection&) const;
-    bool isInShadow(const Intersection&, const PointLight&, const Scene&) const;
+    bool isInShadow(const Intersection&, const ILight&, const Scene&) const;
     
     bool findNearestIntersection(const Scene&, const Ray&, Intersection&) const;
-    Color computeDiffuseColor (const Intersection&, const PointLight&) const;
-    Color computeSpecularColor(const Intersection&, const PointLight&, const Camera&) const;
+    Color computeDiffuseColor (const Intersection&, const ILight&) const;
+    Color computeSpecularColor(const Intersection&, const ILight&, const Camera&) const;
 };
 inline std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
     os << "Tracer("

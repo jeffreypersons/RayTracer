@@ -2,8 +2,8 @@
 #include "Math.hpp"
 #include "Color.hpp"
 #include "Camera.hpp"
-#include "Lights.hpp"
-#include "SceneObjects.h"
+#include "Lights.h"
+#include "Objects.h"
 #include "Scene.hpp"
 #include "FrameBuffer.hpp"
 #include <omp.h>
@@ -75,7 +75,7 @@ Color Tracer::traceRay(const Camera& renderCam, const Scene& scene, const Ray& r
     
     Color nonReflectedColor = intersection.object->getMaterial().getAmbientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
-       const PointLight light = scene.getLight(index);
+       const ILight& light = scene.getLight(index);
        if (!isInShadow(intersection, light, scene)) {
            Color diffuse = computeDiffuseColor(intersection, light);
            Color specular = computeSpecularColor(intersection, light, renderCam);
@@ -117,7 +117,7 @@ bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Interse
     }
 }
 // check if there exists another object blocking light from reaching our hit-point
-bool Tracer::isInShadow(const Intersection& intersection, const PointLight& light, const Scene& scene) const {
+bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, const Scene& scene) const {
     Ray shadowRay{ intersection.point + (shadowBias * intersection.normal), Math::direction(intersection.point, light.getPosition()) };
     float distanceToLight = Math::distance(shadowRay.origin, light.getPosition());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
@@ -131,7 +131,7 @@ bool Tracer::isInShadow(const Intersection& intersection, const PointLight& ligh
     return false;
 }
 
-Color Tracer::computeDiffuseColor(const Intersection& intersection, const PointLight& light) const {
+Color Tracer::computeDiffuseColor(const Intersection& intersection, const ILight& light) const {
     Vec3 directionToLight = Math::direction(intersection.point, light.getPosition());
 
     const Material surfaceMaterial = intersection.object->getMaterial();
@@ -139,7 +139,7 @@ Color Tracer::computeDiffuseColor(const Intersection& intersection, const PointL
     return strengthAtLightAngle * surfaceMaterial.getDiffuseColor();
 }
 
-Color Tracer::computeSpecularColor(const Intersection& intersection, const PointLight& light, const Camera& renderCam) const {
+Color Tracer::computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& renderCam) const {
     Vec3 directionToCam = Math::direction(intersection.point, renderCam.getPosition());
     Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
 
