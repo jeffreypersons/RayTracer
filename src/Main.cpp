@@ -2,7 +2,7 @@
 #include "Lights.h"
 #include "Objects.h"
 #include "Camera.hpp"
-#include "Scene.hpp"
+#include "Scene.h"
 #include "Tracer.h"
 #include <iostream>
 

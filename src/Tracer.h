@@ -5,7 +5,7 @@
 #include "Camera.hpp"
 #include "Lights.h"
 #include "Objects.h"
-#include "Scene.hpp"
+#include "Scene.h"
 #include "FrameBuffer.hpp"
 
 
@@ -49,13 +49,4 @@ private:
     Color computeDiffuseColor (const Intersection&, const ILight&) const;
     Color computeSpecularColor(const Intersection&, const ILight&, const Camera&) const;
 };
-inline std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
-    os << "Tracer("
-         << "shadow-color:("       << tracer.getShadowColor()       << "),"
-         << "background-color:("   << tracer.getBackgroundColor()   << "),"
-         << "shadow-bias:"         << tracer.getShadowBias()        << ","
-         << "reflection-bias:"     << tracer.getReflectionBias()    << ","
-         << "max-num-reflections:" << tracer.getMaxNumReflections()
-       << ")";
-    return os;
-}
+std::ostream& operator<<(std::ostream& os, const Tracer& tracer);

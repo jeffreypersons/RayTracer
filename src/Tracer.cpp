@@ -4,7 +4,7 @@
 #include "Camera.hpp"
 #include "Lights.h"
 #include "Objects.h"
-#include "Scene.hpp"
+#include "Scene.h"
 #include "FrameBuffer.hpp"
 #include <omp.h>
 
@@ -146,4 +146,15 @@ Color Tracer::computeSpecularColor(const Intersection& intersection, const ILigh
     const Material surfaceMaterial = intersection.object->getMaterial();
     float strengthAtCamAngle = Math::max(0.00f, Math::dot(intersection.normal, halfwayVec));
     return Math::pow(strengthAtCamAngle, surfaceMaterial.getShininess()) * surfaceMaterial.getSpecularColor();
+}
+
+std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
+    os << "Tracer("
+         << "shadow-color:("       << tracer.getShadowColor()       << "),"
+         << "background-color:("   << tracer.getBackgroundColor()   << "),"
+         << "shadow-bias:"         << tracer.getShadowBias()        << ","
+         << "reflection-bias:"     << tracer.getReflectionBias()    << ","
+         << "max-num-reflections:" << tracer.getMaxNumReflections()
+       << ")";
+    return os;
 }
