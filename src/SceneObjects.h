@@ -1,27 +1,27 @@
 #pragma once
 #include "Math.hpp"
 #include "Material.hpp"
-#include "Rays.hpp"
+#include "Ray.hpp"
 
 
 class ISceneObject;
 
-struct IntersectInfo {
+struct Intersection {
     Vec3 point;
     Vec3 normal;
     float t;
     const ISceneObject* object;
 
-    constexpr IntersectInfo() : IntersectInfo(Vec3(), Vec3(), -1.00f, nullptr) {}
-    constexpr IntersectInfo(const Vec3& point, const Vec3& normal, float t, ISceneObject* object) :
+    constexpr Intersection() : Intersection(Vec3(), Vec3(), -1.00f, nullptr) {}
+    constexpr Intersection(const Vec3& point, const Vec3& normal, float t, ISceneObject* object) :
         point(point),
         normal(normal),
         t(t),
         object(object)
     {}
 };
-inline std::ostream& operator<<(std::ostream& os, const IntersectInfo& intersectInfo) {
-    os << "IntersectInfo("
+inline std::ostream& operator<<(std::ostream& os, const Intersection& intersectInfo) {
+    os << "Intersection("
          << "point:("  << intersectInfo.point  << "),"
          << "normal:(" << intersectInfo.normal << "),"
          << "t:"       << intersectInfo.t
@@ -42,7 +42,7 @@ public:
     Material getMaterial() const { return material; }
 
     virtual std::string getDescription() const = 0;
-    virtual bool intersect(const Ray& ray, IntersectInfo& result) const = 0;
+    virtual bool intersect(const Ray& ray, Intersection& result) const = 0;
 };
 inline std::ostream& operator<<(std::ostream& os, const ISceneObject& sceneObject) {
     os << sceneObject.getDescription();
@@ -57,7 +57,7 @@ private:
 public:
     Sphere(const Vec3&, float, const Material&);
     virtual std::string getDescription() const override;
-    virtual bool intersect(const Ray&, IntersectInfo&) const override;
+    virtual bool intersect(const Ray&, Intersection&) const override;
     float getRadius() const { return radius; }
 };
 
@@ -77,7 +77,7 @@ private:
 public:
     Triangle(const Vec3&, const Vec3&, const Vec3&, const Material&);
     virtual std::string getDescription() const override;
-    virtual bool intersect(const Ray& ray, IntersectInfo& result) const override;
+    virtual bool intersect(const Ray& ray, Intersection& result) const override;
     Vec3 getVert0()       const { return vert0;       }
     Vec3 getVert1()       const { return vert1;       }
     Vec3 getVert2()       const { return vert2;       }

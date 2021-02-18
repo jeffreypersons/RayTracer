@@ -21,7 +21,6 @@ struct Vec2 {
     static constexpr Vec2 zero()  { return Vec2( 0,  0); };
     static constexpr Vec2 one()   { return Vec2( 1,  1); };
 };
-
 inline constexpr Vec2 operator+(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x + rhs.x, lhs.y + rhs.y); }
 inline constexpr Vec2 operator-(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x - rhs.x, lhs.y - rhs.y); }
 inline constexpr Vec2 operator/(const Vec2& lhs,  float       rhs) { return Vec2(lhs.x / rhs,   lhs.y / rhs);   }

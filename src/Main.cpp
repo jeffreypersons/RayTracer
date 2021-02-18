@@ -1,11 +1,12 @@
 #include "Tracer.h"
 #include "Scene.hpp"
+#include "Camera.hpp"
 #include "StopWatch.hpp"
 #include <iostream>
 
 
-RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target, float aspectRatio) {
-    RenderCam cam{};
+Camera createCam(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target, float aspectRatio) {
+    Camera cam{};
     cam.setPosition(position);
     cam.setNearClip(viewDist);
     cam.setAspectRatio(aspectRatio);
@@ -54,11 +55,11 @@ int main() {
     Vec3 sceneOrigin{ 0, 0, 0 };
     Scene scene = createSimpleScene(sceneOrigin);
     FrameBuffer frameBuffer{ CommonResolutions::HD_720p, Palette::skyBlue };
-    RenderCam frontCam    = createCam(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
-    RenderCam frontTopCam = createCam(eyeTarget + Vec3(0,  50,  25), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
-    RenderCam behindCam   = createCam(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
-    RenderCam topCam      = createCam(eyeTarget + Vec3(0,  50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
-    RenderCam bottomCam   = createCam(eyeTarget + Vec3(0, -50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
+    Camera frontCam    = createCam(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
+    Camera frontTopCam = createCam(eyeTarget + Vec3(0,  50,  25), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
+    Camera behindCam   = createCam(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
+    Camera topCam      = createCam(eyeTarget + Vec3(0,  50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
+    Camera bottomCam   = createCam(eyeTarget + Vec3(0, -50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
     
     std::cout << "Initializing target-"   << frameBuffer << "\n\n";
     std::cout << "Initializing ray-"      << tracer      << "\n\n";

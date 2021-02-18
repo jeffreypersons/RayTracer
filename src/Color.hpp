@@ -27,7 +27,7 @@ public:
     constexpr Color(double r, double g, double b) : r(static_cast<float>(r)),  g(static_cast<float>(g)),  b(static_cast<float>(b))  {}
     constexpr Color(int    r, int    g, int    b) : r(intToFloat(r)),          g(intToFloat(g)),          b(intToFloat(b))          {}
     constexpr Color(int hex)                      : r(extractRedByte(hex)),    g(extractGreenByte(hex)),  b(extractBlueByte(hex))   {}
-    constexpr Color(const Color& intensity)           : r(Math::clamp01(intensity.r)), g(Math::clamp01(intensity.g)), b(Math::clamp01(intensity.b)) {}
+    constexpr Color(const Color& intensity)       : r(Math::clamp01(intensity.r)), g(Math::clamp01(intensity.g)), b(Math::clamp01(intensity.b)) {}
 
     constexpr unsigned int getHex() {
         return ( (0xff & static_cast<unsigned char>(floatToInt(r))) << 16 ) |

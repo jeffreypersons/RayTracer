@@ -1,6 +1,6 @@
 #pragma once
 #include "Math.hpp"
-#include "Rays.hpp"
+#include "Ray.hpp"
 
 
 namespace CommonResolutions {
@@ -20,7 +20,7 @@ constexpr Vec2 HD_12K   = Vec2(12288, 6480);
 // z-axis-aligned perspective 3d camera (rectangular-pinhole cam without lens)
 // note: here, image plane is equivalent to the near plane
 // note: fieldOfView is taken as horizontal fov, with the aspect ratio determining the verticalFov
-class RenderCam {
+class Camera {
 private:
     Vec3 eyePosition;
     Vec3 rightDir;
@@ -64,7 +64,7 @@ private:
     }
     
 public:
-    RenderCam() {
+    Camera() {
         Vec2 size = computeSizeFromHorizontalFov(DEFAULT_FIELD_OF_VIEW, DEFAULT_NEAR_CLIP, DEFAULT_ASPECT_RATIO);
         setPosition(DEFAULT_POSITION);
         setOrientation(DEFAULT_RIGHT_DIR, DEFAULT_UP_DIR, DEFAULT_FORWARD_DIR);
@@ -162,8 +162,8 @@ public:
         this->upDir      = Math::normalize(Math::cross(this->rightDir,   this->forwardDir));
     }
 };
-inline std::ostream& operator<<(std::ostream& os, const RenderCam& renderCam) {
-    os << "RenderCam("
+inline std::ostream& operator<<(std::ostream& os, const Camera& renderCam) {
+    os << "Camera("
          << "position:(" << renderCam.getPosition() << "), "
          << "Orientation{"
            << "right-axis:("   << renderCam.getRightDir()   << "),"

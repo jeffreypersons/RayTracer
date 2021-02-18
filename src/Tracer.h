@@ -1,11 +1,12 @@
 #pragma once
 #include "Math.hpp"
 #include "Color.hpp"
-#include "Cameras.hpp"
+#include "Ray.hpp"
+#include "Camera.hpp"
 #include "Lights.hpp"
-#include "Scene.hpp"
 #include "SceneObjects.h"
-#include "FrameBuffers.hpp"
+#include "Scene.hpp"
+#include "FrameBuffer.hpp"
 
 
 class Tracer {
@@ -25,7 +26,7 @@ private:
 
 public:
     Tracer();
-    void trace(const RenderCam&, const Scene&, FrameBuffer&);
+    void trace(const Camera&, const Scene&, FrameBuffer&);
     void setShadowColor(const Color&);
     void setBackgroundColor(const Color&);
     void setShadowBias(float);
@@ -39,16 +40,15 @@ public:
     size_t getMaxNumReflections() const { return maxNumReflections; }
 
 private:
-    Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
+    Color traceRay(const Camera&, const Scene&, const Ray&, size_t) const;
 
-    Ray reflectRay(const Ray&, const IntersectInfo&) const;
-    bool isInShadow(const IntersectInfo&, const PointLight&, const Scene&) const;
+    Ray reflectRay(const Ray&, const Intersection&) const;
+    bool isInShadow(const Intersection&, const PointLight&, const Scene&) const;
     
-    bool findNearestIntersection(const Scene&, const Ray&, IntersectInfo&) const;
-    Color computeDiffuseColor (const IntersectInfo&, const PointLight&) const;
-    Color computeSpecularColor(const IntersectInfo&, const PointLight&, const RenderCam&) const;
+    bool findNearestIntersection(const Scene&, const Ray&, Intersection&) const;
+    Color computeDiffuseColor (const Intersection&, const PointLight&) const;
+    Color computeSpecularColor(const Intersection&, const PointLight&, const Camera&) const;
 };
-
 inline std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
     os << "Tracer("
          << "shadow-color:("       << tracer.getShadowColor()       << "),"

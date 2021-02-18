@@ -1,6 +1,6 @@
 #include "SceneObjects.h"
 #include "Math.hpp"
-#include "Rays.hpp"
+#include "Ray.hpp"
 
 
 // assumes radius greater than zero

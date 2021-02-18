@@ -2,7 +2,6 @@
 #include "Math.hpp"
 
 
-// represents a point light in 3d space
 class PointLight {
 private:
     Vec3 position;
