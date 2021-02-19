@@ -56,7 +56,7 @@ int main() {
     Vec3 eyeTarget{ 0, 50, 0 };
     Vec3 sceneOrigin{ 0, 0, 0 };
     Scene scene = createSimpleScene(sceneOrigin);
-    FrameBuffer frameBuffer{ CommonResolutions::HD_720p };
+    FrameBuffer frameBuffer{ CommonResolutions::HD_4K };
     Camera frontCam    = createCamera(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera frontTopCam = createCamera(eyeTarget + Vec3(0,  50,  25), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera behindCam   = createCamera(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());

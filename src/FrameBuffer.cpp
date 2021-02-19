@@ -36,9 +36,9 @@ void FrameBuffer::writeToFile(const std::string& filename, float gammaCorrection
     ofs.close();
 }
 
-void FrameBuffer::setPixel(size_t i, const Color& intensity) noexcept {
+void FrameBuffer::setPixel(size_t i, const Color& color) noexcept {
     assert((i >= 0 && i < bufferSize));
-    pixels[i] = intensity;
+    pixels[i] = color;
 }
 void FrameBuffer::setPixel(size_t row, size_t col, const Color& color) noexcept {
     assert((row >= 0 && row < height_) && (col >= 0 && col < width_));

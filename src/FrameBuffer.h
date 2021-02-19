@@ -15,6 +15,7 @@ private:
 public:
     FrameBuffer(size_t width, size_t height);
     FrameBuffer(const Vec2& dimensions);
+    FrameBuffer() = delete;
     FrameBuffer(FrameBuffer&) = delete;
     FrameBuffer& operator=(FrameBuffer&) = delete;
 

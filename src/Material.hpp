@@ -7,13 +7,13 @@
 // color of diffuse/ambient/specular reflectance, as well as weighted intrinsic/reflectivity/refraction
 class Material {
 private:
-    Color ambientColor;
-    Color diffuseColor;
-    Color specularColor;
-    float intrinsity;
-    float reflectivity;
-    float refractivity;
-    float specularExponent;
+    Color ambientColor_;
+    Color diffuseColor_;
+    Color specularColor_;
+    float intrinsity_;
+    float reflectivity_;
+    float refractivity_;
+    float shininess_;
 
     static constexpr Color DEFAULT_AMBIENT_COLOR  { 0.20f, 0.20f, 0.20f };
     static constexpr Color DEFAULT_DIFFUSE_COLOR  { 0.80f, 0.80f, 0.80f };
@@ -24,68 +24,81 @@ private:
     static constexpr float DEFAULT_SPECULAR_EXPONENT { 1.00f };
 
 public:
-    Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor,
+    constexpr Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor,
              float intrinsity, float reflectivity, float refractivity,
-             float specularExponent) {
-        setColors(ambientColor, diffuseColor, specularColor);
-        setWeights(intrinsity, reflectivity, refractivity);
-        setShininess(specularExponent);
+             float shininess) 
+        : ambientColor_ (ambientColor),
+          diffuseColor_ (diffuseColor),
+          specularColor_(specularColor),
+          intrinsity_   (intrinsity),
+          reflectivity_ (reflectivity),
+          refractivity_ (refractivity),
+          shininess_    (shininess) {
+        validateWeights(intrinsity, reflectivity, refractivity);
+        validateShininess(shininess);
     }
-    Material() : Material(
-        DEFAULT_AMBIENT_COLOR,
-        DEFAULT_DIFFUSE_COLOR,
-        DEFAULT_SPECULAR_COLOR,
-        DEFAULT_INTRINSITY,
-        DEFAULT_REFLECTIVITY,
-        DEFAULT_REFRACTIVITY,
-        DEFAULT_SPECULAR_EXPONENT) {}
+    constexpr Material()
+        : Material(
+            DEFAULT_AMBIENT_COLOR,
+            DEFAULT_DIFFUSE_COLOR,
+            DEFAULT_SPECULAR_COLOR,
+            DEFAULT_INTRINSITY,
+            DEFAULT_REFLECTIVITY,
+            DEFAULT_REFRACTIVITY,
+            DEFAULT_SPECULAR_EXPONENT)
+    {}
 
-    void setColors(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor) {
-        this->ambientColor  = ambientColor;
-        this->diffuseColor  = diffuseColor;
-        this->specularColor = specularColor;
+    constexpr void setColors(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor) {
+        this->ambientColor_  = ambientColor;
+        this->diffuseColor_  = diffuseColor;
+        this->specularColor_ = specularColor;
     }
-    void setWeights(float intrinsity, float reflectivity, float refractivity=0.00f) {
+    constexpr void setWeights(float intrinsity, float reflectivity, float refractivity=0.00f) {
+        validateWeights(intrinsity, reflectivity, refractivity);
+        this->intrinsity_   = intrinsity;
+        this->reflectivity_ = reflectivity;
+        this->refractivity_ = refractivity;
+    }
+    constexpr void setShininess(float shininess) {
+        validateShininess(shininess);
+        this->shininess_ = shininess;
+    }
+
+    constexpr Color ambientColor()  const { return ambientColor_;  }
+    constexpr Color diffuseColor()  const { return diffuseColor_;  }
+    constexpr Color specularColor() const { return specularColor_; }
+    constexpr float intrinsity()    const { return intrinsity_;    }
+    constexpr float reflectivity()  const { return reflectivity_;  }
+    constexpr float refractivity()  const { return refractivity_;  }
+    constexpr float shininess()     const { return shininess_;     }
+
+private:
+    static constexpr void validateWeights(float intrinsity, float reflectivity, float refractivity=0.00f) {
         if (!Math::isApproximately(intrinsity + reflectivity + refractivity, 1.00f) ||
                 intrinsity   < 0.00f || intrinsity   > 1.00f ||
                 reflectivity < 0.00f || reflectivity > 1.00f ||
                 refractivity < 0.00f || refractivity > 1.00f) {
             throw std::invalid_argument("weights must be in range[0.0, 1.0] and sum to 1.0");
         }
-        this->intrinsity   = intrinsity;
-        this->reflectivity = reflectivity;
-        this->refractivity = refractivity;
     }
-    void setShininess(float specularExponent) {
-        if (specularExponent <= 0.00f) {
-            throw std::invalid_argument("specular exponent must be greater than zero");
+    static constexpr void validateShininess(float shininess) {
+        if (shininess <= 0.00f) {
+            throw std::invalid_argument("shininess must be greater than zero");
         }
-        this->specularExponent = specularExponent;
     }
-    void setAmbientColor(const Color& ambientColor)   { this->ambientColor  = ambientColor;  }
-    void setDiffuseColor(const Color& diffuseColor)   { this->diffuseColor  = diffuseColor;  }
-    void setSpecularColor(const Color& specularColor) { this->specularColor = specularColor; }
-
-    float getShininess()     const { return specularExponent; }
-    float getIntrinsity()    const { return intrinsity;       }
-    float getReflectivity()  const { return reflectivity;     }
-    float getRefractivity()  const { return refractivity;     }
-    Color getAmbientColor()  const { return ambientColor;     }
-    Color getDiffuseColor()  const { return diffuseColor;     }
-    Color getSpecularColor() const { return specularColor;    }
 };
 inline std::ostream& operator<<(std::ostream& os, const Material& material) {
     os << "Material("
          << "Colors{"
-           << "ambient:("  << material.getAmbientColor()  << "),"
-           << "diffuse:("  << material.getDiffuseColor()  << "),"
-           << "specular:(" << material.getSpecularColor() << ")}, "
+           << "ambient:("  << material.ambientColor()  << "),"
+           << "diffuse:("  << material.diffuseColor()  << "),"
+           << "specular:(" << material.specularColor() << ")}, "
          << "Weights{"
-           << "intrinsic:"  << material.getIntrinsity()   << ","
-           << "reflective:" << material.getReflectivity() << ","
-           << "refractive:" << material.getRefractivity() << "}, "
+           << "intrinsic:"  << material.intrinsity()   << ","
+           << "reflective:" << material.reflectivity() << ","
+           << "refractive:" << material.refractivity() << "}, "
          << "Shininess{"
-           << "specular-exponent:" << material.getShininess() << "}"
+           << "specular-exponent:" << material.shininess() << "}"
        << ")";
     return os;
 }

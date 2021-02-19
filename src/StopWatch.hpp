@@ -5,44 +5,46 @@
 
 class StopWatch {
 private:
-    std::optional<double> _startTime;
-    std::optional<double> _stopTime;
+    std::optional<double> startTime_;
+    std::optional<double> stopTime_;
     
-    static double getCurrentTime() { return omp_get_wtime(); }
-    static double duration(double start, double end) { return end - start; }
+    static double currentTime() { return omp_get_wtime(); }
+
 public:
-    StopWatch() :
-        _startTime(std::nullopt),
-        _stopTime(std::nullopt)
+    StopWatch()
+        : startTime_(std::nullopt),
+          stopTime_ (std::nullopt)
     {}
+
     void reset() {
-        _startTime = std::nullopt;
-        _stopTime  = std::nullopt;
+        startTime_ = std::nullopt;
+        stopTime_  = std::nullopt;
     }
     void start() {
         if (!isRunning()) {
-            _startTime = getCurrentTime();
-            _stopTime  = std::nullopt;
+            startTime_ = currentTime();
+            stopTime_ = std::nullopt;
         }
     }
     void stop() {
         if (isRunning()) {
-            _stopTime = getCurrentTime();
+            stopTime_ = currentTime();
         }
     }
 
     bool isRunning() const {
-        return _startTime.has_value() && !_stopTime.has_value();
+        return startTime_.has_value() && !stopTime_.has_value();
     }
     bool isFinished() const {
-        return _startTime.has_value() && _stopTime.has_value();
+        return startTime_.has_value() && stopTime_.has_value();
     }
+    // compute time since start and now (or since time last stopped)
     double elapsedTime() const {
         if (isRunning()) {
-            return getCurrentTime() - _startTime.value();
+            return currentTime() - startTime_.value();
         }
         if (isFinished()) {
-            return _stopTime.value() - _startTime.value();
+            return stopTime_.value() - startTime_.value();
         }
         return 0;
     }
