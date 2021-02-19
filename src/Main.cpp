@@ -1,11 +1,14 @@
-#include "Tracer.h"
-#include "Scene.hpp"
 #include "StopWatch.hpp"
+#include "Lights.h"
+#include "Objects.h"
+#include "Camera.h"
+#include "Scene.h"
+#include "Tracer.h"
 #include <iostream>
 
 
-RenderCam createCam(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target, float aspectRatio) {
-    RenderCam cam{};
+Camera createCamera(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target, float aspectRatio) {
+    Camera cam{};
     cam.setPosition(position);
     cam.setNearClip(viewDist);
     cam.setAspectRatio(aspectRatio);
@@ -31,7 +34,7 @@ Scene createSimpleScene(const Vec3& localOrigin) {
     reflectiveBlue.setShininess(5);
 
     Scene scene{};
-    scene.addLight(PointLight(localOrigin + Vec3(0, 100, 25), Palette::white, 0.50f, 1e-10f, 1e-20f));
+    scene.addLight(PointLight(localOrigin + Vec3(0, 100, 25), Palette::white,  0.50f, 1e-10f, 1e-20f));
     scene.addLight(PointLight(localOrigin + Vec3(0,   0, 25), Palette::yellow, 0.50f, 1e-10f, 1e-20f));
     scene.addSceneObject(Sphere(localOrigin + Vec3(0, 80,  0), 10.00f, reflectiveRed));
     scene.addSceneObject(Sphere(localOrigin + Vec3(0, 55,  0), 15.00f, reflectiveGreen));
@@ -53,12 +56,12 @@ int main() {
     Vec3 eyeTarget{ 0, 50, 0 };
     Vec3 sceneOrigin{ 0, 0, 0 };
     Scene scene = createSimpleScene(sceneOrigin);
-    FrameBuffer frameBuffer{ CommonResolutions::HD_720p, Palette::skyBlue };
-    RenderCam frontCam    = createCam(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
-    RenderCam frontTopCam = createCam(eyeTarget + Vec3(0,  50,  25), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
-    RenderCam behindCam   = createCam(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
-    RenderCam topCam      = createCam(eyeTarget + Vec3(0,  50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
-    RenderCam bottomCam   = createCam(eyeTarget + Vec3(0, -50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.getAspectRatio());
+    FrameBuffer frameBuffer{ CommonResolutions::HD_720p };
+    Camera frontCam    = createCamera(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
+    Camera frontTopCam = createCamera(eyeTarget + Vec3(0,  50,  25), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
+    Camera behindCam   = createCamera(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
+    Camera topCam      = createCamera(eyeTarget + Vec3(0,  50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
+    Camera bottomCam   = createCamera(eyeTarget + Vec3(0, -50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     
     std::cout << "Initializing target-"   << frameBuffer << "\n\n";
     std::cout << "Initializing ray-"      << tracer      << "\n\n";

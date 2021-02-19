@@ -1,11 +1,12 @@
 #pragma once
 #include "Math.hpp"
+#include "Ray.hpp"
 #include "Color.hpp"
-#include "Cameras.hpp"
-#include "Lights.hpp"
-#include "Scene.hpp"
-#include "SceneObjects.h"
-#include "FrameBuffers.hpp"
+#include "Camera.h"
+#include "Lights.h"
+#include "Objects.h"
+#include "Scene.h"
+#include "FrameBuffer.h"
 
 
 class Tracer {
@@ -25,7 +26,7 @@ private:
 
 public:
     Tracer();
-    void trace(const RenderCam&, const Scene&, FrameBuffer&);
+    void trace(const Camera&, const Scene&, FrameBuffer&);
     void setShadowColor(const Color&);
     void setBackgroundColor(const Color&);
     void setShadowBias(float);
@@ -39,23 +40,13 @@ public:
     size_t getMaxNumReflections() const { return maxNumReflections; }
 
 private:
-    Color traceRay(const RenderCam&, const Scene&, const Ray&, size_t) const;
+    Color traceRay(const Camera&, const Scene&, const Ray&, size_t) const;
 
-    Ray reflectRay(const Ray&, const IntersectInfo&) const;
-    bool isInShadow(const IntersectInfo&, const PointLight&, const Scene&) const;
+    Ray reflectRay(const Ray&, const Intersection&) const;
+    bool isInShadow(const Intersection&, const ILight&, const Scene&) const;
     
-    bool findNearestIntersection(const Scene&, const Ray&, IntersectInfo&) const;
-    Color computeDiffuseColor (const IntersectInfo&, const PointLight&) const;
-    Color computeSpecularColor(const IntersectInfo&, const PointLight&, const RenderCam&) const;
+    bool findNearestIntersection(const Scene&, const Ray&, Intersection&) const;
+    Color computeDiffuseColor (const Intersection&, const ILight&) const;
+    Color computeSpecularColor(const Intersection&, const ILight&, const Camera&) const;
 };
-
-inline std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
-    os << "Tracer("
-         << "shadow-color:("       << tracer.getShadowColor()       << "),"
-         << "background-color:("   << tracer.getBackgroundColor()   << "),"
-         << "shadow-bias:"         << tracer.getShadowBias()        << ","
-         << "reflection-bias:"     << tracer.getReflectionBias()    << ","
-         << "max-num-reflections:" << tracer.getMaxNumReflections()
-       << ")";
-    return os;
-}
+std::ostream& operator<<(std::ostream& os, const Tracer& tracer);
