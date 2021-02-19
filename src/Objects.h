@@ -25,7 +25,7 @@ inline std::ostream& operator<<(std::ostream& os, const IObject& object) {
 }
 
 
-class Sphere : public IObject {
+class Sphere final : public virtual IObject {
 private:
     float radius_;
     Vec3 center_;
@@ -40,7 +40,7 @@ public:
 };
 
 
-class Triangle : public IObject {
+class Triangle final : public virtual IObject {
 private:
     Vec3 vert0_;
     Vec3 vert1_;

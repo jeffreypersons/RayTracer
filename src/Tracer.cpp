@@ -134,13 +134,13 @@ bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Interse
 }
 // check if there exists another object blocking light from reaching our hit-point
 bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, const Scene& scene) const {
-    Ray shadowRay{ intersection.point + (shadowBias_ * intersection.normal), Math::direction(intersection.point, light.getPosition()) };
-    float distanceToLight = Math::distance(shadowRay.origin, light.getPosition());
+    Ray shadowRay{ intersection.point + (shadowBias_ * intersection.normal), Math::direction(intersection.point, light.position()) };
+    float distanceToLight = Math::distance(shadowRay.origin, light.position());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         Intersection occlusion;
         if (scene.getObject(index).intersect(shadowRay, occlusion) &&
                 occlusion.object != intersection.object &&
-                Math::distance(occlusion.point, light.getPosition()) < distanceToLight) {
+                Math::distance(occlusion.point, light.position()) < distanceToLight) {
             return true;
         }
     }
@@ -148,7 +148,7 @@ bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, c
 }
 
 Color Tracer::computeDiffuseColor(const Intersection& intersection, const ILight& light) const {
-    Vec3 directionToLight = Math::direction(intersection.point, light.getPosition());
+    Vec3 directionToLight = Math::direction(intersection.point, light.position());
 
     const Material surfaceMaterial = intersection.object->material();
     float strengthAtLightAngle = Math::max(0.00f, Math::dot(intersection.normal, directionToLight));
@@ -157,7 +157,7 @@ Color Tracer::computeDiffuseColor(const Intersection& intersection, const ILight
 
 Color Tracer::computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& renderCam) const {
     Vec3 directionToCam = Math::direction(intersection.point, renderCam.getPosition());
-    Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
+    Vec3 halfwayVec = Math::normalize(directionToCam + light.position());
 
     const Material surfaceMaterial = intersection.object->material();
     float strengthAtCamAngle = Math::max(0.00f, Math::dot(intersection.normal, halfwayVec));
