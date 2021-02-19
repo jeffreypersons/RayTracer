@@ -9,28 +9,44 @@
 #include <omp.h>
 
 
-Tracer::Tracer() :
-    shadowColor      (DEFAULT_SHADOW_COLOR),
-    backgroundColor  (DEFAULT_BACKGROUND_COLOR),
-    shadowBias       (DEFAULT_SHADOW_BIAS),
-    reflectionBias   (DEFAULT_REFLECTION_BIAS),
-    maxNumReflections(DEFAULT_MAX_NUM_REFLECTIONS)
+Tracer::Tracer()
+    : shadowColor_      (DEFAULT_SHADOW_COLOR),
+      backgroundColor_  (DEFAULT_BACKGROUND_COLOR),
+      shadowBias_       (DEFAULT_SHADOW_BIAS),
+      reflectionBias_   (DEFAULT_REFLECTION_BIAS),
+      maxNumReflections_(DEFAULT_MAX_NUM_REFLECTIONS)
 {}
 
 void Tracer::setShadowColor(const Color& shadowColor) {
-    this->shadowColor = shadowColor;
+    this->shadowColor_ = shadowColor;
 }
 void Tracer::setBackgroundColor(const Color& backgroundColor) {
-    this->backgroundColor = backgroundColor;
+    this->backgroundColor_ = backgroundColor;
 }
 void Tracer::setShadowBias(float shadowBias) {
-    this->shadowBias = shadowBias;
+    this->shadowBias_ = shadowBias;
 }
 void Tracer::setReflectionBias(float reflectionBias) {
-    this->reflectionBias = reflectionBias;
+    this->reflectionBias_ = reflectionBias;
 }
 void Tracer::setMaxNumReflections(size_t maxNumReflections) {
-    this->maxNumReflections = maxNumReflections;
+    this->maxNumReflections_ = maxNumReflections;
+}
+
+Color Tracer::shadowColor() const {
+    return shadowColor_;
+}
+Color Tracer::backgroundColor() const {
+    return backgroundColor_;
+}
+float Tracer::shadowBias() const {
+    return shadowBias_;
+}
+float Tracer::reflectionBias() const {
+    return reflectionBias_;
+}
+size_t Tracer::maxNumReflections() const {
+    return maxNumReflections_;
 }
 
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
@@ -59,13 +75,13 @@ void Tracer::trace(const Camera& renderCam, const Scene& scene, FrameBuffer& fra
 
 // todo: account for near and far clip culling (probably need to determine z dist pf object to camera and clamp on that)
 Color Tracer::traceRay(const Camera& renderCam, const Scene& scene, const Ray& ray, size_t iteration=0) const {
-    if (iteration >= maxNumReflections) {
+    if (iteration >= maxNumReflections_) {
         return Color{ 0, 0, 0 };
     }
 
     Intersection intersection{};
     if (!findNearestIntersection(scene, ray, intersection)) {
-        return backgroundColor;
+        return backgroundColor_;
     }
 
     Color reflectedColor{ 0, 0, 0 };
@@ -82,7 +98,7 @@ Color Tracer::traceRay(const Camera& renderCam, const Scene& scene, const Ray& r
            Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
            nonReflectedColor = nonReflectedColor + lightIntensityAtPoint * (diffuse + specular);
        } else {
-           nonReflectedColor = nonReflectedColor + shadowColor;
+           nonReflectedColor = nonReflectedColor + shadowColor_;
        }
     }
     
@@ -96,7 +112,7 @@ Ray Tracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     Vec3 reflectedDirection = Math::normalize(
         (-1 * ray.direction) + (2 * Math::dot(ray.direction, intersection.normal) * intersection.normal)
     );
-    return Ray(intersection.point + (reflectionBias * reflectedDirection), reflectedDirection);
+    return Ray(intersection.point + (reflectionBias_ * reflectedDirection), reflectedDirection);
 }
 bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Intersection& result) const {
     float tClosest = Math::INF;
@@ -118,7 +134,7 @@ bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Interse
 }
 // check if there exists another object blocking light from reaching our hit-point
 bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, const Scene& scene) const {
-    Ray shadowRay{ intersection.point + (shadowBias * intersection.normal), Math::direction(intersection.point, light.getPosition()) };
+    Ray shadowRay{ intersection.point + (shadowBias_ * intersection.normal), Math::direction(intersection.point, light.getPosition()) };
     float distanceToLight = Math::distance(shadowRay.origin, light.getPosition());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         Intersection occlusion;
@@ -150,11 +166,11 @@ Color Tracer::computeSpecularColor(const Intersection& intersection, const ILigh
 
 std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
     os << "Tracer("
-         << "shadow-color:("       << tracer.getShadowColor()       << "),"
-         << "background-color:("   << tracer.getBackgroundColor()   << "),"
-         << "shadow-bias:"         << tracer.getShadowBias()        << ","
-         << "reflection-bias:"     << tracer.getReflectionBias()    << ","
-         << "max-num-reflections:" << tracer.getMaxNumReflections()
+         << "shadow-color:("       << tracer.shadowColor()       << "),"
+         << "background-color:("   << tracer.backgroundColor()   << "),"
+         << "shadow-bias:"         << tracer.shadowBias()        << ","
+         << "reflection-bias:"     << tracer.reflectionBias()    << ","
+         << "max-num-reflections:" << tracer.maxNumReflections()
        << ")";
     return os;
 }
