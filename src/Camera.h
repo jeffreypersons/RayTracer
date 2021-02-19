@@ -22,16 +22,16 @@ inline constexpr Vec2 HD_12K   = Vec2(12288, 6480);
 // note: fieldOfView is taken as horizontal fov, with the aspect ratio determining the verticalFov
 class Camera {
 private:
-    Vec3 eyePosition;
-    Vec3 rightDir;
-    Vec3 upDir;
-    Vec3 forwardDir;
-
-    float nearClip;
-    float farClip;
-    float aspectRatio;
-    Vec2 fieldOfView;
-    Vec2 viewportSize;
+    Vec3 eyePosition_;
+    Vec3 rightDir_;
+    Vec3 upDir_;
+    Vec3 forwardDir_;
+    
+    float nearClip_;
+    float farClip_;
+    float aspectRatio_;
+    Vec2 fieldOfView_;
+    Vec2 viewportSize_;
 
     static constexpr float MIN_FIELD_OF_VIEW =   0.00f;
     static constexpr float MAX_FIELD_OF_VIEW = 180.00f;
@@ -61,16 +61,16 @@ public:
     void setAspectRatio(float aspectRatio);
     void setFieldOfView(float horizontalDegrees);
 
-    constexpr Vec3 getPosition() const;
-    constexpr Vec3 getRightDir() const;
-    constexpr Vec3 getUpDir() const;
-    constexpr Vec3 getForwardDir() const;
-    constexpr float getNearClip() const;
-    constexpr float getFarClip() const;
-    constexpr Vec2 getViewportSize() const;
-    constexpr float getAspectRatio() const;
-    constexpr float getHorizontalFieldOfView() const;
-    constexpr float getVerticalFieldOfView() const;
+    constexpr Vec3 position() const;
+    constexpr Vec3 rightDir() const;
+    constexpr Vec3 upDir() const;
+    constexpr Vec3 forwardDir() const;
+    constexpr float nearClip() const;
+    constexpr float farClip() const;
+    constexpr Vec2  viewportSize() const;
+    constexpr float aspectRatio() const;
+    constexpr float horizontalFieldOfView() const;
+    constexpr float verticalFieldOfView() const;
 
 private:
     static Vec2 computeSizeFromHorizontalFov(float horizontalFieldOfView, float distanceToPlane, float aspectRatio);

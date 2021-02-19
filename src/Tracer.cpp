@@ -56,8 +56,8 @@ void Tracer::trace(const Camera& renderCam, const Scene& scene, FrameBuffer& fra
     const int height       = static_cast<int>(frameBuffer.height());
     const float invWidth   = 1.00f / width;
     const float invHeight  = 1.00f / height;
-    const float nearZ      = renderCam.getNearClip();
-    const Vec3 eyePosition = renderCam.getPosition();
+    const float nearZ      = renderCam.nearClip();
+    const Vec3 eyePosition = renderCam.position();
     #pragma omp for schedule(dynamic)
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
@@ -156,7 +156,7 @@ Color Tracer::computeDiffuseColor(const Intersection& intersection, const ILight
 }
 
 Color Tracer::computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& renderCam) const {
-    Vec3 directionToCam = Math::direction(intersection.point, renderCam.getPosition());
+    Vec3 directionToCam = Math::direction(intersection.point, renderCam.position());
     Vec3 halfwayVec = Math::normalize(directionToCam + light.position());
 
     const Material surfaceMaterial = intersection.object->material();
