@@ -69,11 +69,11 @@ Color Tracer::traceRay(const Camera& renderCam, const Scene& scene, const Ray& r
     }
 
     Color reflectedColor{ 0, 0, 0 };
-    if (intersection.object->getMaterial().getReflectivity() > 0.00f) {
+    if (intersection.object->material().reflectivity() > 0.00f) {
         reflectedColor = traceRay(renderCam, scene, reflectRay(ray, intersection), iteration + 1);
     }
     
-    Color nonReflectedColor = intersection.object->getMaterial().getAmbientColor();
+    Color nonReflectedColor = intersection.object->material().ambientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
        const ILight& light = scene.getLight(index);
        if (!isInShadow(intersection, light, scene)) {
@@ -87,8 +87,8 @@ Color Tracer::traceRay(const Camera& renderCam, const Scene& scene, const Ray& r
     }
     
     // blend intrinsic and reflected color using our light and intersected object
-    return (intersection.object->getMaterial().getIntrinsity()   * nonReflectedColor) + 
-           (intersection.object->getMaterial().getReflectivity() * reflectedColor);
+    return (intersection.object->material().intrinsity()   * nonReflectedColor) + 
+           (intersection.object->material().reflectivity() * reflectedColor);
 }
 
 // reflect our ray using a slight direction offset to avoid infinite reflections
@@ -134,18 +134,18 @@ bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, c
 Color Tracer::computeDiffuseColor(const Intersection& intersection, const ILight& light) const {
     Vec3 directionToLight = Math::direction(intersection.point, light.getPosition());
 
-    const Material surfaceMaterial = intersection.object->getMaterial();
+    const Material surfaceMaterial = intersection.object->material();
     float strengthAtLightAngle = Math::max(0.00f, Math::dot(intersection.normal, directionToLight));
-    return strengthAtLightAngle * surfaceMaterial.getDiffuseColor();
+    return strengthAtLightAngle * surfaceMaterial.diffuseColor();
 }
 
 Color Tracer::computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& renderCam) const {
     Vec3 directionToCam = Math::direction(intersection.point, renderCam.getPosition());
     Vec3 halfwayVec = Math::normalize(directionToCam + light.getPosition());
 
-    const Material surfaceMaterial = intersection.object->getMaterial();
+    const Material surfaceMaterial = intersection.object->material();
     float strengthAtCamAngle = Math::max(0.00f, Math::dot(intersection.normal, halfwayVec));
-    return Math::pow(strengthAtCamAngle, surfaceMaterial.getShininess()) * surfaceMaterial.getSpecularColor();
+    return Math::pow(strengthAtCamAngle, surfaceMaterial.shininess()) * surfaceMaterial.specularColor();
 }
 
 std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
