@@ -72,6 +72,9 @@ inline constexpr float clamp01(float val) {
 inline constexpr float isApproximately(float a, float b, float epsilon=DEFAULT_EPSILON) {
     return (a == b) || (a > b && a - b <= epsilon) || (b > a && b - a <= epsilon);
 }
+inline constexpr float abs(float a)            { return a <= 0.00f? -a : a; }
+inline constexpr float min(float a, float b)   { return a <= b?      a : b; }
+inline constexpr float max(float a, float b)   { return a >= b?      a : b; }
 
 constexpr float INF = std::numeric_limits<float>::infinity();
 constexpr float PI   = 3.14159265358979323846f;
@@ -88,9 +91,6 @@ inline float atan(float ratio)                 { return radToDeg(std::atanf(rati
 inline float square(float a)                   { return a * a;                         }
 inline float squareRoot(float a)               { return std::sqrtf(a);                 }
 inline float pow(float a, float b)             { return std::powf(a, b);               }
-inline constexpr float abs(float a)            { return a <= 0.00f? -a : a;            }
-inline constexpr float min(float a, float b)   { return a <= b?      a : b;            }
-inline constexpr float max(float a, float b)   { return a >= b?      a : b;            }
 inline float roundToNearestInt(float a)        { return std::round(a);                 }
 inline float roundToNearestDigit(float a, size_t num_digits) {
     size_t roundingMultiple = num_digits * 10;

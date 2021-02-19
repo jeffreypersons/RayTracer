@@ -5,7 +5,7 @@
 #include "Lights.h"
 #include "Objects.h"
 #include "Scene.h"
-#include "FrameBuffer.hpp"
+#include "FrameBuffer.h"
 #include <omp.h>
 
 
@@ -36,8 +36,8 @@ void Tracer::setMaxNumReflections(size_t maxNumReflections) {
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
 // trace it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
 void Tracer::trace(const Camera& renderCam, const Scene& scene, FrameBuffer& frameBuffer) {
-    const int width        = static_cast<int>(frameBuffer.getWidth());
-    const int height       = static_cast<int>(frameBuffer.getHeight());
+    const int width        = static_cast<int>(frameBuffer.width());
+    const int height       = static_cast<int>(frameBuffer.height());
     const float invWidth   = 1.00f / width;
     const float invHeight  = 1.00f / height;
     const float nearZ      = renderCam.getNearClip();
