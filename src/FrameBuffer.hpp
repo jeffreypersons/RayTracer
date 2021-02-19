@@ -14,50 +14,26 @@ private:
     const float aspectRatio;
     const float megaPixels;
     const Color initialColor;
-    Color* pixels;
-
-    static float computeMegaPixels(size_t width, size_t height, size_t numDigits=2) {
-        return Math::roundToNearestDigit((width * height) / 1000000.00f, numDigits);
-    }
+    std::unique_ptr<Color[]> pixels;
 
 public:
-    FrameBuffer(size_t width, size_t height, const Color& initialColor) :
+    FrameBuffer(size_t width, size_t height) :
             width(width),
             height(height),
             numPixels(width * height),
             aspectRatio(width / static_cast<float>(height)),
             megaPixels(computeMegaPixels(width, height)),
             initialColor(initialColor),
-            pixels(nullptr) {
+            pixels(std::make_unique<Color[]>(numPixels)) {
         if (width <= 0 || height <= 0) {
             throw std::invalid_argument("frame buffer must be have dimensions greater than zero");
         }
-        pixels = new Color[numPixels];
-        for (int i = 0; i < numPixels; i++) {
-            pixels[i] = this->initialColor;
-        }
     }
-    FrameBuffer(const Vec2& size, const Color& initialColor) :
-        FrameBuffer(static_cast<size_t>(size.x), static_cast<size_t>(size.y), initialColor)
+    FrameBuffer(const Vec2& size) :
+        FrameBuffer(static_cast<size_t>(size.x), static_cast<size_t>(size.y))
     {}
-
-    FrameBuffer(const FrameBuffer& frameBuffer) :
-            width(width),
-            height(height),
-            numPixels(width * height),
-            aspectRatio(width / static_cast<float>(height)),
-            megaPixels(computeMegaPixels(width, height)),
-            initialColor(initialColor),
-            pixels(nullptr) {
-        pixels = new Color[numPixels];
-        memcpy(pixels, frameBuffer.pixels, sizeof(Color) * width * height);
-    }
-
-    ~FrameBuffer() {
-        if (pixels != nullptr) {
-            delete[] pixels;
-        }
-    }
+    FrameBuffer(FrameBuffer&) = delete;
+    FrameBuffer& operator=(FrameBuffer&) = delete;
 
     // save framebuffer as an array of 256 rgb-colored pixels, written to file at given location
     // note that the buffer stores colors relative to top left corner, while ppm is relative to the bottom left
@@ -90,6 +66,11 @@ public:
     std::string getImageDescription() const {
         return std::to_string(width) + "X" + std::to_string(height) +
             "(" + std::to_string(getMegaPixels()) + "MP)";
+    }
+
+private:
+    static float computeMegaPixels(size_t width, size_t height, size_t numDigits=2) {
+        return Math::roundToNearestDigit((width * height) / 1000000.00f, numDigits);
     }
 };
 inline std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
