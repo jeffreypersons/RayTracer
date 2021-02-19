@@ -1,7 +1,7 @@
 #include "Tracer.h"
 #include "Math.hpp"
 #include "Color.hpp"
-#include "Camera.hpp"
+#include "Camera.h"
 #include "Lights.h"
 #include "Objects.h"
 #include "Scene.h"

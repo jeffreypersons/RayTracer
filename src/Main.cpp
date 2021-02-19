@@ -1,7 +1,7 @@
 #include "StopWatch.hpp"
 #include "Lights.h"
 #include "Objects.h"
-#include "Camera.hpp"
+#include "Camera.h"
 #include "Scene.h"
 #include "Tracer.h"
 #include <iostream>
