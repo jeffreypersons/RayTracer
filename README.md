@@ -1,6 +1,12 @@
 # RayTracer
  A simple ray tracer written from scratch in C++, with refraction, reflection, and shadows...
  
+# New Gallery
+
+
+
+
+# Old Gallery
  *(click on below image to view full size in a seperate tab)*
 
 <p align="center">
