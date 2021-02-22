@@ -53,9 +53,9 @@ int main() {
     tracer.setShadowBias(0.02f);
     tracer.setReflectionBias(0.08f);
 
-    Vec3 eyeTarget{ 0, 50, 0 };
-    Vec3 sceneOrigin{ 0, 0, 0 };
-    Scene scene = createSimpleScene(sceneOrigin);
+    const Vec3 eyeTarget{ 0, 50, 0 };
+    const Vec3 sceneOrigin{ 0, 0, 0 };
+    const Scene scene = createSimpleScene(sceneOrigin);
     FrameBuffer frameBuffer{ CommonResolutions::HD_4K };
     Camera frontCam    = createCamera(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera frontTopCam = createCamera(eyeTarget + Vec3(0,  50,  25), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());

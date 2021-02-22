@@ -11,8 +11,7 @@ protected:
     Material material_{};
 
 public:
-    ~IObject() {}
-
+    virtual ~IObject() = default;
     virtual bool intersect(const Ray& ray, Intersection& result) const = 0;
     virtual std::string description() const = 0;
     
