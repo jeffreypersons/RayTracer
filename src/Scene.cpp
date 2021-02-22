@@ -2,6 +2,7 @@
 #include "Lights.h"
 #include "Objects.h"
 #include <vector>
+#include <assert.h>
 
 
 Scene::Scene()
@@ -10,13 +11,13 @@ Scene::Scene()
 {}
 
 void Scene::addLight(PointLight light) {
-    lights.push_back(std::move(std::make_unique<PointLight>(light)));
+    lights.push_back(std::make_unique<PointLight>(std::move(light)));
 }
 void Scene::addSceneObject(Sphere object) {
-    objects.push_back(std::move(std::make_unique<Sphere>(object)));
+    objects.push_back(std::make_unique<Sphere>(std::move(object)));
 }
 void Scene::addSceneObject(Triangle object) {
-    objects.push_back(std::move(std::make_unique<Triangle>(object)));
+    objects.push_back(std::make_unique<Triangle>(std::move(object)));
 }
 
 size_t Scene::getNumLights() const {
@@ -26,9 +27,11 @@ size_t Scene::getNumObjects() const {
     return objects.size();
 }
 const ILight& Scene::getLight(size_t index) const {
+    assert(index >= 0 && index < lights.size());
     return *lights[index].get();
 }
 const IObject& Scene::getObject(size_t index) const {
+    assert(index >= 0 && index < objects.size());
     return *objects[index].get();
 }
 
