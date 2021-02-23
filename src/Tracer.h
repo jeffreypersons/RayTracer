@@ -41,13 +41,13 @@ public:
     size_t maxNumReflections() const;
 
 private:
-    Color traceRay(const Camera&, const Scene&, const Ray&, size_t) const;
+    Color traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t ) const;
 
-    Ray reflectRay(const Ray&, const Intersection&) const;
-    bool isInShadow(const Intersection&, const ILight&, const Scene&) const;
+    Ray reflectRay(const Ray& ray, const Intersection& intersection) const;
+    bool isInShadow(const Intersection& intersection, const ILight& light, const Scene& scene) const;
     
-    bool findNearestIntersection(const Scene&, const Ray&, Intersection&) const;
-    Color computeDiffuseColor (const Intersection&, const ILight&) const;
-    Color computeSpecularColor(const Intersection&, const ILight&, const Camera&) const;
+    bool findNearestIntersection(const Scene& scene, const Ray& ray, Intersection& result) const;
+    Color computeDiffuseColor (const Intersection& intersection, const ILight& light) const;
+    Color computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& camera) const;
 };
 std::ostream& operator<<(std::ostream& os, const Tracer& tracer);
