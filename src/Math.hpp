@@ -20,6 +20,11 @@ struct Vec2 {
     static constexpr Vec2 left()  { return Vec2(-1,  0); };
     static constexpr Vec2 zero()  { return Vec2( 0,  0); };
     static constexpr Vec2 one()   { return Vec2( 1,  1); };
+    
+    inline constexpr Vec2& operator+=(const Vec2& rhs) { x += rhs.x;  y += rhs.y; return *this; }
+    inline constexpr Vec2& operator-=(const Vec2& rhs) { x -= rhs.x;  y -= rhs.y; return *this; }
+    inline constexpr Vec2& operator*=(float       rhs) { x *= rhs;    y *= rhs;   return *this; }
+    inline constexpr Vec2& operator/=(float       rhs) { x /= rhs;    y /= rhs;   return *this; }
 };
 inline constexpr Vec2 operator+(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x + rhs.x, lhs.y + rhs.y); }
 inline constexpr Vec2 operator-(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x - rhs.x, lhs.y - rhs.y); }
@@ -46,12 +51,17 @@ struct Vec3 {
     static constexpr Vec3 down()   { return Vec3( 0, -1,  0); };
     static constexpr Vec3 right()  { return Vec3( 1,  0,  0); };
     static constexpr Vec3 left()   { return Vec3(-1,  0,  0); };
+    
+    inline constexpr Vec3& operator+=(const Vec3& rhs) { x += rhs.x;  y += rhs.y; z += rhs.z; return *this; }
+    inline constexpr Vec3& operator-=(const Vec3& rhs) { x -= rhs.x;  y -= rhs.y; z -= rhs.z; return *this; }
+    inline constexpr Vec3& operator*=(float       rhs) { x *= rhs;    y *= rhs;   z *= rhs;   return *this; }
+    inline constexpr Vec3& operator/=(float       rhs) { x /= rhs;    y /= rhs;   z /= rhs;   return *this; }
 };
 inline constexpr Vec3 operator+(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
 inline constexpr Vec3 operator-(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
-inline constexpr Vec3 operator*(float       lhs,  const Vec3& rhs) { return Vec3(lhs   * rhs.x, lhs   * rhs.y, lhs   * rhs.z); }
-inline constexpr Vec3 operator*(const Vec3& lhs,  float       rhs) { return Vec3(lhs.x * rhs,   lhs.y * rhs,   lhs.z * rhs);   }
 inline constexpr Vec3 operator/(const Vec3& lhs,  float       rhs) { return Vec3(lhs.x / rhs,   lhs.y / rhs,   lhs.z / rhs);   }
+inline constexpr Vec3 operator*(const Vec3& lhs,  float       rhs) { return Vec3(lhs.x * rhs,   lhs.y * rhs,   lhs.z * rhs);   }
+inline constexpr Vec3 operator*(float       lhs,  const Vec3& rhs) { return Vec3(lhs   * rhs.x, lhs   * rhs.y, lhs   * rhs.z); }
 inline std::ostream& operator<<(std::ostream& os, const Vec3& vec) { os << vec.x << "," << vec.y << "," << vec.z; return os;   }
 
 
@@ -76,10 +86,10 @@ inline constexpr float abs(float a)            { return a <= 0.00f? -a : a; }
 inline constexpr float min(float a, float b)   { return a <= b?      a : b; }
 inline constexpr float max(float a, float b)   { return a >= b?      a : b; }
 
-constexpr float INF = std::numeric_limits<float>::infinity();
-constexpr float PI   = 3.14159265358979323846f;
-constexpr float PI_2 = 1.57079632679489661923f;
-constexpr float PI_4 = 0.78539816339744830962f;
+inline constexpr float INF  = std::numeric_limits<float>::infinity();
+inline constexpr float PI   = 3.14159265358979323846f;
+inline constexpr float PI_2 = 1.57079632679489661923f;
+inline constexpr float PI_4 = 0.78539816339744830962f;
 inline constexpr float radToDeg(float radians) { return radians * (180.00f / PI);      }
 inline constexpr float degToRad(float degrees) { return degrees * (PI      / 180.00f); }
 inline float sin(float degrees)                { return std::sinf(degToRad(degrees));  }
