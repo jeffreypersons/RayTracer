@@ -17,6 +17,10 @@ private:
     static constexpr unsigned char extractGreenByte(unsigned int hex) { return static_cast<unsigned char>((hex >> 8)  & 0xff); }
     static constexpr unsigned char extractBlueByte(unsigned int hex)  { return static_cast<unsigned char>(hex & 0xff);         }
 
+    inline constexpr void setClamped(float r, float g, float b) {
+        this->r = Math::clamp01(r); this->g = Math::clamp01(g); this->b = Math::clamp01(b);
+    }
+
 public:
     float r;
     float g;
@@ -40,11 +44,6 @@ public:
     inline constexpr Color& operator*=(const Color& rhs) { setClamped(r * rhs.r, g * rhs.g, b * rhs.b); return *this; }
     inline constexpr Color& operator*=(float        rhs) { setClamped(r * rhs,   g * rhs,   b * rhs);   return *this; }
     inline constexpr Color& operator/=(float        rhs) { setClamped(r / rhs,   g / rhs,   b / rhs);   return *this; }
-
-private:
-    inline constexpr void setClamped(float r, float g, float b) {
-        this->r = Math::clamp01(r); this->g = Math::clamp01(g); this->b = Math::clamp01(b);
-    }
 };
 inline constexpr Color operator+(const Color& lhs, const Color& rhs)  { return Color(lhs.r + rhs.r, lhs.g + rhs.g, lhs.b + rhs.b);    }
 inline constexpr Color operator-(const Color& lhs, const Color& rhs)  { return Color(lhs.r - rhs.r, lhs.g - rhs.g, lhs.b - rhs.b);    }
