@@ -26,10 +26,10 @@ private:
     Vec3 rightDir_;
     Vec3 upDir_;
     Vec3 forwardDir_;
-    
     float nearClip_;
     float farClip_;
     float aspectRatio_;
+
     Vec2 fieldOfView_;
     Vec2 viewportSize_;
 
@@ -50,8 +50,9 @@ private:
 public:
     Camera();
 
-    Vec3 viewportToWorld(const Vec3& viewportPosition) const;
     void lookAt(const Vec3& target);
+    constexpr Vec3 viewportToWorld(const Vec3& viewportPosition) const;
+    constexpr Vec3 worldToViewport(const Vec3& worldPosition) const;
     Ray viewportPointToRay(const Vec3& point) const;
 
     void setPosition(const Vec3& eyePosition);

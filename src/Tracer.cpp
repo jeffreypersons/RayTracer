@@ -56,12 +56,11 @@ void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& f
     const int height       = static_cast<int>(frameBuffer.height());
     const float invWidth   = 1.00f / width;
     const float invHeight  = 1.00f / height;
-    const float nearZ      = camera.nearClip();
     const Vec3 eyePosition = camera.position();
     #pragma omp for schedule(dynamic)
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
-            const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, nearZ };
+            const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, 0.00f };
             const Ray primaryRay = camera.viewportPointToRay(viewportPosition);
             const Color pixelColor = traceRay(camera, scene, primaryRay, 0);
             frameBuffer.setPixel(row, col, pixelColor);
@@ -105,7 +104,7 @@ Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray,
 
 // reflect our ray using a slight direction offset to avoid infinite reflections
 Ray Tracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
-    Vec3 reflectedDirection = Math::normalize(
+    const Vec3 reflectedDirection = Math::normalize(
         (-1 * ray.direction) + (2 * Math::dot(ray.direction, intersection.normal) * intersection.normal)
     );
     return Ray(intersection.point + (reflectionBias_ * reflectedDirection), reflectedDirection);
@@ -132,12 +131,15 @@ bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Interse
 
 // check if there exists another object blocking light from reaching our hit-point
 bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, const Scene& scene) const {
-    Ray shadowRay{ intersection.point + (shadowBias_ * intersection.normal), Math::direction(intersection.point, light.position()) };
-    float distanceToLight = Math::distance(shadowRay.origin, light.position());
+    const Ray shadowRay{
+        intersection.point + (shadowBias_ * intersection.normal),
+        Math::direction(intersection.point, light.position())
+    };
+    const float distanceToLight = Math::distance(shadowRay.origin, light.position());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         Intersection occlusion;
         if (scene.getObject(index).intersect(shadowRay, occlusion) &&
-                occlusion.object != intersection.object &&
+            occlusion.object != intersection.object &&
                 Math::distance(occlusion.point, light.position()) < distanceToLight) {
             return true;
         }
@@ -146,19 +148,17 @@ bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, c
 }
 
 Color Tracer::computeDiffuseColor(const Intersection& intersection, const ILight& light) const {
-    Vec3 directionToLight = Math::direction(intersection.point, light.position());
-
+    const Vec3 directionToLight = Math::direction(intersection.point, light.position());
     const Material surfaceMaterial = intersection.object->material();
-    float strengthAtLightAngle = Math::max(0.00f, Math::dot(intersection.normal, directionToLight));
+    const float strengthAtLightAngle = Math::max(0.00f, Math::dot(intersection.normal, directionToLight));
     return strengthAtLightAngle * surfaceMaterial.diffuseColor();
 }
 
 Color Tracer::computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& camera) const {
-    Vec3 directionToCam = Math::direction(intersection.point, camera.position());
-    Vec3 halfwayVec = Math::normalize(directionToCam + light.position());
-
+    const Vec3 directionToCam = Math::direction(intersection.point, camera.position());
+    const Vec3 halfwayVec = Math::normalize(directionToCam + light.position());
     const Material surfaceMaterial = intersection.object->material();
-    float strengthAtCamAngle = Math::max(0.00f, Math::dot(intersection.normal, halfwayVec));
+    const float strengthAtCamAngle = Math::max(0.00f, Math::dot(intersection.normal, halfwayVec));
     return Math::pow(strengthAtCamAngle, surfaceMaterial.shininess()) * surfaceMaterial.specularColor();
 }
 

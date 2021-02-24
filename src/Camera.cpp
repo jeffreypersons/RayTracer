@@ -10,17 +10,6 @@ Camera::Camera() {
     setupPerspectiveFromSize(size, DEFAULT_NEAR_CLIP, DEFAULT_FAR_CLIP);
 }
 
-// compute position in world relative to bottom-left of viewport
-// note that points are in the view frustum if {u: [0, 1], v: [0, 1], w: [nearClip, farClip]
-Vec3 Camera::viewportToWorld(const Vec3& viewportPosition) const {
-    float centeredU = viewportPosition.x - 0.50f;
-    float centeredV = viewportPosition.y - 0.50f;
-    float centeredW = viewportPosition.z;
-    Vec3 viewportCenter   = eyePosition_ + (centeredW * forwardDir_);
-    Vec3 offsetInRightDir = (centeredU * viewportSize_.x * rightDir_);
-    Vec3 offsetInUpDir    = (centeredV * viewportSize_.y * upDir_);
-    return viewportCenter + offsetInRightDir + offsetInUpDir;
-}
 void Camera::lookAt(const Vec3& target) {
     // if camera is pointed straight up/down, then we choose a new orthogonal vector for computing the
     // right direction (as otherwise the cross product would be zero!)
@@ -28,19 +17,39 @@ void Camera::lookAt(const Vec3& target) {
     Vec3 directionToTarget = Math::direction(eyePosition_, target);
     if (!Math::isParallelDirection(directionToTarget, Vec3::up())) {
         tempUp = Vec3::up();
-    }
-    else {
+    } else {
         tempUp = directionToTarget.y > 0 ? Vec3::ahead() : Vec3::behind();
     }
 
     this->forwardDir_ = directionToTarget;
     this->rightDir_   = Math::normalize(Math::cross(this->forwardDir_, tempUp));
-    this->upDir_      = Math::normalize(Math::cross(this->rightDir_, this->forwardDir_));
+    this->upDir_      = Math::normalize(Math::cross(this->rightDir_,   this->forwardDir_));
+}
+
+// map point from viewport coordinates to worldspace coordinates
+// note: point in viewport if between bottom-left of near-plane (0,0,0) and top right-right of far-plane (1,1,1)
+constexpr Vec3 Camera::viewportToWorld(const Vec3& point) const {
+    Vec3 projectedCenter  = eyePosition_ + ((nearClip_ + (point.z * farClip_)) * forwardDir_);
+    Vec3 offsetInRightDir = ((point.x - 0.50f) * viewportSize_.x * rightDir_);
+    Vec3 offsetInUpDir    = ((point.y - 0.50f) * viewportSize_.y * upDir_);
+    return projectedCenter + offsetInRightDir + offsetInUpDir;
+}
+// map point from worldspace coordinates to viewport coordinates
+// note: point in viewport if between bottom-left of near-plane (0,0,0) and top right-right of far-plane (1,1,1)
+constexpr Vec3 Camera::worldToViewport(const Vec3& point) const {
+    float u{};
+    float v{};
+    float w = point.z / nearClip_;
+    Vec3 projectedCenter  = Vec3(0.50f, 0.50f, 0.00f);
+    Vec3 offsetInRightDir = Vec3(0.00f, 0.00f, 0.00f);
+    Vec3 offsetInUpDir    = Vec3(0.00f, 0.00f, 0.00f);
+    return projectedCenter + offsetInRightDir + offsetInUpDir;
 }
 // convenience method for returning return ray directed from camera position to given point
 Ray Camera::viewportPointToRay(const Vec3& point) const {
     return Ray(eyePosition_, Math::direction(eyePosition_, viewportToWorld(point)));
 }
+
 void Camera::setPosition(const Vec3& eyePosition) {
     this->eyePosition_ = eyePosition;
 }
