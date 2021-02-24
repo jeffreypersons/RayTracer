@@ -43,7 +43,6 @@ Scene createSimpleScene(const Vec3& localOrigin) {
 }
 
 
-// todo: figure out inverted reflection issue...
 int main() {
     std::cout << "Program started...\n\n";
     Tracer tracer{};
@@ -51,12 +50,12 @@ int main() {
     tracer.setShadowColor(Color(0.125, 0.125, 0.125));
     tracer.setMaxNumReflections(3);
     tracer.setShadowBias(0.02f);
-    tracer.setReflectionBias(1);
+    tracer.setReflectionBias(0.02f);
 
     const Vec3 eyeTarget{ 0, 50, 0 };
     const Vec3 sceneOrigin{ 0, 0, 0 };
     const Scene scene = createSimpleScene(sceneOrigin);
-    FrameBuffer frameBuffer{ CommonResolutions::HD_4K };
+    FrameBuffer frameBuffer{ CommonResolutions::HD_1080p };
     Camera frontCam    = createCamera(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera frontTopCam = createCamera(eyeTarget + Vec3(0,  50,  25), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera behindCam   = createCamera(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
