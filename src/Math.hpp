@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <assert.h>
 
 
 struct Vec2 {
@@ -70,6 +71,7 @@ inline std::ostream& operator<<(std::ostream& os, const Vec3& vec) { os << vec.x
 namespace Math {
 constexpr float DEFAULT_EPSILON = 0.000001f;
 inline constexpr float clamp(float val, float lower, float upper) {
+    assert(lower < upper);
     if (val < lower) return lower;
     if (val > upper) return upper;
     return val;
@@ -79,8 +81,14 @@ inline constexpr float clamp01(float val) {
     if (val > 1.00f) return 1.00f;
     return val;
 }
-inline constexpr float isApproximately(float a, float b, float epsilon=DEFAULT_EPSILON) {
+inline constexpr bool isApproximately(float a, float b, float epsilon=DEFAULT_EPSILON) {
     return (a == b) || (a > b && a - b <= epsilon) || (b > a && b - a <= epsilon);
+}
+inline constexpr bool isApproximately(const Vec2& a, const Vec2& b, float epsilon=DEFAULT_EPSILON) {
+    return isApproximately(a.x, b.x, epsilon) && isApproximately(a.y, b.y, epsilon);
+}
+inline constexpr bool isApproximately(const Vec3& a, const Vec3& b, float epsilon=DEFAULT_EPSILON) {
+    return isApproximately(a.x, b.x, epsilon) && isApproximately(a.y, b.y, epsilon) && isApproximately(a.z, b.z, epsilon);
 }
 inline constexpr float abs(float a)            { return a <= 0.00f? -a : a; }
 inline constexpr float min(float a, float b)   { return a <= b?      a : b; }
