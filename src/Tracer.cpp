@@ -50,8 +50,8 @@ size_t Tracer::maxNumReflections() const {
 }
 
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
-// trace it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
-void Tracer::trace(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
+// traceScene it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
+void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
     const int width        = static_cast<int>(frameBuffer.width());
     const int height       = static_cast<int>(frameBuffer.height());
     const float invWidth   = 1.00f / width;
@@ -61,13 +61,9 @@ void Tracer::trace(const Camera& camera, const Scene& scene, FrameBuffer& frameB
     #pragma omp for schedule(dynamic)
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
-            const Vec3 pixelWorldPosition = camera.viewportToWorld(Vec3(
-                (col + 0.50f) * invWidth,
-                (row + 0.50f) * invHeight,
-                nearZ
-            ));
-            Ray primaryRay{ eyePosition, Math::direction(eyePosition, pixelWorldPosition) };
-            Color pixelColor = traceRay(camera, scene, primaryRay, 0);
+            const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, nearZ };
+            const Ray primaryRay = camera.viewportPointToRay(viewportPosition);
+            const Color pixelColor = traceRay(camera, scene, primaryRay, 0);
             frameBuffer.setPixel(row, col, pixelColor);
         }
     }
@@ -114,6 +110,7 @@ Ray Tracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     );
     return Ray(intersection.point + (reflectionBias_ * reflectedDirection), reflectedDirection);
 }
+
 bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Intersection& result) const {
     float tClosest = Math::INF;
     Intersection closestIntersection{};

@@ -37,7 +37,10 @@ void Camera::lookAt(const Vec3& target) {
     this->rightDir_   = Math::normalize(Math::cross(this->forwardDir_, tempUp));
     this->upDir_      = Math::normalize(Math::cross(this->rightDir_, this->forwardDir_));
 }
-
+// convenience method for returning return ray directed from camera position to given point
+Ray Camera::viewportPointToRay(const Vec3& point) const {
+    return Ray(eyePosition_, Math::direction(eyePosition_, viewportToWorld(point)));
+}
 void Camera::setPosition(const Vec3& eyePosition) {
     this->eyePosition_ = eyePosition;
 }

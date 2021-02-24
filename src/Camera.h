@@ -52,6 +52,7 @@ public:
 
     Vec3 viewportToWorld(const Vec3& viewportPosition) const;
     void lookAt(const Vec3& target);
+    Ray viewportPointToRay(const Vec3& point) const;
 
     void setPosition(const Vec3& eyePosition);
     void setOrientation(const Vec3& rightDir, const Vec3& upDir, const Vec3& forwardDir);

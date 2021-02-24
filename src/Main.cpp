@@ -51,7 +51,7 @@ int main() {
     tracer.setShadowColor(Color(0.125, 0.125, 0.125));
     tracer.setMaxNumReflections(3);
     tracer.setShadowBias(0.02f);
-    tracer.setReflectionBias(0.08f);
+    tracer.setReflectionBias(1);
 
     const Vec3 eyeTarget{ 0, 50, 0 };
     const Vec3 sceneOrigin{ 0, 0, 0 };
@@ -71,11 +71,10 @@ int main() {
     std::cout << "Configuring behind-"    << behindCam   << "\n\n";
     std::cout << "Configuring top-"       << topCam      << "\n\n";
     std::cout << "Configuring bottom-"    << bottomCam   << "\n\n";
-    tracer.trace(frontCam,    scene, frameBuffer); frameBuffer.writeToFile("./scene-front");
-    tracer.trace(frontTopCam, scene, frameBuffer); frameBuffer.writeToFile("./scene-front-top");
-    tracer.trace(behindCam,   scene, frameBuffer); frameBuffer.writeToFile("./scene-back");
-    tracer.trace(topCam,      scene, frameBuffer); frameBuffer.writeToFile("./scene-top");
-    tracer.trace(bottomCam,   scene, frameBuffer); frameBuffer.writeToFile("./scene-bottom");
-    std::cout << "Press ENTER to end...";
-    std::cin.get();
+    tracer.traceScene(frontCam,    scene, frameBuffer); frameBuffer.writeToFile("./scene-front");
+    //tracer.traceScene(frontTopCam, scene, frameBuffer); frameBuffer.writeToFile("./scene-front-top");
+    //tracer.traceScene(behindCam,   scene, frameBuffer); frameBuffer.writeToFile("./scene-back");
+    //tracer.traceScene(topCam,      scene, frameBuffer); frameBuffer.writeToFile("./scene-top");
+    //tracer.traceScene(bottomCam,   scene, frameBuffer); frameBuffer.writeToFile("./scene-bottom");
+    std::cout << "Program finished.";
 }
