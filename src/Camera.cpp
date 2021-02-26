@@ -14,7 +14,7 @@ void Camera::lookAt(const Vec3& target) {
     // if camera is pointed straight up/down, then we choose a new orthogonal vector for computing the
     // right direction (as otherwise the cross product would be zero!)
     Vec3 tempUp{};
-    Vec3 directionToTarget = Math::direction(eyePosition_, target);
+    const Vec3 directionToTarget = Math::direction(eyePosition_, target);
     if (!Math::isParallelDirection(directionToTarget, Vec3::up())) {
         tempUp = Vec3::up();
     } else {
@@ -29,10 +29,11 @@ void Camera::lookAt(const Vec3& target) {
 // map point from viewport coordinates to worldspace coordinates
 // note: point in viewport if between bottom-left of near-plane (0,0,0) and top right-right of far-plane (1,1,1)
 constexpr Vec3 Camera::viewportToWorld(const Vec3& point) const {
-    Vec3 projectedCenter  = eyePosition_ + ((nearClip_ + (point.z * farClip_)) * forwardDir_);
-    Vec3 offsetInRightDir = ((point.x - 0.50f) * viewportSize_.x * rightDir_);
-    Vec3 offsetInUpDir    = ((point.y - 0.50f) * viewportSize_.y * upDir_);
-    return projectedCenter + offsetInRightDir + offsetInUpDir;
+    const Vec3 projectedCenter  = eyePosition_ + ((nearClip_ + (point.z * farClip_)) * forwardDir_);
+    const Vec3 offsetInRightDir = ((point.x - 0.50f) * viewportSize_.x * rightDir_);
+    const Vec3 offsetInUpDir    = ((point.y - 0.50f) * viewportSize_.y * upDir_);
+    const Vec3 worldPoint = projectedCenter + offsetInRightDir + offsetInUpDir;
+    return worldPoint;
 }
 // map point from worldspace coordinates to viewport coordinates
 // note: point in viewport if between bottom-left of near-plane (0,0,0) and top right-right of far-plane (1,1,1)
@@ -40,13 +41,15 @@ constexpr Vec3 Camera::worldToViewport(const Vec3& point) const {
     float u{};
     float v{};
     float w = point.z / nearClip_;
-    Vec3 projectedCenter  = Vec3(0.50f, 0.50f, 0.00f);
-    Vec3 offsetInRightDir = Vec3(0.00f, 0.00f, 0.00f);
-    Vec3 offsetInUpDir    = Vec3(0.00f, 0.00f, 0.00f);
+    const Vec3 projectedCenter  = Vec3(0.50f, 0.50f, 0.00f);
+    const Vec3 offsetInRightDir = Vec3(0.00f, 0.00f, 0.00f);
+    const Vec3 offsetInUpDir    = Vec3(0.00f, 0.00f, 0.00f);
     return projectedCenter + offsetInRightDir + offsetInUpDir;
 }
 // convenience method for returning return ray directed from camera position to given point
 Ray Camera::viewportPointToRay(const Vec3& point) const {
+    const bool success = Math::isApproximately(point, worldToViewport(viewportToWorld(point)));
+    //std::cout << (success ? "coord mapping works!" : "coord mapping fails!");
     return Ray(eyePosition_, Math::direction(eyePosition_, viewportToWorld(point)));
 }
 
@@ -77,7 +80,6 @@ void Camera::setFarClip(float farClip) {
     setupPerspectiveFromSize(this->viewportSize_, this->nearClip_, this->farClip_);
 }
 // overrides field of view, aspect ratio, and clipping planes to match given viewport dimensions
-// compute field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * width) / dist`
 void Camera::overrideViewportSize(const Vec2& viewportSize, float nearZ, float farZ) {
     if (viewportSize.x <= 0 || viewportSize.y <= 0) {
         throw std::invalid_argument("viewport size dimensions must each be greater than 0");
@@ -132,8 +134,8 @@ constexpr float Camera::verticalFieldOfView() const {
 
 // find viewport size by solving for the triangular len (width/height) in the equation `tan(fov * 0.5) = (0.5 * len) / dist`
 Vec2 Camera::computeSizeFromHorizontalFov(float horizontalFieldOfView, float distanceToPlane, float aspectRatio) {
-    float viewportWidth  = 2.00f * distanceToPlane * Math::tan(0.50f * horizontalFieldOfView);
-    float viewportHeight = viewportWidth / aspectRatio;
+    const float viewportWidth  = 2.00f * distanceToPlane * Math::tan(0.50f * horizontalFieldOfView);
+    const float viewportHeight = viewportWidth / aspectRatio;
     return Vec2(viewportWidth, viewportHeight);
 }
 // find field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * len) / dist
