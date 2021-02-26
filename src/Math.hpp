@@ -106,7 +106,7 @@ inline float tan(float degrees)                { return std::tanf(degToRad(degre
 inline float asin(float ratio)                 { return radToDeg(std::asinf(ratio));   }
 inline float acos(float ratio)                 { return radToDeg(std::acosf(ratio));   }
 inline float atan(float ratio)                 { return radToDeg(std::atanf(ratio));   }
-inline float square(float a)                   { return a * a;                         }
+constexpr inline float square(float a)         { return a * a;                         }
 inline float squareRoot(float a)               { return std::sqrtf(a);                 }
 inline float pow(float a, float b)             { return std::powf(a, b);               }
 inline float roundToNearestInt(float a)        { return std::round(a);                 }
