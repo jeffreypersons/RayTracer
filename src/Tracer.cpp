@@ -75,7 +75,7 @@ Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray,
     }
 
     Intersection intersection{};
-    if (!findNearestIntersection(scene, ray, intersection)) {
+    if (!findNearestIntersection(camera, scene, ray, intersection)) {
         return backgroundColor_;
     }
 
@@ -87,7 +87,7 @@ Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray,
     Color nonReflectedColor = intersection.object->material().ambientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
        const ILight& light = scene.getLight(index);
-       if (!isInShadow(intersection, light, scene)) {
+       if (!isInShadow(camera, intersection, light, scene)) {
            Color diffuse  = computeDiffuseColor(intersection, light);
            Color specular = computeSpecularColor(intersection, light, camera);
            Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
@@ -110,12 +110,14 @@ Ray Tracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     return Ray(intersection.point + (reflectionBias_ * reflectedDirection), reflectedDirection);
 }
 
-bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Intersection& result) const {
+// TODO: replace the frustum contains method of culling with a pre-processing scene-culling done outside the tracer..
+bool Tracer::findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const {
     float tClosest = Math::INF;
     Intersection closestIntersection{};
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         Intersection intersection;
-        if (scene.getObject(index).intersect(ray, intersection) && intersection.t < tClosest) {
+        if (scene.getObject(index).intersect(ray, intersection) &&
+                intersection.t < tClosest) {
             tClosest = intersection.t;
             closestIntersection = intersection;
         }
@@ -130,7 +132,7 @@ bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Interse
 }
 
 // check if there exists another object blocking light from reaching our hit-point
-bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, const Scene& scene) const {
+bool Tracer::isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const {
     const Ray shadowRay{
         intersection.point + (shadowBias_ * intersection.normal),
         Math::direction(intersection.point, light.position())

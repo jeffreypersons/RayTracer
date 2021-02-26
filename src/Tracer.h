@@ -44,8 +44,8 @@ private:
     Color traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t iteration) const;
 
     Ray reflectRay(const Ray& ray, const Intersection& intersection) const;
-    bool isInShadow(const Intersection& intersection, const ILight& light, const Scene& scene) const;
-    bool findNearestIntersection(const Scene& scene, const Ray& ray, Intersection& result) const;
+    bool findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const;
+    bool isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const;
 
     Color computeDiffuseColor (const Intersection& intersection, const ILight& light) const;
     Color computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& camera) const;

@@ -81,6 +81,18 @@ inline constexpr float clamp01(float val) {
     if (val > 1.00f) return 1.00f;
     return val;
 }
+// compute linearly interpolated (symmetrical) value given, amount t and bounds a and b, with no limit to t
+// note: garentees lerp(1, a, b) == b even for magnitudaly larger inputs such as t=1.0, a=1.0e20, b=1.0, of which the
+//       algebraically simpler a + t * (b - a) will incorrectly compute 0.0 due to precision loss from subtracting first
+inline constexpr float lerp(float t, float a, float b) {
+    return (a * (1.00f - t)) + (b * t);
+}
+inline constexpr float inverseLerp(float v, float a, float b) {
+    return (v - a) / (b - a);
+}
+inline constexpr float scaleToRange(float v, float inMin, float inMax, float outMin, float outMax) {
+    return Math::lerp(Math::inverseLerp(v, inMin, inMax), outMin, outMax);
+}
 
 inline constexpr bool isApproximately(float a, float b, float epsilon=DEFAULT_EPSILON) {
     return (a == b) || (a > b && a - b <= epsilon) || (b > a && b - a <= epsilon);
@@ -116,18 +128,6 @@ inline float roundToNearestDigit(float a, size_t num_digits) {
     return roundToNearestInt(a * roundingMultiple) / roundingMultiple;
 }
 
-// compute linearly interpolated (symmetrical) value given, amount t and bounds a and b, with no limit to t
-// note: garentees lerp(1, a, b) == b even for magnitudaly larger inputs such as t=1.0, a=1.0e20, b=1.0, of which the
-//       algebraically simpler a + t * (b - a) will incorrectly compute 0.0 due to precision loss from subtracting first
-inline constexpr float lerp(float t, float a, float b) {
-    return (a * (1.00f - t)) + (b * t);
-}
-inline constexpr float inverseLerp(float v, float a, float b) {
-    return (v - a) / (b - a);
-}
-inline constexpr float scaleToRange(float v, float inMin, float inMax, float outMin, float outMax) {
-    return Math::lerp(Math::inverseLerp(v, inMin, inMax), outMin, outMax);
-}
 inline constexpr Vec3 cross(const Vec3& lhs, const Vec3& rhs) {
     return Vec3( (lhs.y * rhs.z - lhs.z * rhs.y),
                 -(lhs.x * rhs.z - lhs.z * rhs.x),

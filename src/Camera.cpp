@@ -39,11 +39,17 @@ constexpr Vec3 Camera::viewportToWorld(const Vec3& point) const {
 constexpr Vec3 Camera::worldToViewport(const Vec3& point) const {
     const Vec3 frustumMin = viewportToWorld(Vec3(0, 0, 0));
     const Vec3 frustumMax = viewportToWorld(Vec3(1, 1, 1));
-    return Vec3{
+    return Vec3(
         Math::scaleToRange(point.x, frustumMin.x, frustumMax.x, 0.00f, 1.00f),
         Math::scaleToRange(point.y, frustumMin.y, frustumMax.y, 0.00f, 1.00f),
         Math::scaleToRange(point.z, frustumMin.z, frustumMax.z, 0.00f, 1.00f)
-    };
+    );
+}
+bool Camera::isPointInFrustum(const Vec3& point) const {
+    const Vec3 viewportPoint = worldToViewport(point);
+    return (viewportPoint.x >= 0.00f && viewportPoint.x <= 1.00f) &&
+           (viewportPoint.y >= 0.00f && viewportPoint.y <= 1.00f) &&
+           (viewportPoint.z >= 0.00f && viewportPoint.z <= 1.00f);
 }
 // convenience method for returning return ray directed from camera position to given point
 Ray Camera::viewportPointToRay(const Vec3& point) const {

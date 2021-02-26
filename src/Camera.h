@@ -50,8 +50,9 @@ public:
     Camera();
 
     void lookAt(const Vec3& target);
-    constexpr Vec3 viewportToWorld(const Vec3& viewportPosition) const;
-    constexpr Vec3 worldToViewport(const Vec3& worldPosition) const;
+    constexpr Vec3 viewportToWorld(const Vec3& point) const;
+    constexpr Vec3 worldToViewport(const Vec3& point) const;
+    bool isPointInFrustum(const Vec3& point) const;
     Ray viewportPointToRay(const Vec3& point) const;
 
     void setPosition(const Vec3& eyePosition);
