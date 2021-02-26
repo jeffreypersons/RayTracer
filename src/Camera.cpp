@@ -32,24 +32,21 @@ constexpr Vec3 Camera::viewportToWorld(const Vec3& point) const {
     const Vec3 projectedCenter  = eyePosition_ + ((nearClip_ + (point.z * farClip_)) * forwardDir_);
     const Vec3 offsetInRightDir = ((point.x - 0.50f) * viewportSize_.x * rightDir_);
     const Vec3 offsetInUpDir    = ((point.y - 0.50f) * viewportSize_.y * upDir_);
-    const Vec3 worldPoint = projectedCenter + offsetInRightDir + offsetInUpDir;
-    return worldPoint;
+    return projectedCenter + offsetInRightDir + offsetInUpDir;
 }
 // map point from worldspace coordinates to viewport coordinates
 // note: point in viewport if between bottom-left of near-plane (0,0,0) and top right-right of far-plane (1,1,1)
 constexpr Vec3 Camera::worldToViewport(const Vec3& point) const {
-    float u{};
-    float v{};
-    float w = point.z / nearClip_;
-    const Vec3 projectedCenter  = Vec3(0.50f, 0.50f, 0.00f);
-    const Vec3 offsetInRightDir = Vec3(0.00f, 0.00f, 0.00f);
-    const Vec3 offsetInUpDir    = Vec3(0.00f, 0.00f, 0.00f);
-    return projectedCenter + offsetInRightDir + offsetInUpDir;
+    const Vec3 frustumMin = viewportToWorld(Vec3(0, 0, 0));
+    const Vec3 frustumMax = viewportToWorld(Vec3(1, 1, 1));
+    return Vec3{
+        Math::scaleToRange(point.x, frustumMin.x, frustumMax.x, 0.00f, 1.00f),
+        Math::scaleToRange(point.y, frustumMin.y, frustumMax.y, 0.00f, 1.00f),
+        Math::scaleToRange(point.z, frustumMin.z, frustumMax.z, 0.00f, 1.00f)
+    };
 }
 // convenience method for returning return ray directed from camera position to given point
 Ray Camera::viewportPointToRay(const Vec3& point) const {
-    const bool success = Math::isApproximately(point, worldToViewport(viewportToWorld(point)));
-    //std::cout << (success ? "coord mapping works!" : "coord mapping fails!");
     return Ray(eyePosition_, Math::direction(eyePosition_, viewportToWorld(point)));
 }
 

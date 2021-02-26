@@ -81,6 +81,7 @@ inline constexpr float clamp01(float val) {
     if (val > 1.00f) return 1.00f;
     return val;
 }
+
 inline constexpr bool isApproximately(float a, float b, float epsilon=DEFAULT_EPSILON) {
     return (a == b) || (a > b && a - b <= epsilon) || (b > a && b - a <= epsilon);
 }
@@ -90,9 +91,9 @@ inline constexpr bool isApproximately(const Vec2& a, const Vec2& b, float epsilo
 inline constexpr bool isApproximately(const Vec3& a, const Vec3& b, float epsilon=DEFAULT_EPSILON) {
     return isApproximately(a.x, b.x, epsilon) && isApproximately(a.y, b.y, epsilon) && isApproximately(a.z, b.z, epsilon);
 }
-inline constexpr float abs(float a)            { return a <= 0.00f? -a : a; }
-inline constexpr float min(float a, float b)   { return a <= b?      a : b; }
-inline constexpr float max(float a, float b)   { return a >= b?      a : b; }
+inline constexpr float abs(float a)          { return a <= 0.00f? -a : a; }
+inline constexpr float min(float a, float b) { return a <= b?      a : b; }
+inline constexpr float max(float a, float b) { return a >= b?      a : b; }
 
 inline constexpr float INF  = std::numeric_limits<float>::infinity();
 inline constexpr float PI   = 3.14159265358979323846f;
@@ -106,13 +107,26 @@ inline float tan(float degrees)                { return std::tanf(degToRad(degre
 inline float asin(float ratio)                 { return radToDeg(std::asinf(ratio));   }
 inline float acos(float ratio)                 { return radToDeg(std::acosf(ratio));   }
 inline float atan(float ratio)                 { return radToDeg(std::atanf(ratio));   }
-constexpr inline float square(float a)         { return a * a;                         }
+inline constexpr float square(float a)         { return a * a;                         }
 inline float squareRoot(float a)               { return std::sqrtf(a);                 }
 inline float pow(float a, float b)             { return std::powf(a, b);               }
 inline float roundToNearestInt(float a)        { return std::round(a);                 }
 inline float roundToNearestDigit(float a, size_t num_digits) {
     size_t roundingMultiple = num_digits * 10;
     return roundToNearestInt(a * roundingMultiple) / roundingMultiple;
+}
+
+// compute linearly interpolated (symmetrical) value given, amount t and bounds a and b, with no limit to t
+// note: garentees lerp(1, a, b) == b even for magnitudaly larger inputs such as t=1.0, a=1.0e20, b=1.0, of which the
+//       algebraically simpler a + t * (b - a) will incorrectly compute 0.0 due to precision loss from subtracting first
+inline constexpr float lerp(float t, float a, float b) {
+    return (a * (1.00f - t)) + (b * t);
+}
+inline constexpr float inverseLerp(float v, float a, float b) {
+    return (v - a) / (b - a);
+}
+inline constexpr float scaleToRange(float v, float inMin, float inMax, float outMin, float outMax) {
+    return Math::lerp(Math::inverseLerp(v, inMin, inMax), outMin, outMax);
 }
 inline constexpr Vec3 cross(const Vec3& lhs, const Vec3& rhs) {
     return Vec3( (lhs.y * rhs.z - lhs.z * rhs.y),
