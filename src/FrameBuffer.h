@@ -9,8 +9,8 @@ class FrameBuffer {
 private:
     const size_t width_;
     const size_t height_;
-    const size_t bufferSize;
-    const std::unique_ptr<Color[]> pixels;
+    const size_t bufferSize_;
+    const std::unique_ptr<Color[]> pixels_;
 
 public:
     FrameBuffer(size_t width, size_t height);
