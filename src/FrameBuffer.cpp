@@ -76,7 +76,7 @@ std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
            << "height:"      << frameBuffer.height()    << ","
            << "pixel-count:" << frameBuffer.numPixels() << "}, "
          << "MetaData{"
-           << "mega-pixels_:"  << frameBuffer.megaPixels()  << ","
+           << "mega-pixels:"  << frameBuffer.megaPixels()  << ","
            << "aspect-ratio:" << frameBuffer.aspectRatio() << "}"
        << ")";
     return os;

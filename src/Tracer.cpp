@@ -49,6 +49,7 @@ size_t Tracer::maxNumReflections() const {
     return maxNumReflections_;
 }
 
+// todo: modify framebuffer to have as a single loop for better parallelization
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
 // traceScene it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
 void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
@@ -68,7 +69,6 @@ void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& f
     }
 }
 
-// todo: account for near and far clip culling (probably need to determine z dist pf object to camera and clamp on that)
 Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t iteration=0) const {
     if (iteration >= maxNumReflections_) {
         return Color{ 0, 0, 0 };
@@ -139,7 +139,7 @@ bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, c
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         Intersection occlusion;
         if (scene.getObject(index).intersect(shadowRay, occlusion) &&
-            occlusion.object != intersection.object &&
+                occlusion.object != intersection.object &&
                 Math::distance(occlusion.point, light.position()) < distanceToLight) {
             return true;
         }
