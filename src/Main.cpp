@@ -51,13 +51,15 @@ void test(const std::string& name, const Tracer& tracer, const Camera& camera, c
     std::cout << "tracing started...";
     stopWatch.start();
     tracer.traceScene(camera, scene, frameBuffer);
-    frameBuffer.writeToFile("./scene-" + name);
     stopWatch.stop();
-    std::cout << "finished in " << stopWatch.elapsedTime() << " seconds" << "\n\n";
+    std::cout << "finished in " << stopWatch.elapsedTime() << " seconds" << "\n";
+
+    const std::string filename = "./scene-" + name;
+    frameBuffer.writeToFile(filename);
+    std::cout << "wrote to file `" << filename << "`" << "\n\n";
 }
 
 int main() {
-
     std::cout << "Program started...\n\n";
     Tracer tracer{};
     tracer.setBackgroundColor(Palette::skyBlue);
@@ -82,4 +84,6 @@ int main() {
     test("behind-view", tracer, frontCam, scene, frameBuffer);
     test("top-view",    tracer, frontCam, scene, frameBuffer);
     test("bottom-view", tracer, frontCam, scene, frameBuffer);
+
+    std::cout << "...program finished\n";
 }
