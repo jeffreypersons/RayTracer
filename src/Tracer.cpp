@@ -110,7 +110,7 @@ Ray Tracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     return Ray(intersection.point + (reflectionBias_ * reflectedDirection), reflectedDirection);
 }
 
-// TODO: replace the frustum contains method of culling with a pre-processing scene-culling done outside the tracer..
+// TODO: replace the frustum contains method of culling with a pre-processing scene-culling done outside the tracer via kd-trees
 bool Tracer::findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const {
     float tClosest = Math::INF;
     Intersection closestIntersection{};
