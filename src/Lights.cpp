@@ -23,9 +23,9 @@ PointLight::PointLight(const Vec3& position, const Color& intensity) {
 
 // compute intensity at given point according to inverse square law with respect to distance and attenuation coefficients
 Color PointLight::computeIntensityAtPoint(const Vec3& point) const {
-    float distanceSquared = Math::magnitudeSquared(point - this->position_);
-    Vec3 direction = Math::direction(this->position_, point);
-    float distance  = Math::square(distanceSquared);
+    const float distanceSquared = Math::magnitudeSquared(point - this->position_);
+    const Vec3 direction = Math::direction(this->position_, point);
+    const float distance  = Math::square(distanceSquared);
     return intensity_ / ((attenuationConstant_) + (attenuationLinear_ * distance) + (attenuationQuadratic_ * distanceSquared));
 }
 

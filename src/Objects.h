@@ -26,8 +26,8 @@ inline std::ostream& operator<<(std::ostream& os, const IObject& object) {
 
 class Sphere final : public virtual IObject {
 private:
-    float radius_;
     Vec3 center_;
+    float radius_;
 
 public:
     Sphere(const Vec3& center, float radius, const Material& material);
@@ -36,6 +36,7 @@ public:
     
     constexpr float radius() const;
     constexpr Vec3 center()  const;
+    constexpr bool contains(const Vec3& point) const;
 };
 
 
@@ -64,4 +65,5 @@ public:
 
 private:
     constexpr Vec3 computeCentroid() const;
+    static bool isValidTriangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2);
 };

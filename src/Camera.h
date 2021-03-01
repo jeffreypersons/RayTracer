@@ -26,15 +26,11 @@ private:
     Vec3 rightDir_;
     Vec3 upDir_;
     Vec3 forwardDir_;
-    
     float nearClip_;
     float farClip_;
     float aspectRatio_;
     Vec2 fieldOfView_;
     Vec2 viewportSize_;
-
-    static constexpr float MIN_FIELD_OF_VIEW =   0.00f;
-    static constexpr float MAX_FIELD_OF_VIEW = 180.00f;
 
     static constexpr Vec3 DEFAULT_POSITION    = Vec3::zero();
     static constexpr Vec3 DEFAULT_RIGHT_DIR   = Vec3::right();
@@ -46,12 +42,18 @@ private:
     static constexpr float DEFAULT_DISTANCE      =    1000.00f;
     static constexpr float DEFAULT_NEAR_CLIP     =       0.25f;
     static constexpr float DEFAULT_FAR_CLIP      =    1000.00f;
-    
+
+    static constexpr float MIN_FIELD_OF_VIEW = 0.00f;
+    static constexpr float MAX_FIELD_OF_VIEW = 180.00f;
+
 public:
     Camera();
 
-    Vec3 viewportToWorld(const Vec3& viewportPosition) const;
     void lookAt(const Vec3& target);
+    constexpr Vec3 viewportToWorld(const Vec3& point) const;
+    constexpr Vec3 worldToViewport(const Vec3& point) const;
+    bool isPointInFrustum(const Vec3& point) const;
+    Ray viewportPointToRay(const Vec3& point) const;
 
     void setPosition(const Vec3& eyePosition);
     void setOrientation(const Vec3& rightDir, const Vec3& upDir, const Vec3& forwardDir);
@@ -61,16 +63,16 @@ public:
     void setAspectRatio(float aspectRatio);
     void setFieldOfView(float horizontalDegrees);
 
-    constexpr Vec3 position() const;
-    constexpr Vec3 rightDir() const;
-    constexpr Vec3 upDir() const;
-    constexpr Vec3 forwardDir() const;
-    constexpr float nearClip() const;
-    constexpr float farClip() const;
-    constexpr Vec2  viewportSize() const;
+    constexpr Vec3 position()     const;
+    constexpr Vec3 rightDir()     const;
+    constexpr Vec3 upDir()        const;
+    constexpr Vec3 forwardDir()   const;
+    constexpr float nearClip()    const;
+    constexpr float farClip()     const;
     constexpr float aspectRatio() const;
     constexpr float horizontalFieldOfView() const;
-    constexpr float verticalFieldOfView() const;
+    constexpr float verticalFieldOfView()   const;
+    constexpr Vec2 viewportSize()           const;
 
 private:
     static Vec2 computeSizeFromHorizontalFov(float horizontalFieldOfView, float distanceToPlane, float aspectRatio);

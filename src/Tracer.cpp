@@ -49,56 +49,51 @@ size_t Tracer::maxNumReflections() const {
     return maxNumReflections_;
 }
 
+// todo: modify framebuffer to have as a single loop for better parallelization
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
-// trace it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
-void Tracer::trace(const Camera& renderCam, const Scene& scene, FrameBuffer& frameBuffer) {
+// traceScene it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
+void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
     const int width        = static_cast<int>(frameBuffer.width());
     const int height       = static_cast<int>(frameBuffer.height());
     const float invWidth   = 1.00f / width;
     const float invHeight  = 1.00f / height;
-    const float nearZ      = renderCam.nearClip();
-    const Vec3 eyePosition = renderCam.position();
+    const Vec3 eyePosition = camera.position();
     #pragma omp for schedule(dynamic)
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
-            const Vec3 pixelWorldPosition = renderCam.viewportToWorld(Vec3(
-                (col + 0.50f) * invWidth,
-                (row + 0.50f) * invHeight,
-                nearZ
-            ));
-            Ray primaryRay{ eyePosition, Math::direction(eyePosition, pixelWorldPosition) };
-            Color pixelColor = traceRay(renderCam, scene, primaryRay, 0);
+            const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, 0.00f };
+            const Ray primaryRay = camera.viewportPointToRay(viewportPosition);
+            const Color pixelColor = traceRay(camera, scene, primaryRay, 0);
             frameBuffer.setPixel(row, col, pixelColor);
         }
     }
 }
 
-// todo: account for near and far clip culling (probably need to determine z dist pf object to camera and clamp on that)
-Color Tracer::traceRay(const Camera& renderCam, const Scene& scene, const Ray& ray, size_t iteration=0) const {
+Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t iteration=0) const {
     if (iteration >= maxNumReflections_) {
         return Color{ 0, 0, 0 };
     }
 
     Intersection intersection{};
-    if (!findNearestIntersection(scene, ray, intersection)) {
+    if (!findNearestIntersection(camera, scene, ray, intersection)) {
         return backgroundColor_;
     }
 
     Color reflectedColor{ 0, 0, 0 };
     if (intersection.object->material().reflectivity() > 0.00f) {
-        reflectedColor = traceRay(renderCam, scene, reflectRay(ray, intersection), iteration + 1);
+        reflectedColor = traceRay(camera, scene, reflectRay(ray, intersection), iteration + 1);
     }
     
     Color nonReflectedColor = intersection.object->material().ambientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
        const ILight& light = scene.getLight(index);
-       if (!isInShadow(intersection, light, scene)) {
-           Color diffuse = computeDiffuseColor(intersection, light);
-           Color specular = computeSpecularColor(intersection, light, renderCam);
+       if (!isInShadow(camera, intersection, light, scene)) {
+           Color diffuse  = computeDiffuseColor(intersection, light);
+           Color specular = computeSpecularColor(intersection, light, camera);
            Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
-           nonReflectedColor = nonReflectedColor + lightIntensityAtPoint * (diffuse + specular);
+           nonReflectedColor += lightIntensityAtPoint * (diffuse + specular);
        } else {
-           nonReflectedColor = nonReflectedColor + shadowColor_;
+           nonReflectedColor += shadowColor_;
        }
     }
     
@@ -109,17 +104,20 @@ Color Tracer::traceRay(const Camera& renderCam, const Scene& scene, const Ray& r
 
 // reflect our ray using a slight direction offset to avoid infinite reflections
 Ray Tracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
-    Vec3 reflectedDirection = Math::normalize(
+    const Vec3 reflectedDirection = Math::normalize(
         (-1 * ray.direction) + (2 * Math::dot(ray.direction, intersection.normal) * intersection.normal)
     );
     return Ray(intersection.point + (reflectionBias_ * reflectedDirection), reflectedDirection);
 }
-bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Intersection& result) const {
+
+// TODO: replace the frustum contains method of culling with a pre-processing scene-culling done outside the tracer via kd-trees
+bool Tracer::findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const {
     float tClosest = Math::INF;
     Intersection closestIntersection{};
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         Intersection intersection;
-        if (scene.getObject(index).intersect(ray, intersection) && intersection.t < tClosest) {
+        if (scene.getObject(index).intersect(ray, intersection) &&
+                intersection.t < tClosest) {
             tClosest = intersection.t;
             closestIntersection = intersection;
         }
@@ -132,10 +130,14 @@ bool Tracer::findNearestIntersection(const Scene& scene, const Ray& ray, Interse
         return true;
     }
 }
+
 // check if there exists another object blocking light from reaching our hit-point
-bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, const Scene& scene) const {
-    Ray shadowRay{ intersection.point + (shadowBias_ * intersection.normal), Math::direction(intersection.point, light.position()) };
-    float distanceToLight = Math::distance(shadowRay.origin, light.position());
+bool Tracer::isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const {
+    const Ray shadowRay{
+        intersection.point + (shadowBias_ * intersection.normal),
+        Math::direction(intersection.point, light.position())
+    };
+    const float distanceToLight = Math::distance(shadowRay.origin, light.position());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         Intersection occlusion;
         if (scene.getObject(index).intersect(shadowRay, occlusion) &&
@@ -148,19 +150,17 @@ bool Tracer::isInShadow(const Intersection& intersection, const ILight& light, c
 }
 
 Color Tracer::computeDiffuseColor(const Intersection& intersection, const ILight& light) const {
-    Vec3 directionToLight = Math::direction(intersection.point, light.position());
-
+    const Vec3 directionToLight = Math::direction(intersection.point, light.position());
     const Material surfaceMaterial = intersection.object->material();
-    float strengthAtLightAngle = Math::max(0.00f, Math::dot(intersection.normal, directionToLight));
+    const float strengthAtLightAngle = Math::max(0.00f, Math::dot(intersection.normal, directionToLight));
     return strengthAtLightAngle * surfaceMaterial.diffuseColor();
 }
 
-Color Tracer::computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& renderCam) const {
-    Vec3 directionToCam = Math::direction(intersection.point, renderCam.position());
-    Vec3 halfwayVec = Math::normalize(directionToCam + light.position());
-
+Color Tracer::computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& camera) const {
+    const Vec3 directionToCam = Math::direction(intersection.point, camera.position());
+    const Vec3 halfwayVec = Math::normalize(directionToCam + light.position());
     const Material surfaceMaterial = intersection.object->material();
-    float strengthAtCamAngle = Math::max(0.00f, Math::dot(intersection.normal, halfwayVec));
+    const float strengthAtCamAngle = Math::max(0.00f, Math::dot(intersection.normal, halfwayVec));
     return Math::pow(strengthAtCamAngle, surfaceMaterial.shininess()) * surfaceMaterial.specularColor();
 }
 

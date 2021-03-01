@@ -24,6 +24,26 @@ private:
     static constexpr float DEFAULT_SPECULAR_EXPONENT { 1.00f };
 
 public:
+    constexpr Material()
+        : Material(
+            DEFAULT_AMBIENT_COLOR,
+            DEFAULT_DIFFUSE_COLOR,
+            DEFAULT_SPECULAR_COLOR,
+            DEFAULT_INTRINSITY,
+            DEFAULT_REFLECTIVITY,
+            DEFAULT_REFRACTIVITY,
+            DEFAULT_SPECULAR_EXPONENT)
+    {}
+    constexpr Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor)
+        : Material(
+            ambientColor,
+            diffuseColor,
+            specularColor,
+            DEFAULT_INTRINSITY,
+            DEFAULT_REFLECTIVITY,
+            DEFAULT_REFRACTIVITY,
+            DEFAULT_SPECULAR_EXPONENT)
+    {}
     constexpr Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor,
              float intrinsity, float reflectivity, float refractivity,
              float shininess) 
@@ -37,16 +57,6 @@ public:
         validateWeights(intrinsity, reflectivity, refractivity);
         validateShininess(shininess);
     }
-    constexpr Material()
-        : Material(
-            DEFAULT_AMBIENT_COLOR,
-            DEFAULT_DIFFUSE_COLOR,
-            DEFAULT_SPECULAR_COLOR,
-            DEFAULT_INTRINSITY,
-            DEFAULT_REFLECTIVITY,
-            DEFAULT_REFRACTIVITY,
-            DEFAULT_SPECULAR_EXPONENT)
-    {}
 
     constexpr void setColors(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor) {
         this->ambientColor_  = ambientColor;

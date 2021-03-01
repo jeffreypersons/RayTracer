@@ -1,14 +1,14 @@
 #include "Objects.h"
 #include "Math.hpp"
 #include "Ray.hpp"
+#include <assert.h>
 
 
-// assumes radius greater than zero
 Sphere::Sphere(const Vec3& center, float radius, const Material& material) {
     // note that base class members can only be initialized in the body and not our typical initializer list
+    assert(radius > 0.00f);
     this->radius_ = radius;
     this->center_ = center;
-
     this->position_ = center;
     this->material_ = material;
 }
@@ -17,9 +17,9 @@ Sphere::Sphere(const Vec3& center, float radius, const Material& material) {
 // at least one real number t [t = - D.M +/- sqrt((D.M)^2 – ( |M|^2 – r^2 ))]
 // (that is, if above discriminant >= 0, then there exists a point along ray that also lies along sphere's surface)
 bool Sphere::intersect(const Ray& ray, Intersection& result) const {
-    Vec3 M = ray.origin - this->position_;
-    float dDotM = Math::dot(ray.direction, M);
-    float discriminant = (dDotM * dDotM) - (Math::magnitudeSquared(M) - radius_ * radius_);
+    const Vec3 M = ray.origin - this->position_;
+    const float dDotM = Math::dot(ray.direction, M);
+    const float discriminant = Math::square(dDotM) - (Math::magnitudeSquared(M) - Math::square(radius_));
     if (discriminant < 0.00f) {
         return false;
     }
@@ -27,7 +27,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& result) const {
     // we have an intersection, calculate our t, and plug it in to find our normal/intersect-point
     float closestT;
     if (Math::isApproximately(discriminant, 0.00f)) {
-        closestT = - dDotM;
+        closestT = -dDotM;
     } else {
         float sqrtOfDiscriminant = Math::squareRoot(discriminant);
         closestT = Math::min(-dDotM + sqrtOfDiscriminant, -dDotM - sqrtOfDiscriminant);
@@ -46,6 +46,12 @@ constexpr float Sphere::radius() const {
     return radius_;
 }
 
+// recall, a point lies within or along a sphere if..
+// (Px - Cx)^2 + (Py - Cy)^2 + (Pz - Cz)^2 <= R^2
+constexpr bool Sphere::contains(const Vec3& point) const {
+    return Math::magnitudeSquared(point - center_) <= Math::square(radius_);
+}
+
 std::string Sphere::description() const {
     std::stringstream ss;
     ss << "Sphere("
@@ -59,6 +65,7 @@ std::string Sphere::description() const {
 
 Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, const Material& material) {
     // note that base class members can only be initialized in the body and not our typical initializer list
+    assert(isValidTriangle(vert0, vert1, vert2));
     this->vert0_ = vert0;
     this->vert1_ = vert1;
     this->vert2_ = vert2;
@@ -67,7 +74,6 @@ Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, cons
     this->edge2_ = vert0 - vert2;
     this->planeNormal_ = Math::normalize(Math::cross(edge0_, edge1_));
     this->center_ = computeCentroid();
-
     this->material_ = material;
     this->position_ = this->center_;
 }
@@ -76,9 +82,9 @@ Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, cons
 // our intersection point is always to the LEFT side of EVERY edge
 // (aka our plane intersection point @[t = (k – P.n)/(D.n)] lies in between our triangle vertices)
 bool Triangle::intersect(const Ray& ray, Intersection& result) const {
-    float k = Math::dot(vert0_, planeNormal_);
-    float t = (k - Math::dot(ray.origin, planeNormal_)) / Math::dot(ray.direction, planeNormal_);
-    Vec3 pointIntersectingPlane = ray.origin + ray.direction * t;
+    const float k = Math::dot(vert0_, planeNormal_);
+    const float t = (k - Math::dot(ray.origin, planeNormal_)) / Math::dot(ray.direction, planeNormal_);
+    const Vec3 pointIntersectingPlane = ray.origin + ray.direction * t;
     if (contains(pointIntersectingPlane)) {
         result.t      = t;
         result.point  = pointIntersectingPlane;
@@ -120,12 +126,20 @@ constexpr Vec3 Triangle::computeCentroid() const {
                 (vert0_.z + vert1_.z + vert2_.z) / 3.00f);
 }
 
+// recall that a triangle is formed if each side has a length smaller than the the sum of the other two
+bool Triangle::isValidTriangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2) {
+    float a = Math::distance(vert0, vert1);
+    float b = Math::distance(vert1, vert2);
+    float c = Math::distance(vert2, vert0);
+    return (a + b > c) && (a + c > b) && (b + c > a);
+}
+
 std::string Triangle::description() const {
     std::stringstream ss;
     ss << "Triangle("
-         << "position:("        << center()      << "),"
-         << "plane-normal:(v0:" << planeNormal() << "),"
-         << "material:"         << material()    << ","
+         << "position:("     << center()      << "),"
+         << "plane-normal:(" << planeNormal() << "),"
+         << "material:"      << material()    << ","
          << "verts:[v0:(" << vert0() << "),v1:(" << vert1() << "),v2:(" << vert2() << ")]"
        << ")";
     return ss.str();

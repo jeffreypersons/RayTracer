@@ -26,7 +26,7 @@ private:
 
 public:
     Tracer();
-    void trace(const Camera&, const Scene&, FrameBuffer&);
+    void traceScene(const Camera&, const Scene&, FrameBuffer&);
 
     void setShadowColor(const Color& shadowColor);
     void setBackgroundColor(const Color& backgroundColor);
@@ -41,13 +41,13 @@ public:
     size_t maxNumReflections() const;
 
 private:
-    Color traceRay(const Camera&, const Scene&, const Ray&, size_t) const;
+    Color traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t iteration) const;
 
-    Ray reflectRay(const Ray&, const Intersection&) const;
-    bool isInShadow(const Intersection&, const ILight&, const Scene&) const;
-    
-    bool findNearestIntersection(const Scene&, const Ray&, Intersection&) const;
-    Color computeDiffuseColor (const Intersection&, const ILight&) const;
-    Color computeSpecularColor(const Intersection&, const ILight&, const Camera&) const;
+    Ray reflectRay(const Ray& ray, const Intersection& intersection) const;
+    bool findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const;
+    bool isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const;
+
+    Color computeDiffuseColor (const Intersection& intersection, const ILight& light) const;
+    Color computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& camera) const;
 };
 std::ostream& operator<<(std::ostream& os, const Tracer& tracer);
