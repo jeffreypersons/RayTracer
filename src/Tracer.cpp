@@ -52,7 +52,7 @@ size_t Tracer::maxNumReflections() const {
 // todo: modify framebuffer to have as a single loop for better parallelization
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
 // traceScene it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
-void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
+void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) const {
     const int width        = static_cast<int>(frameBuffer.width());
     const int height       = static_cast<int>(frameBuffer.height());
     const float invWidth   = 1.00f / width;
