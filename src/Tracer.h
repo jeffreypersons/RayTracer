@@ -6,7 +6,7 @@
 #include "Lights.h"
 #include "Objects.h"
 #include "Scene.h"
-#include "FrameBuffer.h"
+#include "FrameBuffer.hpp"
 
 
 class Tracer {

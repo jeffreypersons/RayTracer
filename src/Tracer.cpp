@@ -5,7 +5,7 @@
 #include "Lights.h"
 #include "Objects.h"
 #include "Scene.h"
-#include "FrameBuffer.h"
+#include "FrameBuffer.hpp"
 #include <omp.h>
 
 
@@ -53,19 +53,20 @@ size_t Tracer::maxNumReflections() const {
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
 // traceScene it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
 void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) const {
+    // use ints for indexing since size_t is not supported by openMp loop parallelization macros
     const int width        = static_cast<int>(frameBuffer.width());
     const int height       = static_cast<int>(frameBuffer.height());
     const float invWidth   = 1.00f / width;
     const float invHeight  = 1.00f / height;
     const Vec3 eyePosition = camera.position();
+    const int numPixels    = static_cast<int>(frameBuffer.numPixels());
     #pragma omp for schedule(dynamic)
-    for (int row = 0; row < height; row++) {
-        for (int col = 0; col < width; col++) {
-            const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, 0.00f };
-            const Ray primaryRay = camera.viewportPointToRay(viewportPosition);
-            const Color pixelColor = traceRay(camera, scene, primaryRay, 0);
-            frameBuffer.setPixel(row, col, pixelColor);
-        }
+    for (int i = 0; i < numPixels; i++) {
+        const auto [row, col] = frameBuffer.getPixelRowCol(i);
+        const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, 0.00f };
+        const Ray primaryRay = camera.viewportPointToRay(viewportPosition);
+        const Color pixelColor = traceRay(camera, scene, primaryRay, 0);
+        frameBuffer.setPixel(row, col, pixelColor);
     }
 }
 
