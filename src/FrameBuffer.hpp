@@ -66,22 +66,22 @@ public:
     }
 
     float megaPixels() const {
-        return Math::roundToNearestDigit((bufferSize_) / 1000000.00f, 2);
+        return Math::roundToNearestDigit(bufferSize_ / 1000000.00f, 2);
     }
 
-    constexpr size_t width()      const noexcept { return width_;      }
-    constexpr size_t height()     const noexcept { return height_;     }
-    constexpr size_t numPixels()  const noexcept { return bufferSize_; }
+    constexpr size_t width()      const noexcept { return width_;                               }
+    constexpr size_t height()     const noexcept { return height_;                              }
+    constexpr size_t numPixels()  const noexcept { return bufferSize_;                          }
     constexpr float aspectRatio() const noexcept { return width_ / static_cast<float>(height_); }
 };
 inline std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
     os << "FrameBuffer("
-         << "Dimensions{"
-           << "width:" << frameBuffer.width() << ","
-           << "height:" << frameBuffer.height() << ","
+         << "Size{"
+           << "width:"       << frameBuffer.width()     << ","
+           << "height:"      << frameBuffer.height()    << ","
            << "pixel-count:" << frameBuffer.numPixels() << "}, "
          << "MetaData{"
-           << "mega-pixels:" << frameBuffer.megaPixels() << ","
+           << "mega-pixels:"  << frameBuffer.megaPixels()  << ","
            << "aspect-ratio:" << frameBuffer.aspectRatio() << "}"
          << ")";
     return os;

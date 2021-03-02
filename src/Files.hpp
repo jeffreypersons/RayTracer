@@ -1,8 +1,8 @@
 #pragma once
+#include <string>
 #include <istream>
 #include <ostream>
 #include <fstream>
-#include <string>
 #include <exception>
 #include <filesystem>
 #include <assert.h>
