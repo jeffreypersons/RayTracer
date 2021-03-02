@@ -48,7 +48,7 @@ Scene createSimpleScene(const Vec3& localOrigin) {
 void test(const std::string& name, const Tracer& tracer, const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
     StopWatch stopWatch{};
     std::cout << Text::padSides(" Tracing `" + name + "` ", '*', 80) << "\n";
-    std::cout << "configuring " << camera << "\n";
+    std::cout << "Configuring " << camera << "\n";
 
     std::cout << "Tracing started...";
     stopWatch.start();
