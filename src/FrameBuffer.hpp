@@ -10,42 +10,35 @@
 // fast, header file defined, color buffer
 class FrameBuffer {
 private:
-    size_t width_;
-    size_t height_;
-    size_t bufferSize_;
-    std::unique_ptr<Color[]> pixels_;
+    const size_t width_;
+    const size_t height_;
+    const size_t bufferSize_;
+    const std::unique_ptr<Color[]> pixels_;
     
 public:
     FrameBuffer() = delete;
-    FrameBuffer(FrameBuffer&) = delete;
-    FrameBuffer& operator=(FrameBuffer&) = delete;
+    FrameBuffer(const FrameBuffer& frameBuffer)
+        : width_(frameBuffer.width_),
+          height_(frameBuffer.height_),
+          bufferSize_(frameBuffer.bufferSize_),
+          pixels_(std::make_unique<Color[]>(frameBuffer.bufferSize_)) {
+        for (size_t i = 0; i < frameBuffer.numPixels(); i++) {
+            setPixel(i, frameBuffer.getPixel(i));
+        }
+    }
+
+    FrameBuffer& operator=(FrameBuffer& frameBuffer) = delete;
     FrameBuffer(const Vec2& dimensions)
         : FrameBuffer(static_cast<size_t>(dimensions.x), static_cast<size_t>(dimensions.y))
     {}
     FrameBuffer(size_t width, size_t height)
-        : width_(width),
-          height_(height),
-          bufferSize_(width* height),
-          pixels_(std::make_unique<Color[]>(bufferSize_)) {
+        : width_     (width),
+          height_    (height),
+          bufferSize_(width * height),
+          pixels_    (std::make_unique<Color[]>(bufferSize_)) {
         if (width <= 0 || height <= 0 || bufferSize_ <= 0) {
             throw std::invalid_argument("frame buffer must be have dimensions greater than zero");
         }
-    }
-
-    // save framebuffer as an array of 256 rgb-colored pixels_, written to file at given location
-    // note that the buffer stores colors relative to top left corner, while ppm is relative to the bottom left
-    void writeToFile(const std::string& filename, float gammaCorrection=2.20f) {
-        const float invGamma = 1.00f / gammaCorrection;
-        std::ofstream ofs(filename + ".ppm", std::ios::out | std::ios::binary);
-        ofs << "P6\n" << width_ << " " << height_ << "\n255\n";
-        for (size_t i = 0; i < bufferSize_; i++) {
-            const auto [row, col] = getPixelRowCol(i);
-            const Color color = getPixel(height_ - 1 - row, col);
-            ofs << static_cast<unsigned char>(static_cast<int>((Math::pow(color.r, invGamma) * 255) + 0.50f))
-                << static_cast<unsigned char>(static_cast<int>((Math::pow(color.g, invGamma) * 255) + 0.50f))
-                << static_cast<unsigned char>(static_cast<int>((Math::pow(color.b, invGamma) * 255) + 0.50f));
-        }
-        ofs.close();
     }
 
     void setPixel(size_t i, const Color& color) noexcept {

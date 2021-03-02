@@ -1,4 +1,5 @@
 #include "StopWatch.hpp"
+#include "Files.hpp"
 #include "Text.hpp"
 #include "Lights.h"
 #include "Objects.h"
@@ -55,7 +56,7 @@ void test(const std::string& name, const Tracer& tracer, const Camera& camera, c
     std::cout << "finished in " << stopWatch.elapsedTime() << " seconds" << "\n";
 
     const std::string filename = "./scene-" + name;
-    frameBuffer.writeToFile(filename);
+    Files::writePpm(frameBuffer, filename);
     std::cout << "wrote to file `" << filename << "`" << "\n\n";
 }
 
@@ -75,15 +76,13 @@ int main() {
     Camera frontCam    = createCamera(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera behindCam   = createCamera(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera topCam      = createCamera(eyeTarget + Vec3(0,  50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
-    Camera bottomCam   = createCamera(eyeTarget + Vec3(0, -50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     
     std::cout << "Initializing target-" << frameBuffer << "\n\n";
     std::cout << "Initializing ray-"    << tracer      << "\n\n";
     std::cout << "Assembling "          << scene       << "\n\n";
-    test("front-view",  tracer, frontCam, scene, frameBuffer);
-    test("behind-view", tracer, frontCam, scene, frameBuffer);
-    test("top-view",    tracer, frontCam, scene, frameBuffer);
-    test("bottom-view", tracer, frontCam, scene, frameBuffer);
+    test("front-view",  tracer, frontCam,  scene, frameBuffer);
+    test("behind-view", tracer, behindCam, scene, frameBuffer);
+    test("top-view",    tracer, topCam,    scene, frameBuffer);
 
     std::cout << "...program finished\n";
 }

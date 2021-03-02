@@ -66,13 +66,13 @@ void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& f
         const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, 0.00f };
         const Ray primaryRay = camera.viewportPointToRay(viewportPosition);
         const Color pixelColor = traceRay(camera, scene, primaryRay, 0);
-        frameBuffer.setPixel(row, col, pixelColor);
+        frameBuffer.setPixel(height - 1 - row, col, pixelColor);
     }
 }
 
 Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t iteration=0) const {
     if (iteration >= maxNumReflections_) {
-        return Color{ 0, 0, 0 };
+        return Color{ 0.00, 0.00, 0.00 };
     }
 
     Intersection intersection{};
@@ -80,7 +80,7 @@ Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray,
         return backgroundColor_;
     }
 
-    Color reflectedColor{ 0, 0, 0 };
+    Color reflectedColor{ 0.00, 0.00, 0.00 };
     if (intersection.object->material().reflectivity() > 0.00f) {
         reflectedColor = traceRay(camera, scene, reflectRay(ray, intersection), iteration + 1);
     }
