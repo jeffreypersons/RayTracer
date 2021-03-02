@@ -1,4 +1,6 @@
 #include "StopWatch.hpp"
+#include "Files.hpp"
+#include "Text.hpp"
 #include "Lights.h"
 #include "Objects.h"
 #include "Camera.h"
@@ -42,6 +44,21 @@ Scene createSimpleScene(const Vec3& localOrigin) {
     return scene;
 }
 
+void test(const std::string& name, const Tracer& tracer, const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
+    StopWatch stopWatch{};
+    std::cout << Text::padSides(" Tracing `" + name + "` ", '*', 80) << "\n";
+    std::cout << "configuring " << camera << "\n";
+
+    std::cout << "tracing started...";
+    stopWatch.start();
+    tracer.traceScene(camera, scene, frameBuffer);
+    stopWatch.stop();
+    std::cout << "finished in " << stopWatch.elapsedTime() << " seconds" << "\n";
+
+    const std::string filename = "./scene-" + name;
+    Files::writePpm(frameBuffer, filename);
+    std::cout << "wrote to file `" << filename << "`" << "\n\n";
+}
 
 int main() {
     std::cout << "Program started...\n\n";
@@ -57,23 +74,15 @@ int main() {
     const Scene scene = createSimpleScene(sceneOrigin);
     FrameBuffer frameBuffer{ CommonResolutions::HD_1080p };
     Camera frontCam    = createCamera(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
-    Camera frontTopCam = createCamera(eyeTarget + Vec3(0,  50,  25), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera behindCam   = createCamera(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera topCam      = createCamera(eyeTarget + Vec3(0,  50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
-    Camera bottomCam   = createCamera(eyeTarget + Vec3(0, -50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     
-    std::cout << "Initializing target-"   << frameBuffer << "\n\n";
-    std::cout << "Initializing ray-"      << tracer      << "\n\n";
-    std::cout << "Assembling "            << scene       << "\n\n";
-    std::cout << "Configuring front-"     << frontCam    << "\n\n";
-    std::cout << "Configuring front-top-" << frontTopCam << "\n\n";
-    std::cout << "Configuring behind-"    << behindCam   << "\n\n";
-    std::cout << "Configuring top-"       << topCam      << "\n\n";
-    std::cout << "Configuring bottom-"    << bottomCam   << "\n\n";
-    tracer.traceScene(frontCam,    scene, frameBuffer); frameBuffer.writeToFile("./scene-front");
-    //tracer.traceScene(frontTopCam, scene, frameBuffer); frameBuffer.writeToFile("./scene-front-top");
-    //tracer.traceScene(behindCam,   scene, frameBuffer); frameBuffer.writeToFile("./scene-back");
-    //tracer.traceScene(topCam,      scene, frameBuffer); frameBuffer.writeToFile("./scene-top");
-    //tracer.traceScene(bottomCam,   scene, frameBuffer); frameBuffer.writeToFile("./scene-bottom");
-    std::cout << "Program finished.";
+    std::cout << "Initializing target-" << frameBuffer << "\n\n";
+    std::cout << "Initializing ray-"    << tracer      << "\n\n";
+    std::cout << "Assembling "          << scene       << "\n\n";
+    test("front-view",  tracer, frontCam,  scene, frameBuffer);
+    test("behind-view", tracer, behindCam, scene, frameBuffer);
+    test("top-view",    tracer, topCam,    scene, frameBuffer);
+
+    std::cout << "...program finished\n";
 }

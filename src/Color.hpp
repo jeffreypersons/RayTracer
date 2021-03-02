@@ -11,8 +11,8 @@ private:
     static constexpr int MAX_8BIT = 255;
     static constexpr float INV_MAX_8BIT = 1.0f / MAX_8BIT;
     
-    static constexpr float intToFloat(int v)                          { return v * INV_MAX_8BIT;                               }
-    static constexpr int   floatToInt(float v)                        { return static_cast<int>(v * MAX_8BIT);                 }
+    static constexpr float charToFloat(unsigned char v)               { return static_cast<int>(v) * INV_MAX_8BIT;             }
+    static constexpr unsigned char floatToChar(float v)               { return static_cast<unsigned char>(v * MAX_8BIT);       }
     static constexpr unsigned char extractRedByte(unsigned int hex)   { return static_cast<unsigned char>((hex >> 16) & 0xff); }
     static constexpr unsigned char extractGreenByte(unsigned int hex) { return static_cast<unsigned char>((hex >> 8)  & 0xff); }
     static constexpr unsigned char extractBlueByte(unsigned int hex)  { return static_cast<unsigned char>(hex & 0xff);         }
@@ -27,16 +27,15 @@ public:
     float b;
     
     Color() = default;
-    constexpr Color(float  r, float  g, float  b) : r(Math::clamp01(r)),       g(Math::clamp01(g)),       b(Math::clamp01(b))      {}
-    constexpr Color(double r, double g, double b) : r(static_cast<float>(r)),  g(static_cast<float>(g)),  b(static_cast<float>(b)) {}
-    constexpr Color(int    r, int    g, int    b) : r(intToFloat(r)),          g(intToFloat(g)),          b(intToFloat(b))         {}
-    constexpr Color(int hex)                      : r(extractRedByte(hex)),    g(extractGreenByte(hex)),  b(extractBlueByte(hex))  {}
-    constexpr Color(const Color& intensity)       : r(Math::clamp01(intensity.r)), g(Math::clamp01(intensity.g)), b(Math::clamp01(intensity.b)) {}
+    constexpr Color(float  r, float  g, float  b) : r(Math::clamp01(r)),       g(Math::clamp01(g)),       b(Math::clamp01(b))       {}
+    constexpr Color(double r, double g, double b) : r(static_cast<float>(r)),  g(static_cast<float>(g)),  b(static_cast<float>(b))  {}
+    constexpr Color(unsigned int hex)             : r(extractRedByte(hex)),    g(extractGreenByte(hex)),  b(extractBlueByte(hex))   {}
+    constexpr Color(const Color& color)           : r(Math::clamp01(color.r)), g(Math::clamp01(color.g)), b(Math::clamp01(color.b)) {}
 
     constexpr unsigned int getHex() {
-        return ( (0xff & static_cast<unsigned char>(floatToInt(r))) << 16 ) |
-               ( (0xff & static_cast<unsigned char>(floatToInt(g))) << 8  ) |
-               ( (0xff & static_cast<unsigned char>(floatToInt(b)))       );
+        return ( (0xff & static_cast<unsigned char>(floatToChar(r))) << 16 ) |
+               ( (0xff & static_cast<unsigned char>(floatToChar(g))) << 8  ) |
+               ( (0xff & static_cast<unsigned char>(floatToChar(b)))       );
     }
 
     inline constexpr Color& operator+=(const Color& rhs) { setClamped(r + rhs.r, g + rhs.g, b + rhs.b); return *this; }

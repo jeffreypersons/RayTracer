@@ -6,7 +6,7 @@
 #include "Lights.h"
 #include "Objects.h"
 #include "Scene.h"
-#include "FrameBuffer.h"
+#include "FrameBuffer.hpp"
 
 
 class Tracer {
@@ -26,7 +26,7 @@ private:
 
 public:
     Tracer();
-    void traceScene(const Camera&, const Scene&, FrameBuffer&);
+    void traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) const;
 
     void setShadowColor(const Color& shadowColor);
     void setBackgroundColor(const Color& backgroundColor);
