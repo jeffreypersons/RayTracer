@@ -56,8 +56,8 @@ void test(const std::string& name, const Tracer& tracer, const Camera& camera, c
     stopWatch.stop();
     std::cout << "finished in " << stopWatch.elapsedTime() << " seconds" << "\n";
 
-    const std::string filename = "./scene-" + name;
-    Files::writePpm(frameBuffer, filename);
+    const std::string filename = "./scene-" + name + ".ppm";
+    Files::writePpmWithGammaCorrection(frameBuffer, filename);
     std::cout << "Wrote to file `" << filename << "`" << "\n\n";
 }
 

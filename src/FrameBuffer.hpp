@@ -22,8 +22,8 @@ public:
           height_(frameBuffer.height_),
           bufferSize_(frameBuffer.bufferSize_),
           pixels_(std::make_unique<Color[]>(frameBuffer.bufferSize_)) {
-        for (size_t i = 0; i < frameBuffer.numPixels(); i++) {
-            setPixel(i, frameBuffer.getPixel(i));
+        for (size_t i = 0; i < frameBuffer.bufferSize_; i++) {
+            pixels_[i] = frameBuffer.pixels_[i];
         }
     }
 
