@@ -7,6 +7,7 @@
 #include "Scene.h"
 #include "Tracer.h"
 #include <iostream>
+#include <string>
 
 
 Camera createCamera(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target, float aspectRatio) {
@@ -47,17 +48,17 @@ Scene createSimpleScene(const Vec3& localOrigin) {
 void test(const std::string& name, const Tracer& tracer, const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
     StopWatch stopWatch{};
     std::cout << Text::padSides(" Tracing `" + name + "` ", '*', 80) << "\n";
-    std::cout << "configuring " << camera << "\n";
+    std::cout << "Configuring " << camera << "\n";
 
-    std::cout << "tracing started...";
+    std::cout << "Tracing started...";
     stopWatch.start();
     tracer.traceScene(camera, scene, frameBuffer);
     stopWatch.stop();
     std::cout << "finished in " << stopWatch.elapsedTime() << " seconds" << "\n";
 
-    const std::string filename = "./scene-" + name;
-    Files::writePpm(frameBuffer, filename);
-    std::cout << "wrote to file `" << filename << "`" << "\n\n";
+    const std::string filename = "./scene-" + name + ".ppm";
+    Files::writePpmWithGammaCorrection(frameBuffer, filename);
+    std::cout << "Wrote to file `" << filename << "`" << "\n\n";
 }
 
 int main() {
