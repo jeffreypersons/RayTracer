@@ -84,6 +84,7 @@ Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray,
         reflectedColor = traceRay(camera, scene, reflectRay(ray, intersection), iteration + 1);
     }
     
+    // todo: will need to adjust lighting model for weakening (or not summing) reflection values according to 'strength' of each shadow
     Color nonReflectedColor = intersection.object->material().ambientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
        const ILight& light = scene.getLight(index);
