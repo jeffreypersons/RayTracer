@@ -49,7 +49,6 @@ size_t Tracer::maxNumReflections() const {
     return maxNumReflections_;
 }
 
-// todo: modify framebuffer to have as a single loop for better parallelization
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
 // traceScene it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
 void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) const {
@@ -111,7 +110,6 @@ Ray Tracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     return Ray(intersection.point + (reflectionBias_ * reflectedDirection), reflectedDirection);
 }
 
-// TODO: replace the frustum contains method of culling with a pre-processing scene-culling done outside the tracer via kd-trees
 bool Tracer::findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const {
     float tClosest = Math::INF;
     Intersection closestIntersection{};
