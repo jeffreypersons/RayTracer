@@ -102,7 +102,7 @@ Ray Tracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     const Vec3 reflectedDirection = Math::normalize(
         (-1.00f * ray.direction) + (2.00f * Math::dot(ray.direction, intersection.normal) * intersection.normal)
     );
-    return Ray(intersection.point + (reflectionBias_ * reflectedDirection), reflectedDirection);
+    return Ray(intersection.point + (reflectionBias_ * intersection.normal), reflectedDirection);
 }
 
 bool Tracer::findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const {
