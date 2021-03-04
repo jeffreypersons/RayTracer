@@ -65,37 +65,31 @@ void Tracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& f
         const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, 0.00f };
         const Ray primaryRay = camera.viewportPointToRay(viewportPosition);
         const Color pixelColor = traceRay(camera, scene, primaryRay, 0);
-        frameBuffer.setPixel(height - 1 - row, col, pixelColor);
+        frameBuffer.setPixel(height - 1 - row, col, pixelColor);  // invert y since viewport and row start opposite
     }
 }
 
-Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t iteration=0) const {
-    if (iteration >= maxNumReflections_) {
-        return Color{ 0.00, 0.00, 0.00 };
-    }
-
+Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t depth=0) const {
     Intersection intersection{};
     if (!findNearestIntersection(camera, scene, ray, intersection)) {
         return backgroundColor_;
     }
 
     Color reflectedColor{ 0.00, 0.00, 0.00 };
-    if (intersection.object->material().reflectivity() > 0.00f) {
-        reflectedColor = traceRay(camera, scene, reflectRay(ray, intersection), iteration + 1);
+    if (depth < maxNumReflections_ && intersection.object->material().reflectivity() > 0.00f) {
+        reflectedColor = traceRay(camera, scene, reflectRay(ray, intersection), depth + 1);
     }
     
-    // todo: will need to adjust lighting model for weakening (or not summing) reflection values according to 'strength' of each shadow
+    // todo: will need to adjust lighting model for weakening (or not summing) reflection values according to 'strength' of each shadow,
+    //       and also a better way to include reflection from background (sky) without overpowering everything
     Color nonReflectedColor = intersection.object->material().ambientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
        const ILight& light = scene.getLight(index);
-       if (!isInShadow(camera, intersection, light, scene)) {
-           Color diffuse  = computeDiffuseColor(intersection, light);
-           Color specular = computeSpecularColor(intersection, light, camera);
-           Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
-           nonReflectedColor += lightIntensityAtPoint * (diffuse + specular);
-       } else {
-           nonReflectedColor += shadowColor_;
-       }
+       //if (isInShadow(camera, intersection, light, scene)) { nonReflectedColor += shadowColor_; continue; }
+       Color diffuse  = computeDiffuseColor(intersection, light);
+       Color specular = computeSpecularColor(intersection, light, camera);
+       Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
+       nonReflectedColor += lightIntensityAtPoint * (diffuse + specular);
     }
     
     // blend intrinsic and reflected color using our light and intersected object
@@ -106,7 +100,7 @@ Color Tracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray,
 // reflect our ray using a slight direction offset to avoid infinite reflections
 Ray Tracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     const Vec3 reflectedDirection = Math::normalize(
-        (-1 * ray.direction) + (2 * Math::dot(ray.direction, intersection.normal) * intersection.normal)
+        (-1.00f * ray.direction) + (2.00f * Math::dot(ray.direction, intersection.normal) * intersection.normal)
     );
     return Ray(intersection.point + (reflectionBias_ * reflectedDirection), reflectedDirection);
 }
@@ -116,8 +110,7 @@ bool Tracer::findNearestIntersection(const Camera& camera, const Scene& scene, c
     Intersection closestIntersection{};
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         Intersection intersection;
-        if (scene.getObject(index).intersect(ray, intersection) &&
-                intersection.t < tClosest) {
+        if (scene.getObject(index).intersect(ray, intersection) && intersection.t < tClosest) {
             tClosest = intersection.t;
             closestIntersection = intersection;
         }
