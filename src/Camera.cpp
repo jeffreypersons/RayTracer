@@ -25,6 +25,10 @@ void Camera::lookAt(const Vec3& target) {
     this->rightDir_   = Math::normalize(Math::cross(this->forwardDir_, tempUp));
     this->upDir_      = Math::normalize(Math::cross(this->rightDir_,   this->forwardDir_));
 }
+void Camera::lookAtFrom(const Vec3& target, const Vec3& position) {
+    setPosition(position);
+    lookAt(target);
+}
 
 // map point from viewport coordinates to worldspace coordinates
 // note: point in viewport if between bottom-left of near-plane (0,0,0) and top right-right of far-plane (1,1,1)

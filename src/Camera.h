@@ -50,6 +50,8 @@ public:
     Camera();
 
     void lookAt(const Vec3& target);
+    void lookAtFrom(const Vec3& target, const Vec3& position);
+
     constexpr Vec3 viewportToWorld(const Vec3& point) const;
     constexpr Vec3 worldToViewport(const Vec3& point) const;
     bool isPointInFrustum(const Vec3& point) const;
