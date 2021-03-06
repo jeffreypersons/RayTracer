@@ -27,6 +27,7 @@ struct Vec2 {
     inline constexpr Vec2& operator*=(float       rhs) { x *= rhs;    y *= rhs;   return *this; }
     inline constexpr Vec2& operator/=(float       rhs) { x /= rhs;    y /= rhs;   return *this; }
 };
+inline constexpr Vec2 operator-(const Vec2& v)                     { return Vec2(         -v.x,          -v.y); }
 inline constexpr Vec2 operator+(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x + rhs.x, lhs.y + rhs.y); }
 inline constexpr Vec2 operator-(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x - rhs.x, lhs.y - rhs.y); }
 inline constexpr Vec2 operator/(const Vec2& lhs,  float       rhs) { return Vec2(lhs.x / rhs,   lhs.y / rhs);   }
@@ -58,6 +59,7 @@ struct Vec3 {
     inline constexpr Vec3& operator*=(float       rhs) { x *= rhs;    y *= rhs;   z *= rhs;   return *this; }
     inline constexpr Vec3& operator/=(float       rhs) { x /= rhs;    y /= rhs;   z /= rhs;   return *this; }
 };
+inline constexpr Vec3 operator-(const Vec3& v)                     { return Vec3(         -v.x,          -v.y,          -v.z); }
 inline constexpr Vec3 operator+(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
 inline constexpr Vec3 operator-(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
 inline constexpr Vec3 operator/(const Vec3& lhs,  float       rhs) { return Vec3(lhs.x / rhs,   lhs.y / rhs,   lhs.z / rhs);   }
@@ -128,6 +130,12 @@ inline float roundToNearestDigit(float a, size_t num_digits) {
     return roundToNearestInt(a * roundingMultiple) / roundingMultiple;
 }
 
+inline constexpr Vec2 reflect(const Vec2& inDirection, const Vec2& inNormal) {
+    return inDirection - (2.00f * Math::dot(inDirection, inNormal) * inNormal);
+}
+inline constexpr Vec3 reflect(const Vec3& inDirection, const Vec3& inNormal) {
+    return inDirection - (2.00f * Math::dot(inDirection, inNormal) * inNormal);
+}
 inline constexpr Vec3 cross(const Vec3& lhs, const Vec3& rhs) {
     return Vec3( (lhs.y * rhs.z - lhs.z * rhs.y),
                 -(lhs.x * rhs.z - lhs.z * rhs.x),
@@ -137,8 +145,8 @@ inline constexpr float dot(const Vec2& lhs, const Vec2& rhs) { return lhs.x * rh
 inline constexpr float dot(const Vec3& lhs, const Vec3& rhs) { return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z; }
 inline constexpr float magnitudeSquared(const Vec2& vec)     { return vec.x * vec.x + vec.y * vec.y;                 }
 inline constexpr float magnitudeSquared(const Vec3& vec)     { return vec.x * vec.x + vec.y * vec.y + vec.z * vec.z; }
-inline float magnitude(const Vec2& vec)                      { return sqrtf(magnitudeSquared(vec));                  }
-inline float magnitude(const Vec3& vec)                      { return sqrtf(magnitudeSquared(vec));                  }
+inline float magnitude(const Vec2& vec)                      { return Math::squareRoot(Math::magnitudeSquared(vec)); }
+inline float magnitude(const Vec3& vec)                      { return Math::squareRoot(Math::magnitudeSquared(vec)); }
 inline Vec2 normalize(const Vec2& vec)                       { return vec / Math::magnitude(vec);                    }
 inline Vec3 normalize(const Vec3& vec)                       { return vec / Math::magnitude(vec);                    }
 inline Vec2 direction(const Vec2& from, const Vec2& to)      { return Math::normalize(to - from);                    }
