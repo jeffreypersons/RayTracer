@@ -126,16 +126,11 @@ inline float squareRoot(float a)               { return std::sqrtf(a);          
 inline float pow(float a, float b)             { return std::powf(a, b);               }
 inline float roundToNearestInt(float a)        { return std::round(a);                 }
 inline float roundToNearestDigit(float a, size_t num_digits) {
-    size_t roundingMultiple = num_digits * 10;
+    const size_t roundingMultiple = num_digits * 10;
     return roundToNearestInt(a * roundingMultiple) / roundingMultiple;
 }
 
-inline constexpr Vec2 reflect(const Vec2& inDirection, const Vec2& inNormal) {
-    return inDirection - (2.00f * Math::dot(inDirection, inNormal) * inNormal);
-}
-inline constexpr Vec3 reflect(const Vec3& inDirection, const Vec3& inNormal) {
-    return inDirection - (2.00f * Math::dot(inDirection, inNormal) * inNormal);
-}
+
 inline constexpr Vec3 cross(const Vec3& lhs, const Vec3& rhs) {
     return Vec3( (lhs.y * rhs.z - lhs.z * rhs.y),
                 -(lhs.x * rhs.z - lhs.z * rhs.x),
@@ -153,6 +148,12 @@ inline Vec2 direction(const Vec2& from, const Vec2& to)      { return Math::norm
 inline Vec3 direction(const Vec3& from, const Vec3& to)      { return Math::normalize(to - from);                    }
 inline float distance(const Vec2& from, const Vec2& to)      { return Math::magnitude(to - from);                    }
 inline float distance(const Vec3& from, const Vec3& to)      { return Math::magnitude(to - from);                    }
+inline constexpr Vec2 reflect(const Vec2& inDirection, const Vec2& inNormal) {
+    return inDirection - (2.00f * Math::dot(inDirection, inNormal) * inNormal);
+}
+inline constexpr Vec3 reflect(const Vec3& inDirection, const Vec3& inNormal) {
+    return inDirection - (2.00f * Math::dot(inDirection, inNormal) * inNormal);
+}
 
 // compute the cosine [-1, 1] of the (shortest) angle between given vectors A and B
 inline float cosineSimilarity(const Vec2& a, const Vec2& b) {
@@ -188,11 +189,11 @@ inline bool isOppositeDirection(const Vec3& a, const Vec3& b, float epsilon=DEFA
     return isApproximately(cosineSimilarity(a, b), -1.00f, epsilon);
 }
 inline bool isParallelDirection(const Vec2& a, const Vec2& b, float epsilon=DEFAULT_EPSILON) {
-    float cosAB = cosineSimilarity(a, b);
+    const float cosAB = cosineSimilarity(a, b);
     return isApproximately(cosAB, 1.00f, epsilon) || isApproximately(cosAB, -1.00f, epsilon);
 }
 inline bool isParallelDirection(const Vec3& a, const Vec3& b, float epsilon=DEFAULT_EPSILON) {
-    float cosAB = cosineSimilarity(a, b);
+    const float cosAB = cosineSimilarity(a, b);
     return isApproximately(cosAB, 1.00f, epsilon) || isApproximately(cosAB, -1.00f, epsilon);
 }
 };
