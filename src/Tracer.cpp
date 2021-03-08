@@ -12,8 +12,7 @@
 Tracer::Tracer()
     : shadowColor_      (DEFAULT_SHADOW_COLOR),
       backgroundColor_  (DEFAULT_BACKGROUND_COLOR),
-      shadowBias_       (DEFAULT_SHADOW_BIAS),
-      reflectionBias_   (DEFAULT_REFLECTION_BIAS),
+      bias_             (DEFAULT_BIAS),
       maxNumReflections_(DEFAULT_MAX_NUM_REFLECTIONS)
 {}
 
@@ -23,11 +22,8 @@ void Tracer::setShadowColor(const Color& shadowColor) {
 void Tracer::setBackgroundColor(const Color& backgroundColor) {
     this->backgroundColor_ = backgroundColor;
 }
-void Tracer::setShadowBias(float shadowBias) {
-    this->shadowBias_ = shadowBias;
-}
-void Tracer::setReflectionBias(float reflectionBias) {
-    this->reflectionBias_ = reflectionBias;
+void Tracer::setBias(float shadowBias) {
+    this->bias_ = shadowBias;
 }
 void Tracer::setMaxNumReflections(size_t maxNumReflections) {
     this->maxNumReflections_ = maxNumReflections;
@@ -39,11 +35,8 @@ Color Tracer::shadowColor() const {
 Color Tracer::backgroundColor() const {
     return backgroundColor_;
 }
-float Tracer::shadowBias() const {
-    return shadowBias_;
-}
-float Tracer::reflectionBias() const {
-    return reflectionBias_;
+float Tracer::bias() const {
+    return bias_;
 }
 size_t Tracer::maxNumReflections() const {
     return maxNumReflections_;
@@ -102,7 +95,7 @@ Ray Tracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     const Vec3 reflectedDirection = Math::normalize(
         (-1.00f * ray.direction) + (2.00f * Math::dot(ray.direction, intersection.normal) * intersection.normal)
     );
-    return Ray(intersection.point + (reflectionBias_ * intersection.normal), reflectedDirection);
+    return Ray(intersection.point + (bias_ * intersection.normal), reflectedDirection);
 }
 
 bool Tracer::findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const {
@@ -127,7 +120,7 @@ bool Tracer::findNearestIntersection(const Camera& camera, const Scene& scene, c
 // check if there exists another object blocking light from reaching our hit-point
 bool Tracer::isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const {
     const Ray shadowRay{
-        intersection.point + (shadowBias_ * intersection.normal),
+        intersection.point + (bias_ * intersection.normal),
         Math::direction(intersection.point, light.position())
     };
     const float distanceToLight = Math::distance(shadowRay.origin, light.position());
@@ -161,8 +154,7 @@ std::ostream& operator<<(std::ostream& os, const Tracer& tracer) {
     os << "Tracer("
          << "shadow-color:("       << tracer.shadowColor()       << "),"
          << "background-color:("   << tracer.backgroundColor()   << "),"
-         << "shadow-bias:"         << tracer.shadowBias()        << ","
-         << "reflection-bias:"     << tracer.reflectionBias()    << ","
+         << "bias:"                << tracer.bias()              << ","
          << "max-num-reflections:" << tracer.maxNumReflections()
        << ")";
     return os;

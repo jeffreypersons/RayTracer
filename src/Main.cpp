@@ -65,15 +65,15 @@ int main() {
     std::cout << "Program started...\n\n";
     Tracer tracer{};
     tracer.setBackgroundColor(Palette::skyBlue);
-    tracer.setShadowColor(Color(0.125, 0.125, 0.125));
+    tracer.setShadowColor(Color(0.125f, 0.125f, 0.125f));
     tracer.setMaxNumReflections(3);
-    tracer.setShadowBias(0.02f);
-    tracer.setReflectionBias(0.02f);
+    tracer.setBias(0.02f);
 
     const Vec3 eyeTarget{ 0, 50, 0 };
     const Vec3 sceneOrigin{ 0, 0, 0 };
     const Scene scene = createSimpleScene(sceneOrigin);
     FrameBuffer frameBuffer{ CommonResolutions::HD_1080p };
+
     Camera frontCam    = createCamera(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera behindCam   = createCamera(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
     Camera topCam      = createCamera(eyeTarget + Vec3(0,  50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
