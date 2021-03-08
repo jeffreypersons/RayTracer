@@ -5,7 +5,7 @@
 #include "Objects.h"
 #include "Camera.h"
 #include "Scene.h"
-#include "Tracer.h"
+#include "RayTracer.h"
 #include <iostream>
 #include <string>
 
@@ -45,7 +45,7 @@ Scene createSimpleScene(const Vec3& localOrigin) {
     return scene;
 }
 
-void test(const std::string& name, const Tracer& tracer, const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
+void test(const std::string& name, const RayTracer& tracer, const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
     StopWatch stopWatch{};
     std::cout << Text::padSides(" Tracing `" + name + "` ", '*', 80) << "\n";
     std::cout << "Configuring " << camera << "\n";
@@ -63,12 +63,12 @@ void test(const std::string& name, const Tracer& tracer, const Camera& camera, c
 
 int main() {
     std::cout << "Program started...\n\n";
-    Tracer tracer{};
-    tracer.setBackgroundColor(Palette::skyBlue);
-    tracer.setShadowColor(Color(0.125, 0.125, 0.125));
-    tracer.setMaxNumReflections(3);
-    tracer.setShadowBias(0.02f);
-    tracer.setReflectionBias(0.02f);
+    RayTracerOptions tracerOptions{};
+    tracerOptions.backgroundColor   = Palette::skyBlue;
+    tracerOptions.shadowColor       = Color(0.125, 0.125, 0.125);
+    tracerOptions.bias              = 0.01f;
+    tracerOptions.maxNumReflections = 3;
+    RayTracer tracer{ tracerOptions };
 
     const Vec3 eyeTarget{ 0, 50, 0 };
     const Vec3 sceneOrigin{ 0, 0, 0 };
