@@ -17,17 +17,8 @@ private:
     
 public:
     FrameBuffer() = delete;
-    FrameBuffer(const FrameBuffer& frameBuffer)
-        : width_(frameBuffer.width_),
-          height_(frameBuffer.height_),
-          bufferSize_(frameBuffer.bufferSize_),
-          pixels_(std::make_unique<Color[]>(frameBuffer.bufferSize_)) {
-        for (size_t i = 0; i < frameBuffer.bufferSize_; i++) {
-            pixels_[i] = frameBuffer.pixels_[i];
-        }
-    }
-
     FrameBuffer& operator=(FrameBuffer& frameBuffer) = delete;
+
     FrameBuffer(const Vec2& dimensions)
         : FrameBuffer(static_cast<size_t>(dimensions.x), static_cast<size_t>(dimensions.y))
     {}
@@ -38,6 +29,15 @@ public:
           pixels_    (std::make_unique<Color[]>(bufferSize_)) {
         if (width <= 0 || height <= 0 || bufferSize_ <= 0) {
             throw std::invalid_argument("frame buffer must be have dimensions greater than zero");
+        }
+    }
+    FrameBuffer(const FrameBuffer& frameBuffer)
+        : width_(frameBuffer.width_),
+          height_(frameBuffer.height_),
+          bufferSize_(frameBuffer.bufferSize_),
+          pixels_(std::make_unique<Color[]>(frameBuffer.bufferSize_)) {
+        for (size_t i = 0; i < frameBuffer.bufferSize_; i++) {
+            pixels_[i] = frameBuffer.pixels_[i];
         }
     }
 
