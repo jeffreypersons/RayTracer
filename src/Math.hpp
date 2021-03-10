@@ -36,6 +36,7 @@ inline constexpr Vec2 operator*(const Vec2& lhs,  float       rhs) { return Vec2
 inline constexpr Vec2 operator*(float       lhs,  const Vec2& rhs) { return Vec2(lhs   * rhs.x, lhs   * rhs.y); }
 inline std::ostream& operator<<(std::ostream& os, const Vec2& vec) { os << vec.x << "," << vec.y; return os;    }
 
+
 struct Vec3 {
     float x;
     float y;
