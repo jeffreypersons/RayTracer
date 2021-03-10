@@ -10,16 +10,19 @@
 // fast, header file defined, color buffer
 class FrameBuffer {
 private:
-    const size_t width_;
-    const size_t height_;
-    const size_t bufferSize_;
-    const std::unique_ptr<Color[]> pixels_;
+    size_t width_;
+    size_t height_;
+    size_t bufferSize_;
+    std::unique_ptr<Color[]> pixels_;
     
 public:
-    FrameBuffer() = delete;
-    FrameBuffer& operator=(FrameBuffer& frameBuffer) = delete;
+    FrameBuffer()                         = delete;
+    FrameBuffer(const FrameBuffer&)       = delete;
+    FrameBuffer& operator=(FrameBuffer&)  = delete;
+    FrameBuffer& operator=(FrameBuffer&&) = default;
+    FrameBuffer(FrameBuffer&&)            = default;
 
-    FrameBuffer(const Vec2& dimensions)
+    explicit FrameBuffer(Vec2 dimensions)
         : FrameBuffer(static_cast<size_t>(dimensions.x), static_cast<size_t>(dimensions.y))
     {}
     FrameBuffer(size_t width, size_t height)
@@ -28,16 +31,7 @@ public:
           bufferSize_(width * height),
           pixels_    (std::make_unique<Color[]>(bufferSize_)) {
         if (width <= 0 || height <= 0 || bufferSize_ <= 0) {
-            throw std::invalid_argument("frame buffer must be have dimensions greater than zero");
-        }
-    }
-    FrameBuffer(const FrameBuffer& frameBuffer)
-        : width_(frameBuffer.width_),
-          height_(frameBuffer.height_),
-          bufferSize_(frameBuffer.bufferSize_),
-          pixels_(std::make_unique<Color[]>(frameBuffer.bufferSize_)) {
-        for (size_t i = 0; i < frameBuffer.bufferSize_; i++) {
-            pixels_[i] = frameBuffer.pixels_[i];
+            throw std::invalid_argument("frame buffer must have dimensions greater than zero");
         }
     }
 
