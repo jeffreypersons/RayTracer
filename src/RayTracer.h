@@ -9,22 +9,31 @@
 #include "FrameBuffer.hpp"
 
 
-struct RayTracerOptions {
-    Color shadowColor;
-    Color backgroundColor;
-    float bias;
-    size_t maxNumReflections;
-    RayTracerOptions() = default;
-};
-
 class RayTracer {
 private:
-    const RayTracerOptions options_;
+    float bias_;
+    size_t maxNumReflections_;
+    Color shadowColor_;
+    Color backgroundColor_;
+
+    static constexpr float DEFAULT_BIAS = 1e-02f;
+    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 3;
+    static constexpr Color DEFAULT_SHADOW_COLOR     { 0.125f, 0.125f, 0.125f };
+    static constexpr Color DEFAULT_BACKGROUND_COLOR { 0.500f, 0.500f, 0.500f };
     
 public:
-    RayTracer(const RayTracerOptions& options);
+    RayTracer();
     void traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) const;
-    RayTracerOptions options() const;
+
+    void setBias(float bias);
+    void setMaxNumReflections(size_t maxNumReflections);
+    void setShadowColor(const Color& shadowColor);
+    void setBackgroundColor(const Color& backgroundColor);
+
+    float bias()               const;
+    size_t maxNumReflections() const;
+    Color shadowColor()        const;
+    Color backgroundColor()    const;
 
 private:
     Color traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t depth) const;

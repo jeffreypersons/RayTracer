@@ -9,12 +9,37 @@
 #include <omp.h>
 
 
-RayTracer::RayTracer(const RayTracerOptions& options)
-    : options_(options)
+RayTracer::RayTracer()
+    : bias_             (DEFAULT_BIAS),
+      maxNumReflections_(DEFAULT_MAX_NUM_REFLECTIONS),
+      shadowColor_      (DEFAULT_SHADOW_COLOR),
+      backgroundColor_  (DEFAULT_BACKGROUND_COLOR)
 {}
 
-RayTracerOptions RayTracer::options() const {
-    return options_;
+void RayTracer::setBias(float shadowBias) {
+    this->bias_ = shadowBias;
+}
+void RayTracer::setMaxNumReflections(size_t maxNumReflections) {
+    this->maxNumReflections_ = maxNumReflections;
+}
+void RayTracer::setShadowColor(const Color& shadowColor) {
+    this->shadowColor_ = shadowColor;
+}
+void RayTracer::setBackgroundColor(const Color& backgroundColor) {
+    this->backgroundColor_ = backgroundColor;
+}
+
+float RayTracer::bias() const {
+    return bias_;
+}
+size_t RayTracer::maxNumReflections() const {
+    return maxNumReflections_;
+}
+Color RayTracer::shadowColor() const {
+    return backgroundColor_;
+}
+Color RayTracer::backgroundColor() const {
+    return backgroundColor_;
 }
 
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
@@ -40,11 +65,11 @@ void RayTracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer
 Color RayTracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t depth=0) const {
     Intersection intersection{};
     if (!findNearestIntersection(camera, scene, ray, intersection)) {
-        return options_.backgroundColor;
+        return backgroundColor_;
     }
 
     Color reflectedColor{ 0.00, 0.00, 0.00 };
-    if (depth < options_.maxNumReflections && intersection.object->material().reflectivity() > 0.00f) {
+    if (depth < maxNumReflections_ && intersection.object->material().reflectivity() > 0.00f) {
         reflectedColor = traceRay(camera, scene, reflectRay(ray, intersection), depth + 1);
     }
     
@@ -68,7 +93,7 @@ Color RayTracer::traceRay(const Camera& camera, const Scene& scene, const Ray& r
 // reflect our ray using a slight direction offset to avoid infinite reflections
 Ray RayTracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     const Vec3 reflectedDirection = Math::reflect(-ray.direction, intersection.normal);
-    return Ray(intersection.point + (options_.bias * intersection.normal), reflectedDirection);
+    return Ray(intersection.point + (bias_ * intersection.normal), reflectedDirection);
 }
 
 bool RayTracer::findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const {
@@ -93,7 +118,7 @@ bool RayTracer::findNearestIntersection(const Camera& camera, const Scene& scene
 // check if there exists another object blocking light from reaching our hit-point
 bool RayTracer::isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const {
     const Ray shadowRay{
-        intersection.point + (options_.bias * intersection.normal),
+        intersection.point + (bias_ * intersection.normal),
         Math::direction(intersection.point, light.position())
     };
     const float distanceToLight = Math::distance(shadowRay.origin, light.position());
@@ -125,10 +150,10 @@ Color RayTracer::computeSpecularColor(const Intersection& intersection, const IL
 
 std::ostream& operator<<(std::ostream& os, const RayTracer& rayTracer) {
     os << "RayTracer("
-         << "shadow-color:("       << rayTracer.options().shadowColor       << "),"
-         << "background-color:("   << rayTracer.options().backgroundColor   << "),"
-         << "bias:"                << rayTracer.options().bias              << ","
-         << "max-num-reflections:" << rayTracer.options().maxNumReflections
+         << "shadow-color:("       << rayTracer.shadowColor()       << "),"
+         << "background-color:("   << rayTracer.backgroundColor()   << "),"
+         << "bias:"                << rayTracer.bias()              << ","
+         << "max-num-reflections:" << rayTracer.maxNumReflections()
        << ")";
     return os;
 }
