@@ -10,6 +10,7 @@ struct Vec2 {
     float x;
     float y;
     static constexpr size_t len = 2;
+
     Vec2() = default;
     constexpr Vec2(float  x, float  y) : x(x), y(y) {}
     constexpr Vec2(int    x, int    y) : Vec2(static_cast<float>(x), static_cast<float>(y)) {}
@@ -40,6 +41,7 @@ struct Vec3 {
     float y;
     float z;
     static constexpr size_t len = 3;
+
     Vec3() = default;
     constexpr Vec3(float  x, float  y, float  z) : x(x), y(y), z(z) {}
     constexpr Vec3(int    x, int    y, int    z) : Vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)) {}
