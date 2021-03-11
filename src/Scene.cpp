@@ -23,11 +23,11 @@ size_t Scene::getNumObjects() const {
 }
 const ILight& Scene::getLight(size_t index) const {
     assert(index >= 0 && index < lights.size());
-    return *lights[index].get();
+    return *lights[index];
 }
 const IObject& Scene::getObject(size_t index) const {
     assert(index >= 0 && index < objects.size());
-    return *objects[index].get();
+    return *objects[index];
 }
 
 std::ostream& operator<<(std::ostream& os, const Scene& scene) {
