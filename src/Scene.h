@@ -12,7 +12,7 @@ private:
     std::vector<std::unique_ptr<IObject>> objects;
 
 public:
-    Scene();
+    Scene() = default;
 
     void addLight(PointLight light);
     void addSceneObject(Sphere object);

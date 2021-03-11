@@ -5,11 +5,6 @@
 #include <assert.h>
 
 
-Scene::Scene()
-    : lights(),
-      objects()
-{}
-
 void Scene::addLight(PointLight light) {
     lights.push_back(std::make_unique<PointLight>(std::move(light)));
 }
