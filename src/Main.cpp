@@ -1,26 +1,9 @@
-#include "StopWatch.hpp"
-#include "Files.hpp"
-#include "Text.hpp"
-#include "Lights.h"
-#include "Objects.h"
-#include "Camera.h"
-#include "Scene.h"
-#include "RayTracer.h"
+#include "App.h"
 #include <iostream>
 #include <string>
 
 
-Camera createCamera(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target, float aspectRatio) {
-    Camera cam{};
-    cam.setPosition(position);
-    cam.setNearClip(viewDist);
-    cam.setAspectRatio(aspectRatio);
-    cam.setFieldOfView(fieldOfView);
-    cam.lookAt(target);
-    return cam;
-}
-
-Scene createSimpleScene(const Vec3& localOrigin) {
+Scene createSimpleScene(const Vec3& localOrigin=Vec3::zero()) {
     Material reflectiveRed{};
     reflectiveRed.setWeights(0.10f, 0.90f);
     reflectiveRed.setColors(Palette::darkRed, Palette::red, Palette::orangeRed);
@@ -37,53 +20,26 @@ Scene createSimpleScene(const Vec3& localOrigin) {
     reflectiveBlue.setShininess(5);
 
     Scene scene{};
-    scene.addLight(PointLight(localOrigin + Vec3(0, 100, 25), Palette::white,  0.50f, 1e-10f, 1e-20f));
-    scene.addLight(PointLight(localOrigin + Vec3(0,   0, 25), Palette::yellow, 0.50f, 1e-10f, 1e-20f));
-    scene.addSceneObject(Sphere(localOrigin + Vec3(0, 80,  0), 10.00f, reflectiveRed));
-    scene.addSceneObject(Sphere(localOrigin + Vec3(0, 55,  0), 15.00f, reflectiveGreen));
-    scene.addSceneObject(Sphere(localOrigin + Vec3(0, 20,  0), 20.00f, reflectiveBlue));
+    scene.addLight(std::move(PointLight(localOrigin + Vec3(0, 100, 25), Palette::white,  0.50f, 1e-10f, 1e-20f)));
+    scene.addLight(std::move(PointLight(localOrigin + Vec3(0,   0, 25), Palette::yellow, 0.50f, 1e-10f, 1e-20f)));
+    scene.addSceneObject(std::move(Sphere(localOrigin + Vec3(0, 80,  0), 10.00f, reflectiveRed)));
+    scene.addSceneObject(std::move(Sphere(localOrigin + Vec3(0, 55,  0), 15.00f, reflectiveGreen)));
+    scene.addSceneObject(std::move(Sphere(localOrigin + Vec3(0, 20,  0), 20.00f, reflectiveBlue)));
     return scene;
 }
 
-void test(const std::string& name, const RayTracer& tracer, const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
-    StopWatch stopWatch{};
-    std::cout << Text::padSides(" Tracing `" + name + "` ", '*', 80) << "\n";
-    std::cout << "Configuring " << camera << "\n";
-
-    std::cout << "Tracing started...";
-    stopWatch.start();
-    tracer.traceScene(camera, scene, frameBuffer);
-    stopWatch.stop();
-    std::cout << "finished in " << stopWatch.elapsedTime() << " seconds" << "\n";
-
-    const std::string filename = "./scene-" + name + ".ppm";
-    Files::writePpmWithGammaCorrection(frameBuffer, filename);
-    std::cout << "Wrote to file `" << filename << "`" << "\n\n";
-}
-
 int main() {
-    std::cout << "Program started...\n\n";
-    RayTracerOptions tracerOptions{};
-    tracerOptions.backgroundColor   = Palette::skyBlue;
-    tracerOptions.shadowColor       = Color(0.125, 0.125, 0.125);
-    tracerOptions.bias              = 0.01f;
-    tracerOptions.maxNumReflections = 3;
-    RayTracer tracer{ tracerOptions };
-
-    const Vec3 eyeTarget{ 0, 50, 0 };
-    const Vec3 sceneOrigin{ 0, 0, 0 };
-    const Scene scene = createSimpleScene(sceneOrigin);
-    FrameBuffer frameBuffer{ CommonResolutions::HD_1080p };
-    Camera frontCam    = createCamera(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
-    Camera behindCam   = createCamera(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
-    Camera topCam      = createCamera(eyeTarget + Vec3(0,  50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
-    
-    std::cout << "Initializing target-" << frameBuffer << "\n\n";
-    std::cout << "Initializing ray-"    << tracer      << "\n\n";
-    std::cout << "Assembling "          << scene       << "\n\n";
-    test("front-view",  tracer, frontCam,  scene, frameBuffer);
-    test("behind-view", tracer, behindCam, scene, frameBuffer);
-    test("top-view",    tracer, topCam,    scene, frameBuffer);
-
-    std::cout << "...program finished\n";
+    AppOptions options;
+    options.imageOutputFile           = "./scene.ppm";
+    options.imageOutputSize           = CommonResolutions::HD_1080p;
+    options.rayTracingReflectionLimit = 3;
+    options.skyBoxColor               = Color(0.125f, 0.125f, 0.125f);
+    options.shadowColor               = Color(0.500f, 0.500f, 0.500f);
+    options.cameraNearZ               = 0.50f;
+    options.cameraFieldOfView         = 120.0f;
+    options.viewTarget                = Vec3(0, 50,  0);
+    options.viewOffset                = Vec3(0,  0, 50);
+    Scene scene = createSimpleScene();
+    App app{ scene, options };
+    app.run();
 }
