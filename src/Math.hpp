@@ -22,11 +22,11 @@ struct Vec2 {
     static constexpr Vec2 left()  { return Vec2(-1,  0); };
     static constexpr Vec2 zero()  { return Vec2( 0,  0); };
     static constexpr Vec2 one()   { return Vec2( 1,  1); };
-    
-    inline constexpr Vec2& operator+=(const Vec2& rhs) { x += rhs.x;  y += rhs.y; return *this; }
-    inline constexpr Vec2& operator-=(const Vec2& rhs) { x -= rhs.x;  y -= rhs.y; return *this; }
-    inline constexpr Vec2& operator*=(float       rhs) { x *= rhs;    y *= rhs;   return *this; }
-    inline constexpr Vec2& operator/=(float       rhs) { x /= rhs;    y /= rhs;   return *this; }
+
+    inline constexpr Vec2& operator+=(const Vec2& rhs) { x += rhs.x; y += rhs.y; return *this; }
+    inline constexpr Vec2& operator-=(const Vec2& rhs) { x -= rhs.x; y -= rhs.y; return *this; }
+    inline constexpr Vec2& operator*=(float       rhs) { x *= rhs;   y *= rhs;   return *this; }
+    inline constexpr Vec2& operator/=(float       rhs) { x /= rhs;   y /= rhs;   return *this; }
 };
 inline constexpr Vec2 operator-(const Vec2& v)                     { return Vec2(         -v.x,          -v.y); }
 inline constexpr Vec2 operator+(const Vec2& lhs,  const Vec2& rhs) { return Vec2(lhs.x + rhs.x, lhs.y + rhs.y); }
@@ -57,10 +57,10 @@ struct Vec3 {
     static constexpr Vec3 right()  { return Vec3( 1,  0,  0); };
     static constexpr Vec3 left()   { return Vec3(-1,  0,  0); };
     
-    inline constexpr Vec3& operator+=(const Vec3& rhs) { x += rhs.x;  y += rhs.y; z += rhs.z; return *this; }
-    inline constexpr Vec3& operator-=(const Vec3& rhs) { x -= rhs.x;  y -= rhs.y; z -= rhs.z; return *this; }
-    inline constexpr Vec3& operator*=(float       rhs) { x *= rhs;    y *= rhs;   z *= rhs;   return *this; }
-    inline constexpr Vec3& operator/=(float       rhs) { x /= rhs;    y /= rhs;   z /= rhs;   return *this; }
+    inline constexpr Vec3& operator+=(const Vec3& rhs) { x += rhs.x; y += rhs.y; z += rhs.z; return *this; }
+    inline constexpr Vec3& operator-=(const Vec3& rhs) { x -= rhs.x; y -= rhs.y; z -= rhs.z; return *this; }
+    inline constexpr Vec3& operator*=(float       rhs) { x *= rhs;   y *= rhs;   z *= rhs;   return *this; }
+    inline constexpr Vec3& operator/=(float       rhs) { x /= rhs;   y /= rhs;   z /= rhs;   return *this; }
 };
 inline constexpr Vec3 operator-(const Vec3& v)                     { return Vec3(         -v.x,          -v.y,          -v.z); }
 inline constexpr Vec3 operator+(const Vec3& lhs,  const Vec3& rhs) { return Vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
