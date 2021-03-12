@@ -114,7 +114,6 @@ bool RayTracer::findNearestIntersection(const Camera& camera, const Scene& scene
         return true;
     }
 }
-
 // check if there exists another object blocking light from reaching our hit-point
 bool RayTracer::isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const {
     const Ray shadowRay{
@@ -139,7 +138,6 @@ Color RayTracer::computeDiffuseColor(const Intersection& intersection, const ILi
     const float strengthAtLightAngle = Math::max(0.00f, Math::dot(intersection.normal, directionToLight));
     return strengthAtLightAngle * surfaceMaterial.diffuseColor();
 }
-
 Color RayTracer::computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& camera) const {
     const Vec3 directionToCam      = Math::direction(intersection.point, camera.position());
     const Vec3 halfwayVec          = Math::normalize(directionToCam + light.position());
