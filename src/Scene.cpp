@@ -6,28 +6,28 @@
 
 
 void Scene::addLight(PointLight&& light) {
-    lights.push_back(std::make_unique<PointLight>(std::move(light)));
+    lights_.push_back(std::make_unique<PointLight>(std::move(light)));
 }
 void Scene::addSceneObject(Sphere&& object) {
-    objects.push_back(std::make_unique<Sphere>(std::move(object)));
+    objects_.push_back(std::make_unique<Sphere>(std::move(object)));
 }
 void Scene::addSceneObject(Triangle&& object) {
-    objects.push_back(std::make_unique<Triangle>(std::move(object)));
+    objects_.push_back(std::make_unique<Triangle>(std::move(object)));
 }
 
-size_t Scene::getNumLights() const {
-    return lights.size();
-}
-size_t Scene::getNumObjects() const {
-    return objects.size();
-}
 const ILight& Scene::getLight(size_t index) const {
     assert(index >= 0 && index < lights.size());
-    return *lights[index];
+    return *lights_[index];
 }
 const IObject& Scene::getObject(size_t index) const {
     assert(index >= 0 && index < objects.size());
-    return *objects[index];
+    return *objects_[index];
+}
+size_t Scene::getNumLights() const {
+    return lights_.size();
+}
+size_t Scene::getNumObjects() const {
+    return objects_.size();
 }
 
 std::ostream& operator<<(std::ostream& os, const Scene& scene) {
