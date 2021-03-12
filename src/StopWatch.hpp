@@ -38,6 +38,7 @@ public:
     bool isFinished() const {
         return startTime_.has_value() && stopTime_.has_value();
     }
+
     // compute time since start and now (or since time last stopped)
     double elapsedTime() const {
         if (isRunning()) {
