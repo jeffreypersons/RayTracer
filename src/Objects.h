@@ -11,7 +11,7 @@ public:
     virtual bool intersect(const Ray& ray, Intersection& result) const = 0;
     virtual std::string description() const = 0;
     
-    constexpr Vec3 position()            const { return position_; }
+    constexpr const Vec3&     position() const { return position_; }
     constexpr const Material& material() const { return material_; }
 
 protected:
