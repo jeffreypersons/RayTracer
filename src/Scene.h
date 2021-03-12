@@ -14,9 +14,9 @@ private:
 public:
     Scene() = default;
 
-    void addLight(PointLight light);
-    void addSceneObject(Sphere object);
-    void addSceneObject(Triangle object);
+    void addLight(PointLight&& light);
+    void addSceneObject(Sphere&& object);
+    void addSceneObject(Triangle&& object);
 
     size_t getNumLights() const;
     size_t getNumObjects() const;

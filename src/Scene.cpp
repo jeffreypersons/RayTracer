@@ -5,13 +5,13 @@
 #include <assert.h>
 
 
-void Scene::addLight(PointLight light) {
+void Scene::addLight(PointLight&& light) {
     lights.push_back(std::make_unique<PointLight>(std::move(light)));
 }
-void Scene::addSceneObject(Sphere object) {
+void Scene::addSceneObject(Sphere&& object) {
     objects.push_back(std::make_unique<Sphere>(std::move(object)));
 }
-void Scene::addSceneObject(Triangle object) {
+void Scene::addSceneObject(Triangle&& object) {
     objects.push_back(std::make_unique<Triangle>(std::move(object)));
 }
 
