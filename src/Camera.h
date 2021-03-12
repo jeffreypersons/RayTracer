@@ -52,8 +52,8 @@ public:
     void lookAt(const Vec3& target);
     void lookAtFrom(const Vec3& target, const Vec3& position);
 
-    constexpr Vec3 viewportToWorld(const Vec3& point) const;
-    constexpr Vec3 worldToViewport(const Vec3& point) const;
+    Vec3 viewportToWorld(const Vec3& point) const;
+    Vec3 worldToViewport(const Vec3& point) const;
     bool isPointInFrustum(const Vec3& point) const;
     Ray viewportPointToRay(const Vec3& point) const;
 
@@ -65,16 +65,16 @@ public:
     void setAspectRatio(float aspectRatio);
     void setFieldOfView(float horizontalDegrees);
 
-    constexpr Vec3 position()     const;
-    constexpr Vec3 rightDir()     const;
-    constexpr Vec3 upDir()        const;
-    constexpr Vec3 forwardDir()   const;
-    constexpr float nearClip()    const;
-    constexpr float farClip()     const;
-    constexpr float aspectRatio() const;
-    constexpr float horizontalFieldOfView() const;
-    constexpr float verticalFieldOfView()   const;
-    constexpr Vec2 viewportSize()           const;
+    Vec3 position()               const;
+    Vec3 rightDir()               const;
+    Vec3 upDir()                  const;
+    Vec3 forwardDir()             const;
+    float nearClip()              const;
+    float farClip()               const;
+    float aspectRatio()           const;
+    float horizontalFieldOfView() const;
+    float verticalFieldOfView()   const;
+    Vec2 viewportSize()           const;
 
 private:
     static Vec2 computeSizeFromHorizontalFov(float horizontalFieldOfView, float distanceToPlane, float aspectRatio);

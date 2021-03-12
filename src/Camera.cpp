@@ -108,34 +108,34 @@ void Camera::setFieldOfView(float horizontalDegrees) {
     setupPerspectiveFromSize(adjustedSize, this->nearClip_, this->farClip_);
 }
 
-constexpr Vec3 Camera::position() const {
+Vec3 Camera::position() const {
     return eyePosition_;
 }
-constexpr Vec3 Camera::rightDir() const {
+Vec3 Camera::rightDir() const {
     return rightDir_;
 }
-constexpr Vec3 Camera::upDir() const {
+Vec3 Camera::upDir() const {
     return upDir_;
 }
-constexpr Vec3 Camera::forwardDir() const {
+Vec3 Camera::forwardDir() const {
     return forwardDir_;
 }
-constexpr float Camera::nearClip() const {
+float Camera::nearClip() const {
     return nearClip_;
 }
-constexpr float Camera::farClip() const {
+float Camera::farClip() const {
     return farClip_;
 }
-constexpr Vec2 Camera::viewportSize() const {
+Vec2 Camera::viewportSize() const {
     return viewportSize_;
 }
-constexpr float Camera::aspectRatio() const {
+float Camera::aspectRatio() const {
     return aspectRatio_;
 }
-constexpr float Camera::horizontalFieldOfView() const {
+float Camera::horizontalFieldOfView() const {
     return fieldOfView_.x;
 }
-constexpr float Camera::verticalFieldOfView() const {
+float Camera::verticalFieldOfView() const {
     return fieldOfView_.y;
 }
 
