@@ -9,8 +9,18 @@ Sphere::Sphere(const Vec3& center, float radius, const Material& material) {
     assert(radius > 0.00f);
     this->radius_ = radius;
     this->center_ = center;
+
     this->position_ = center;
     this->material_ = material;
+}
+std::string Sphere::description() const {
+    std::stringstream ss;
+    ss << "Sphere("
+         << "position:(" << center()   << "),"
+         << "material:"  << material() << ","
+         << "radius:"    << radius()
+       << ")";
+    return ss.str();
 }
 
 // given ray [X(t) = P + t] intersects sphere [| X – C | = r] IFF there exists
@@ -39,29 +49,18 @@ bool Sphere::intersect(const Ray& ray, Intersection& result) const {
     return true;
 }
 
-constexpr Vec3 Sphere::center() const {
+Vec3 Sphere::center() const {
     return center_;
 }
-constexpr float Sphere::radius() const {
+float Sphere::radius() const {
     return radius_;
 }
 
 // recall, a point lies within or along a sphere if..
 // (Px - Cx)^2 + (Py - Cy)^2 + (Pz - Cz)^2 <= R^2
-constexpr bool Sphere::contains(const Vec3& point) const {
+bool Sphere::contains(const Vec3& point) const {
     return Math::magnitudeSquared(point - center_) <= Math::square(radius_);
 }
-
-std::string Sphere::description() const {
-    std::stringstream ss;
-    ss << "Sphere("
-         << "position:(" << center()   << "),"
-         << "material:"  << material() << ","
-         << "radius:"    << radius()
-       << ")";
-    return ss.str();
-}
-
 
 Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, const Material& material) {
     // note that base class members can only be initialized in the body and not our typical initializer list
@@ -74,10 +73,10 @@ Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, cons
     this->edge2_ = vert0 - vert2;
     this->planeNormal_ = Math::normalize(Math::cross(edge0_, edge1_));
     this->center_ = computeCentroid();
-    this->material_ = material;
-    this->position_ = this->center_;
-}
 
+    this->position_ = this->center_;
+    this->material_ = material;
+}
 // given ray intersects triangle IFF given ray [X(t) = P + tD] intersects the plane [P.n = k] in a way such that
 // our intersection point is always to the LEFT side of EVERY edge
 // (aka our plane intersection point @[t = (k – P.n)/(D.n)] lies in between our triangle vertices)
@@ -94,33 +93,43 @@ bool Triangle::intersect(const Ray& ray, Intersection& result) const {
     }
     return false;
 }
+std::string Triangle::description() const {
+    std::stringstream ss;
+    ss << "Triangle("
+         << "position:("     << center()      << "),"
+         << "plane-normal:(" << planeNormal() << "),"
+         << "material:"      << material()    << ","
+         << "verts:[v0:(" << vert0() << "),v1:(" << vert1() << "),v2:(" << vert2() << ")]"
+       << ")";
+    return ss.str();
+}
 
-constexpr Vec3 Triangle::vert0() const {
+Vec3 Triangle::vert0() const {
     return vert0_;
 }
-constexpr Vec3 Triangle::vert1() const {
+Vec3 Triangle::vert1() const {
     return vert1_;
 }
-constexpr Vec3 Triangle::vert2() const {
+Vec3 Triangle::vert2() const {
     return vert2_;
 }
-constexpr Vec3 Triangle::planeNormal() const {
-    return planeNormal_;
-}
-constexpr Vec3 Triangle::center() const {
+Vec3 Triangle::center() const {
     return center_;
+}
+Vec3 Triangle::planeNormal() const {
+    return planeNormal_;
 }
 
 // recall, a point lies in a triangle if..
 // (e0 x(R – P0)).n > 0 & (e1 x(R – P1)).n > 0 & (e2 x(R – P2)).n > 0
 // aka R is always to the LEFT side of EVERY edge
-constexpr bool Triangle::contains(const Vec3& point) const {
+bool Triangle::contains(const Vec3& point) const {
     return (Math::dot(planeNormal_, Math::cross(edge0_, (point - vert0_))) > 0.00f) &&
            (Math::dot(planeNormal_, Math::cross(edge1_, (point - vert1_))) > 0.00f) &&
            (Math::dot(planeNormal_, Math::cross(edge2_, (point - vert2_))) > 0.00f);
 }
 
-constexpr Vec3 Triangle::computeCentroid() const {
+Vec3 Triangle::computeCentroid() const {
     return Vec3((vert0_.x + vert1_.x + vert2_.x) / 3.00f,
                 (vert0_.y + vert1_.y + vert2_.y) / 3.00f,
                 (vert0_.z + vert1_.z + vert2_.z) / 3.00f);
@@ -132,15 +141,4 @@ bool Triangle::isValidTriangle(const Vec3& vert0, const Vec3& vert1, const Vec3&
     float b = Math::distance(vert1, vert2);
     float c = Math::distance(vert2, vert0);
     return (a + b > c) && (a + c > b) && (b + c > a);
-}
-
-std::string Triangle::description() const {
-    std::stringstream ss;
-    ss << "Triangle("
-         << "position:("     << center()      << "),"
-         << "plane-normal:(" << planeNormal() << "),"
-         << "material:"      << material()    << ","
-         << "verts:[v0:(" << vert0() << "),v1:(" << vert1() << "),v2:(" << vert2() << ")]"
-       << ")";
-    return ss.str();
 }
