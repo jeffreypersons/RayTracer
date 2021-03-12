@@ -4,7 +4,7 @@
 
 
 Camera::Camera() {
-    Vec2 size = computeSizeFromHorizontalFov(DEFAULT_FIELD_OF_VIEW, DEFAULT_NEAR_CLIP, DEFAULT_ASPECT_RATIO);
+    const Vec2 size = computeSizeFromHorizontalFov(DEFAULT_FIELD_OF_VIEW, DEFAULT_NEAR_CLIP, DEFAULT_ASPECT_RATIO);
     setPosition(DEFAULT_POSITION);
     setOrientation(DEFAULT_RIGHT_DIR, DEFAULT_UP_DIR, DEFAULT_FORWARD_DIR);
     setupPerspectiveFromSize(size, DEFAULT_NEAR_CLIP, DEFAULT_FAR_CLIP);
@@ -24,6 +24,10 @@ void Camera::lookAt(const Vec3& target) {
     this->forwardDir_ = directionToTarget;
     this->rightDir_   = Math::normalize(Math::cross(this->forwardDir_, tempUp));
     this->upDir_      = Math::normalize(Math::cross(this->rightDir_,   this->forwardDir_));
+}
+void Camera::lookAtFrom(const Vec3& target, const Vec3& position) {
+    setPosition(position);
+    lookAt(target);
 }
 
 // map point from viewport coordinates to worldspace coordinates

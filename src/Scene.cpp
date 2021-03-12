@@ -5,18 +5,13 @@
 #include <assert.h>
 
 
-Scene::Scene()
-    : lights(),
-      objects()
-{}
-
-void Scene::addLight(PointLight light) {
+void Scene::addLight(PointLight&& light) {
     lights.push_back(std::make_unique<PointLight>(std::move(light)));
 }
-void Scene::addSceneObject(Sphere object) {
+void Scene::addSceneObject(Sphere&& object) {
     objects.push_back(std::make_unique<Sphere>(std::move(object)));
 }
-void Scene::addSceneObject(Triangle object) {
+void Scene::addSceneObject(Triangle&& object) {
     objects.push_back(std::make_unique<Triangle>(std::move(object)));
 }
 
@@ -28,11 +23,11 @@ size_t Scene::getNumObjects() const {
 }
 const ILight& Scene::getLight(size_t index) const {
     assert(index >= 0 && index < lights.size());
-    return *lights[index].get();
+    return *lights[index];
 }
 const IObject& Scene::getObject(size_t index) const {
     assert(index >= 0 && index < objects.size());
-    return *objects[index].get();
+    return *objects[index];
 }
 
 std::ostream& operator<<(std::ostream& os, const Scene& scene) {

@@ -9,39 +9,34 @@
 #include "FrameBuffer.hpp"
 
 
-class Tracer {
+class RayTracer {
 private:
+    float bias_;
+    size_t maxNumReflections_;
     Color shadowColor_;
     Color backgroundColor_;
-    float shadowBias_;
-    float reflectionBias_;
-    size_t maxNumReflections_;
 
+    static constexpr float DEFAULT_BIAS = 1e-02f;
+    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 3;
     static constexpr Color DEFAULT_SHADOW_COLOR     { 0.125f, 0.125f, 0.125f };
     static constexpr Color DEFAULT_BACKGROUND_COLOR { 0.500f, 0.500f, 0.500f };
     
-    static constexpr float DEFAULT_SHADOW_BIAS     = 1e-02f;
-    static constexpr float DEFAULT_REFLECTION_BIAS = 1e-02f;
-    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 3;
-
 public:
-    Tracer();
+    RayTracer();
     void traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) const;
 
+    void setBias(float bias);
+    void setMaxNumReflections(size_t maxNumReflections);
     void setShadowColor(const Color& shadowColor);
     void setBackgroundColor(const Color& backgroundColor);
-    void setShadowBias(float shadowBias);
-    void setReflectionBias(float reflectionBias);
-    void setMaxNumReflections(size_t maxNumReflections);
 
+    float bias()               const;
+    size_t maxNumReflections() const;
     Color shadowColor()        const;
     Color backgroundColor()    const;
-    float shadowBias()         const;
-    float reflectionBias()     const;
-    size_t maxNumReflections() const;
 
 private:
-    Color traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t iteration) const;
+    Color traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t depth) const;
 
     Ray reflectRay(const Ray& ray, const Intersection& intersection) const;
     bool findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const;
@@ -50,4 +45,4 @@ private:
     Color computeDiffuseColor (const Intersection& intersection, const ILight& light) const;
     Color computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& camera) const;
 };
-std::ostream& operator<<(std::ostream& os, const Tracer& tracer);
+std::ostream& operator<<(std::ostream& os, const RayTracer& tracer);

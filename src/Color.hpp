@@ -21,15 +21,17 @@ private:
     }
 
 public:
-    float r = 0.00f;
-    float g = 0.00f;
-    float b = 0.00f;
+    float r;
+    float g;
+    float b;
 
     Color() = default;
-    constexpr Color(const Color& color)           : r(Math::clamp01(color.r)), g(Math::clamp01(color.g)), b(Math::clamp01(color.b)) {}
+    constexpr Color(const Color& color)           : r(color.r), g(color.g), b(color.b) {}
+    constexpr Color(const Color&& color) noexcept : r(color.r), g(color.g), b(color.b) {}
+
     constexpr Color(float  r, float  g, float  b) : r(Math::clamp01(r)),       g(Math::clamp01(g)),       b(Math::clamp01(b))       {}
     constexpr Color(double r, double g, double b) : r(static_cast<float>(r)),  g(static_cast<float>(g)),  b(static_cast<float>(b))  {}
-    constexpr Color(unsigned int hex)             : r(extractRedByte(hex)),    g(extractGreenByte(hex)),  b(extractBlueByte(hex))   {}
+    explicit constexpr Color(unsigned int hex)    : r(extractRedByte(hex)),    g(extractGreenByte(hex)),  b(extractBlueByte(hex))   {}
     constexpr Color(unsigned char r, unsigned char g, unsigned char b) : r(charToFloat(r)), g(charToFloat(g)), b(charToFloat(b)) {}
 
     constexpr unsigned int getHex() {
@@ -38,6 +40,7 @@ public:
                ( (0xff & static_cast<unsigned char>(floatToChar(b)))       );
     }
 
+    inline constexpr Color& operator=(const Color&& rhs) noexcept { setClamped(rhs.r, rhs.g, rhs.b);    return *this; }
     inline constexpr Color& operator=(const Color& rhs)  { setClamped(    rhs.r,     rhs.g,     rhs.b); return *this; }
     inline constexpr Color& operator+=(const Color& rhs) { setClamped(r + rhs.r, g + rhs.g, b + rhs.b); return *this; }
     inline constexpr Color& operator-=(const Color& rhs) { setClamped(r - rhs.r, g - rhs.g, b - rhs.b); return *this; }

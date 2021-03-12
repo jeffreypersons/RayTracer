@@ -34,7 +34,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& result) const {
     }
     result.t      = closestT;
     result.point  = ray.origin + ray.direction * result.t;
-    result.normal = (result.point - this->position_) / this->radius_;
+    result.normal = Math::direction(this->position_, result.point);
     result.object = this;
     return true;
 }

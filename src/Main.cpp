@@ -1,26 +1,9 @@
-#include "StopWatch.hpp"
-#include "Files.hpp"
-#include "Text.hpp"
-#include "Lights.h"
-#include "Objects.h"
-#include "Camera.h"
-#include "Scene.h"
-#include "Tracer.h"
+#include "App.h"
 #include <iostream>
 #include <string>
 
 
-Camera createCamera(const Vec3& position, float fieldOfView, float viewDist, const Vec3& target, float aspectRatio) {
-    Camera cam{};
-    cam.setPosition(position);
-    cam.setNearClip(viewDist);
-    cam.setAspectRatio(aspectRatio);
-    cam.setFieldOfView(fieldOfView);
-    cam.lookAt(target);
-    return cam;
-}
-
-Scene createSimpleScene(const Vec3& localOrigin) {
+Scene createSimpleScene(const Vec3& localOrigin=Vec3::zero()) {
     Material reflectiveRed{};
     reflectiveRed.setWeights(0.10f, 0.90f);
     reflectiveRed.setColors(Palette::darkRed, Palette::red, Palette::orangeRed);
@@ -45,45 +28,18 @@ Scene createSimpleScene(const Vec3& localOrigin) {
     return scene;
 }
 
-void test(const std::string& name, const Tracer& tracer, const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) {
-    StopWatch stopWatch{};
-    std::cout << Text::padSides(" Tracing `" + name + "` ", '*', 80) << "\n";
-    std::cout << "Configuring " << camera << "\n";
-
-    std::cout << "Tracing started...";
-    stopWatch.start();
-    tracer.traceScene(camera, scene, frameBuffer);
-    stopWatch.stop();
-    std::cout << "finished in " << stopWatch.elapsedTime() << " seconds" << "\n";
-
-    const std::string filename = "./scene-" + name + ".ppm";
-    Files::writePpmWithGammaCorrection(frameBuffer, filename);
-    std::cout << "Wrote to file `" << filename << "`" << "\n\n";
-}
-
 int main() {
-    std::cout << "Program started...\n\n";
-    Tracer tracer{};
-    tracer.setBackgroundColor(Palette::skyBlue);
-    tracer.setShadowColor(Color(0.125, 0.125, 0.125));
-    tracer.setMaxNumReflections(3);
-    tracer.setShadowBias(0.02f);
-    tracer.setReflectionBias(0.02f);
+    AppOptions options;
+    options.imageOutputFile           = "./scene.ppm";
+    options.imageOutputSize           = CommonResolutions::HD_1080p;
+    options.rayTracingReflectionLimit = 3;
+    options.skyBoxColor               = Palette::skyBlue;
+    options.shadowColor               = Color(0.25f, 0.25f, 0.25f);
+    options.cameraNearZ               = 0.50f;
+    options.cameraFieldOfView         = 120.0f;
+    options.viewTarget                = Vec3(0, 50,  0);
+    options.viewOffset                = Vec3(0,  0, 50);
 
-    const Vec3 eyeTarget{ 0, 50, 0 };
-    const Vec3 sceneOrigin{ 0, 0, 0 };
-    const Scene scene = createSimpleScene(sceneOrigin);
-    FrameBuffer frameBuffer{ CommonResolutions::HD_1080p };
-    Camera frontCam    = createCamera(eyeTarget + Vec3(0,   0,  50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
-    Camera behindCam   = createCamera(eyeTarget + Vec3(0,   0, -50), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
-    Camera topCam      = createCamera(eyeTarget + Vec3(0,  50,   0), 120.00f, 0.50f, eyeTarget, frameBuffer.aspectRatio());
-    
-    std::cout << "Initializing target-" << frameBuffer << "\n\n";
-    std::cout << "Initializing ray-"    << tracer      << "\n\n";
-    std::cout << "Assembling "          << scene       << "\n\n";
-    test("front-view",  tracer, frontCam,  scene, frameBuffer);
-    test("behind-view", tracer, behindCam, scene, frameBuffer);
-    test("top-view",    tracer, topCam,    scene, frameBuffer);
-
-    std::cout << "...program finished\n";
+    App app{ createSimpleScene(), options };
+    app.run();
 }

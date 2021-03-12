@@ -43,13 +43,15 @@ private:
     static constexpr float DEFAULT_NEAR_CLIP     =       0.25f;
     static constexpr float DEFAULT_FAR_CLIP      =    1000.00f;
 
-    static constexpr float MIN_FIELD_OF_VIEW = 0.00f;
+    static constexpr float MIN_FIELD_OF_VIEW =   0.00f;
     static constexpr float MAX_FIELD_OF_VIEW = 180.00f;
 
 public:
     Camera();
 
     void lookAt(const Vec3& target);
+    void lookAtFrom(const Vec3& target, const Vec3& position);
+
     constexpr Vec3 viewportToWorld(const Vec3& point) const;
     constexpr Vec3 worldToViewport(const Vec3& point) const;
     bool isPointInFrustum(const Vec3& point) const;
