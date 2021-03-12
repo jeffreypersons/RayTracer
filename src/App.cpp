@@ -30,11 +30,11 @@ std::ostream& operator<<(std::ostream& os, const AppOptions& appOptions) {
 
 App::App(Scene&& scene, const AppOptions& options)
     : options_(options),
+      stopWatch_(),
       scene_(std::move(scene)),
       camera_(),
       rayTracer_(),
-      frameBuffer_(options.imageOutputSize),
-      stopWatch_() {
+      frameBuffer_(options.imageOutputSize) {
     if (options_.logInfo) {
         std::cout << Text::padSides(" Configuring App ", '*', 80) << "\n";
         std::cout << options_ << "\n\n";

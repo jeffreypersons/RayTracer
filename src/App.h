@@ -26,23 +26,22 @@ struct AppOptions {
     Vec3 viewTarget{ 0, 0,  0 };
     Vec3 viewOffset{ 0, 0, 10 };
 };
-
-std::ostream& operator<<(std::ostream& os, const AppOptions& app);
+std::ostream& operator<<(std::ostream& os, const AppOptions& appOptions);
 
 
 // entry point for wrapping everything together
 class App {
+public:
+    App(Scene&& scene, const AppOptions& options);
+    void run();
+    friend std::ostream& operator<<(std::ostream& os, const App& app);
+
 private:
     AppOptions options_;
+    StopWatch stopWatch_;
+
     Scene scene_;
     Camera camera_;
     RayTracer rayTracer_;
     FrameBuffer frameBuffer_;
-    StopWatch stopWatch_;
-
-public:
-    App(Scene&& scene, const AppOptions& options);
-    void run();
-
-    friend std::ostream& operator<<(std::ostream& os, const App& app);
 };
