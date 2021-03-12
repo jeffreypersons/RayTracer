@@ -24,7 +24,7 @@ public:
     float r;
     float g;
     float b;
-    
+
     Color() = default;
     constexpr Color(const Color& color)           : r(color.r), g(color.g), b(color.b) {}
     constexpr Color(const Color&& color) noexcept : r(color.r), g(color.g), b(color.b) {}
