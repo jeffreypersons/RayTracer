@@ -28,12 +28,12 @@ std::ostream& operator<<(std::ostream& os, const AppOptions& appOptions) {
     return os;
 }
 
-App::App(Scene& scene, const AppOptions options)
-    : scene_(std::move(scene)),
+App::App(Scene&& scene, const AppOptions& options)
+    : options_(options),
+      scene_(std::move(scene)),
       camera_(),
       rayTracer_(),
-      frameBuffer_(Vec2(1920,1080)),
-      //frameBuffer_(options_.imageOutputSize),
+      frameBuffer_(options.imageOutputSize),
       stopWatch_() {
     if (options_.logInfo) {
         std::cout << Text::padSides(" Configuring App ", '*', 80) << "\n";
@@ -66,7 +66,7 @@ void App::run() {
         std::cout << "finished in " << stopWatch_.elapsedTime() << " seconds" << "\n";
 
         Files::writePpmWithGammaCorrection(frameBuffer_, options_.imageOutputFile, options_.imageOutputGamma);
-        std::cout << "Wrote to file '"                << options_.imageOutputFile << "'"
+        std::cout << "Wrote to file \'"              << options_.imageOutputFile << "\' "
                   << "with gamma correction set to " << options_.imageOutputGamma << "\n\n";
     } else {
         rayTracer_.traceScene(camera_, scene_, frameBuffer_);
@@ -75,6 +75,9 @@ void App::run() {
 }
 
 inline std::ostream& operator<<(std::ostream& os, const App& app) {
-    os << app.frameBuffer_ << "\n\n" << app.rayTracer_   << "\n\n" << app.scene_ << "\n\n" << app.camera_ << "\n";
+    os << app.frameBuffer_ << "\n\n"
+       << app.rayTracer_   << "\n\n"
+       << app.scene_       << "\n\n"
+       << app.camera_      << "\n";
     return os;
 }
