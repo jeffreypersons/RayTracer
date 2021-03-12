@@ -7,7 +7,6 @@
 #include <assert.h>
 
 
-// fast, header file defined, color buffer
 class FrameBuffer {
 private:
     size_t width_;
