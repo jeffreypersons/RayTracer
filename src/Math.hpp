@@ -9,12 +9,12 @@ struct Vec2 {
     float y;
     static constexpr size_t len = 2;
 
-    Vec2() = default;
-    constexpr Vec2(float x, float y)
+    Vec2() noexcept = default;
+    constexpr Vec2(float x, float y) noexcept
         : x(x), y(y) {}
-    constexpr Vec2(int x, int y)
+    constexpr Vec2(int x, int y) noexcept
         : Vec2(static_cast<float>(x), static_cast<float>(y)) {}
-    constexpr Vec2(double x, double y)
+    constexpr Vec2(double x, double y) noexcept
         : Vec2(static_cast<float>(x), static_cast<float>(y)) {}
 
     static constexpr Vec2 up()    { return Vec2( 0,  1); };
@@ -75,12 +75,12 @@ struct Vec3 {
     float z;
     static constexpr size_t len = 3;
 
-    Vec3() = default;
-    constexpr Vec3(float x, float y, float z)
+    Vec3() noexcept = default;
+    constexpr Vec3(float x, float y, float z) noexcept
         : x(x), y(y), z(z) {}
-    constexpr Vec3(int x, int y, int z)
+    constexpr Vec3(int x, int y, int z) noexcept
         : Vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)) {}
-    constexpr Vec3(double x, double y, double z)
+    constexpr Vec3(double x, double y, double z) noexcept
         : Vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)) {}
 
     static constexpr Vec3 zero()   { return Vec3( 0,  0,  0); };
