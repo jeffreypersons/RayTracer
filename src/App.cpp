@@ -56,7 +56,7 @@ App::App(Scene&& scene, const AppOptions& options)
 
 void App::run() {
     if (options_.logInfo) {
-        std::cout << "\n" << Text::padSides(" Tracing `" + options_.imageOutputFile + "` ", '*', 80) << "\n";
+        std::cout << "\n" << Text::padSides(" Tracing `" + Files::fileName(options_.imageOutputFile) + "` ", '*', 80) << "\n";
 
         std::cout << "Tracing started...";
         stopWatch_.start();
@@ -66,12 +66,12 @@ void App::run() {
         
         std::cout << "Writing file started...";
         stopWatch_.start();
-        Files::writePpmWithGammaCorrection(frameBuffer_, options_.imageOutputFile, options_.imageOutputGamma);
+        Files::writePpmWithGammaCorrection(options_.imageOutputFile, frameBuffer_, options_.imageOutputGamma);
         stopWatch_.stop();
         std::cout << "finished in " << stopWatch_.elapsedTime() << " seconds" << "\n";
     } else {
         rayTracer_.traceScene(camera_, scene_, frameBuffer_);
-        Files::writePpmWithGammaCorrection(frameBuffer_, options_.imageOutputFile, options_.imageOutputGamma);
+        Files::writePpmWithGammaCorrection(options_.imageOutputFile, frameBuffer_, options_.imageOutputGamma);
     }
 }
 
