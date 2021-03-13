@@ -38,7 +38,6 @@ App::App(Scene&& scene, const AppOptions& options)
     if (options_.logInfo) {
         std::cout << Text::padSides(" Configuring App ", '*', 80) << "\n";
         std::cout << options_ << "\n\n";
-        std::cout << *this;
     }
     rayTracer_.setBias(options.rayTracingBias);
     rayTracer_.setMaxNumReflections(options.rayTracingReflectionLimit);
