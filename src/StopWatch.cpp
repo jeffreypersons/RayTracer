@@ -5,7 +5,7 @@
 
 StopWatch::StopWatch()
     : startTime_(std::nullopt),
-      stopTime_(std::nullopt) {}
+      stopTime_ (std::nullopt) {}
 
 void StopWatch::reset() {
     startTime_ = std::nullopt;

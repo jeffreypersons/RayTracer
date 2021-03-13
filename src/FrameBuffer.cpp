@@ -10,10 +10,10 @@ FrameBuffer::FrameBuffer(const Vec2& dimensions)
     : FrameBuffer(static_cast<size_t>(dimensions.x), static_cast<size_t>(dimensions.y)) {}
 
 FrameBuffer::FrameBuffer(size_t width, size_t height)
-    : width_   (width),
+    : width_     (width),
       height_    (height),
       bufferSize_(width * height),
-      pixels_(std::make_unique<Color[]>(bufferSize_)) {
+      pixels_    (std::make_unique<Color[]>(bufferSize_)) {
     if (width <= 0 || height <= 0 || bufferSize_ <= 0) {
         throw std::invalid_argument("frame buffer must have dimensions greater than zero");
     }
