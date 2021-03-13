@@ -32,7 +32,7 @@ void Camera::lookAtFrom(const Vec3& target, const Vec3& position) {
 
 // map point from viewport coordinates to worldspace coordinates
 // note: point in viewport if between bottom-left of near-plane (0,0,0) and top right-right of far-plane (1,1,1)
-constexpr Vec3 Camera::viewportToWorld(const Vec3& point) const {
+Vec3 Camera::viewportToWorld(const Vec3& point) const {
     const Vec3 projectedCenter  = eyePosition_ + ((nearClip_ + (point.z * farClip_)) * forwardDir_);
     const Vec3 offsetInRightDir = ((point.x - 0.50f) * viewportSize_.x * rightDir_);
     const Vec3 offsetInUpDir    = ((point.y - 0.50f) * viewportSize_.y * upDir_);
@@ -40,7 +40,7 @@ constexpr Vec3 Camera::viewportToWorld(const Vec3& point) const {
 }
 // map point from worldspace coordinates to viewport coordinates
 // note: point in viewport if between bottom-left of near-plane (0,0,0) and top right-right of far-plane (1,1,1)
-constexpr Vec3 Camera::worldToViewport(const Vec3& point) const {
+Vec3 Camera::worldToViewport(const Vec3& point) const {
     const Vec3 frustumMin = viewportToWorld(Vec3(0, 0, 0));
     const Vec3 frustumMax = viewportToWorld(Vec3(1, 1, 1));
     return Vec3(
@@ -58,6 +58,37 @@ bool Camera::isPointInFrustum(const Vec3& point) const {
 // convenience method for returning return ray directed from camera position to given point
 Ray Camera::viewportPointToRay(const Vec3& point) const {
     return Ray(eyePosition_, Math::direction(eyePosition_, viewportToWorld(point)));
+}
+
+Vec3 Camera::position() const {
+    return eyePosition_;
+}
+Vec3 Camera::rightDir() const {
+    return rightDir_;
+}
+Vec3 Camera::upDir() const {
+    return upDir_;
+}
+Vec3 Camera::forwardDir() const {
+    return forwardDir_;
+}
+float Camera::nearClip() const {
+    return nearClip_;
+}
+float Camera::farClip() const {
+    return farClip_;
+}
+Vec2 Camera::viewportSize() const {
+    return viewportSize_;
+}
+float Camera::aspectRatio() const {
+    return aspectRatio_;
+}
+float Camera::horizontalFieldOfView() const {
+    return fieldOfView_.x;
+}
+float Camera::verticalFieldOfView() const {
+    return fieldOfView_.y;
 }
 
 void Camera::setPosition(const Vec3& eyePosition) {
@@ -86,13 +117,6 @@ void Camera::setFarClip(float farClip) {
     }
     setupPerspectiveFromSize(this->viewportSize_, this->nearClip_, this->farClip_);
 }
-// overrides field of view, aspect ratio, and clipping planes to match given viewport dimensions
-void Camera::overrideViewportSize(const Vec2& viewportSize, float nearZ, float farZ) {
-    if (viewportSize.x <= 0 || viewportSize.y <= 0) {
-        throw std::invalid_argument("viewport size dimensions must each be greater than 0");
-    }
-    setupPerspectiveFromSize(viewportSize, nearZ, farZ);
-}
 void Camera::setAspectRatio(float aspectRatio) {
     if (aspectRatio <= 0) {
         throw std::invalid_argument("aspect-ratio must be greater than 0");
@@ -107,52 +131,12 @@ void Camera::setFieldOfView(float horizontalDegrees) {
     Vec2 adjustedSize = computeSizeFromHorizontalFov(horizontalDegrees, this->nearClip_, this->aspectRatio_);
     setupPerspectiveFromSize(adjustedSize, this->nearClip_, this->farClip_);
 }
-
-constexpr Vec3 Camera::position() const {
-    return eyePosition_;
-}
-constexpr Vec3 Camera::rightDir() const {
-    return rightDir_;
-}
-constexpr Vec3 Camera::upDir() const {
-    return upDir_;
-}
-constexpr Vec3 Camera::forwardDir() const {
-    return forwardDir_;
-}
-constexpr float Camera::nearClip() const {
-    return nearClip_;
-}
-constexpr float Camera::farClip() const {
-    return farClip_;
-}
-constexpr Vec2 Camera::viewportSize() const {
-    return viewportSize_;
-}
-constexpr float Camera::aspectRatio() const {
-    return aspectRatio_;
-}
-constexpr float Camera::horizontalFieldOfView() const {
-    return fieldOfView_.x;
-}
-constexpr float Camera::verticalFieldOfView() const {
-    return fieldOfView_.y;
-}
-
-// find viewport size by solving for the triangular len (width/height) in the equation `tan(fov * 0.5) = (0.5 * len) / dist`
-Vec2 Camera::computeSizeFromHorizontalFov(float horizontalFieldOfView, float distanceToPlane, float aspectRatio) {
-    const float viewportWidth  = 2.00f * distanceToPlane * Math::tan(0.50f * horizontalFieldOfView);
-    const float viewportHeight = viewportWidth / aspectRatio;
-    return Vec2(viewportWidth, viewportHeight);
-}
-// find field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * len) / dist
-void Camera::setupPerspectiveFromSize(const Vec2& viewportSize, float nearZ, float farZ) {
-    this->nearClip_      = nearZ;
-    this->farClip_       = farZ;
-    this->viewportSize_  = viewportSize;
-    this->aspectRatio_   = viewportSize.x / viewportSize.y;
-    this->fieldOfView_.x = 2.00f * Math::atan(viewportSize.x / (2.00f * nearZ));
-    this->fieldOfView_.y = 2.00f * Math::atan(viewportSize.y / (2.00f * nearZ));
+// overrides field of view, aspect ratio, and clipping planes to match given viewport dimensions
+void Camera::overrideViewportSize(const Vec2& viewportSize, float nearZ, float farZ) {
+    if (viewportSize.x <= 0 || viewportSize.y <= 0) {
+        throw std::invalid_argument("viewport size dimensions must each be greater than 0");
+    }
+    setupPerspectiveFromSize(viewportSize, nearZ, farZ);
 }
 
 std::ostream& operator<<(std::ostream& os, const Camera& camera) {
@@ -173,4 +157,20 @@ std::ostream& operator<<(std::ostream& os, const Camera& camera) {
            << "aspect-ratio:" << camera.aspectRatio()    << "}"
        << ")";
     return os;
+}
+
+// find viewport size by solving for the triangular len (width/height) in the equation `tan(fov * 0.5) = (0.5 * len) / dist`
+Vec2 Camera::computeSizeFromHorizontalFov(float horizontalFieldOfView, float distanceToPlane, float aspectRatio) {
+    const float viewportWidth  = 2.00f * distanceToPlane * Math::tan(0.50f * horizontalFieldOfView);
+    const float viewportHeight = viewportWidth / aspectRatio;
+    return Vec2(viewportWidth, viewportHeight);
+}
+// find field of view by solving for the fov in the equation `tan(fov * 0.5) = (0.5 * len) / dist
+void Camera::setupPerspectiveFromSize(const Vec2& viewportSize, float nearZ, float farZ) {
+    this->nearClip_      = nearZ;
+    this->farClip_       = farZ;
+    this->viewportSize_  = viewportSize;
+    this->aspectRatio_   = viewportSize.x / viewportSize.y;
+    this->fieldOfView_.x = 2.00f * Math::atan(viewportSize.x / (2.00f * nearZ));
+    this->fieldOfView_.y = 2.00f * Math::atan(viewportSize.y / (2.00f * nearZ));
 }

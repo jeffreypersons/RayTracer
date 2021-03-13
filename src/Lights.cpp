@@ -3,20 +3,17 @@
 #include "Color.hpp"
 
 
-PointLight::PointLight(const Vec3& position, const Color& intensity, float constant, float linear, float quadratic) {
-    // note that base class members can only be initialized in the body and not our typical initializer list
-    this->attenuationConstant_  = constant;
-    this->attenuationLinear_    = linear;
-    this->attenuationQuadratic_ = quadratic;
-
+PointLight::PointLight(const Vec3& position, const Color& intensity, float constant, float linear, float quadratic)
+    : attenuationConstant_ (constant),
+      attenuationLinear_   (linear),
+      attenuationQuadratic_(quadratic) {
     this->position_  = position;
     this->intensity_ = intensity;
 };
-PointLight::PointLight(const Vec3& position, const Color& intensity) {
-    this->attenuationConstant_  = 1.00f;
-    this->attenuationLinear_    = 0.00f;
-    this->attenuationQuadratic_ = 0.00f;
-
+PointLight::PointLight(const Vec3& position, const Color& intensity)
+    : attenuationConstant_ (DEFAULT_ATTENUATION_CONSTANT),
+      attenuationLinear_   (DEFAULT_ATTENUATION_LINEAR),
+      attenuationQuadratic_(DEFAULT_ATTENUATION_QUADRATIC) {
     this->position_ = position;
     this->intensity_ = intensity;
 }
@@ -26,7 +23,30 @@ Color PointLight::computeIntensityAtPoint(const Vec3& point) const {
     const float distanceSquared = Math::magnitudeSquared(point - this->position_);
     const Vec3 direction = Math::direction(this->position_, point);
     const float distance  = Math::square(distanceSquared);
-    return intensity_ / ((attenuationConstant_) + (attenuationLinear_ * distance) + (attenuationQuadratic_ * distanceSquared));
+    return intensity_ / 
+        ((attenuationConstant_) + (attenuationLinear_ * distance) + (attenuationQuadratic_ * distanceSquared));
+}
+std::string PointLight::description() const {
+    std::stringstream ss;
+    ss << "PointLight("
+         << "position:("  << position()  << "),"
+         << "intensity:(" << intensity() << "),"
+       << "Attenuation{"
+         << "constant:"  << attenuationConstant()  << ","
+         << "linear:"    << attenuationLinear()    << ","
+         << "quadratic:" << attenuationQuadratic() << "}"
+       << ")";
+    return ss.str();
+}
+
+float PointLight::attenuationConstant() const {
+    return attenuationConstant_;
+}
+float PointLight::attenuationLinear() const {
+    return attenuationLinear_;
+}
+float PointLight::attenuationQuadratic() const {
+    return attenuationConstant_;
 }
 
 // attenuation coefficients sum to create a falloff from source in range [0.0, 1.0],
@@ -39,27 +59,4 @@ void PointLight::setAttenuation(float constant, float linear, float quadratic) {
     this->attenuationConstant_  = constant;
     this->attenuationLinear_    = linear;
     this->attenuationQuadratic_ = quadratic;
-}
-
-constexpr float PointLight::attenuationConstant() const {
-    return attenuationConstant_;
-}
-constexpr float PointLight::attenuationLinear() const {
-    return attenuationLinear_;
-}
-constexpr float PointLight::attenuationQuadratic() const {
-    return attenuationConstant_;
-}
-
-std::string PointLight::description() const {
-    std::stringstream ss;
-    ss << "PointLight("
-         << "position:("  << position()  << "),"
-         << "intensity:(" << intensity() << "),"
-       << "Attenuation{"
-         << "constant:"  << attenuationConstant()  << ","
-         << "linear:"    << attenuationLinear()    << ","
-         << "quadratic:" << attenuationQuadratic() << "}"
-       << ")";
-    return ss.str();
 }

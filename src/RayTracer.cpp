@@ -5,7 +5,7 @@
 #include "Lights.h"
 #include "Objects.h"
 #include "Scene.h"
-#include "FrameBuffer.hpp"
+#include "FrameBuffer.h"
 #include <omp.h>
 
 
@@ -13,20 +13,26 @@ RayTracer::RayTracer()
     : bias_             (DEFAULT_BIAS),
       maxNumReflections_(DEFAULT_MAX_NUM_REFLECTIONS),
       shadowColor_      (DEFAULT_SHADOW_COLOR),
-      backgroundColor_  (DEFAULT_BACKGROUND_COLOR)
-{}
+      backgroundColor_  (DEFAULT_BACKGROUND_COLOR) {}
 
-void RayTracer::setBias(float shadowBias) {
-    this->bias_ = shadowBias;
-}
-void RayTracer::setMaxNumReflections(size_t maxNumReflections) {
-    this->maxNumReflections_ = maxNumReflections;
-}
-void RayTracer::setShadowColor(const Color& shadowColor) {
-    this->shadowColor_ = shadowColor;
-}
-void RayTracer::setBackgroundColor(const Color& backgroundColor) {
-    this->backgroundColor_ = backgroundColor;
+// for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
+// traceScene it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
+void RayTracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) const {
+    // use ints for indexing since size_t is not supported by openMp loop parallelization macros
+    const size_t width     = static_cast<int>(frameBuffer.width());
+    const size_t height    = static_cast<int>(frameBuffer.height());
+    const float invWidth   = 1.00f / width;
+    const float invHeight  = 1.00f / height;
+    const Vec3 eyePosition = camera.position();
+    const int numPixels    = static_cast<int>(frameBuffer.numPixels());
+    #pragma omp for schedule(dynamic)
+    for (int i = 0; i < numPixels; i++) {
+        const auto [row, col] = frameBuffer.getPixelRowCol(i);
+        const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, 0.00f };
+        const Ray primaryRay = camera.viewportPointToRay(viewportPosition);
+        const Color pixelColor = traceRay(camera, scene, primaryRay, 0);
+        frameBuffer.setPixel(height - 1 - row, col, pixelColor);  // invert y (since viewport and row start opposite)
+    }
 }
 
 float RayTracer::bias() const {
@@ -42,25 +48,19 @@ Color RayTracer::backgroundColor() const {
     return backgroundColor_;
 }
 
-// for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
-// traceScene it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
-void RayTracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) const {
-    // use ints for indexing since size_t is not supported by openMp loop parallelization macros
-    const int width        = static_cast<int>(frameBuffer.width());
-    const int height       = static_cast<int>(frameBuffer.height());
-    const float invWidth   = 1.00f / width;
-    const float invHeight  = 1.00f / height;
-    const Vec3 eyePosition = camera.position();
-    const int numPixels    = static_cast<int>(frameBuffer.numPixels());
-    #pragma omp for schedule(dynamic)
-    for (int i = 0; i < numPixels; i++) {
-        const auto [row, col] = frameBuffer.getPixelRowCol(i);
-        const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, 0.00f };
-        const Ray primaryRay = camera.viewportPointToRay(viewportPosition);
-        const Color pixelColor = traceRay(camera, scene, primaryRay, 0);
-        frameBuffer.setPixel(height - 1 - row, col, pixelColor);  // invert y since viewport and row start opposite
-    }
+void RayTracer::setBias(float shadowBias) {
+    this->bias_ = shadowBias;
 }
+void RayTracer::setMaxNumReflections(size_t maxNumReflections) {
+    this->maxNumReflections_ = maxNumReflections;
+}
+void RayTracer::setShadowColor(const Color& shadowColor) {
+    this->shadowColor_ = shadowColor;
+}
+void RayTracer::setBackgroundColor(const Color& backgroundColor) {
+    this->backgroundColor_ = backgroundColor;
+}
+
 
 Color RayTracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t depth=0) const {
     Intersection intersection{};
@@ -114,7 +114,6 @@ bool RayTracer::findNearestIntersection(const Camera& camera, const Scene& scene
         return true;
     }
 }
-
 // check if there exists another object blocking light from reaching our hit-point
 bool RayTracer::isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const {
     const Ray shadowRay{
@@ -139,7 +138,6 @@ Color RayTracer::computeDiffuseColor(const Intersection& intersection, const ILi
     const float strengthAtLightAngle = Math::max(0.00f, Math::dot(intersection.normal, directionToLight));
     return strengthAtLightAngle * surfaceMaterial.diffuseColor();
 }
-
 Color RayTracer::computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& camera) const {
     const Vec3 directionToCam      = Math::direction(intersection.point, camera.position());
     const Vec3 halfwayVec          = Math::normalize(directionToCam + light.position());
@@ -147,6 +145,7 @@ Color RayTracer::computeSpecularColor(const Intersection& intersection, const IL
     const float strengthAtCamAngle = Math::max(0.00f, Math::dot(intersection.normal, halfwayVec));
     return Math::pow(strengthAtCamAngle, surfaceMaterial.shininess()) * surfaceMaterial.specularColor();
 }
+
 
 std::ostream& operator<<(std::ostream& os, const RayTracer& rayTracer) {
     os << "RayTracer("
