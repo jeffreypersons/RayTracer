@@ -90,7 +90,6 @@ void Material::validateShininess(float shininess) {
     }
 }
 
-
 std::ostream& operator<<(std::ostream& os, const Material& material) {
     os << "Material("
          << "Colors{"

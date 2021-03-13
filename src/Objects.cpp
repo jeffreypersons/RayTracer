@@ -62,13 +62,13 @@ bool Sphere::contains(const Vec3& point) const {
 
 
 Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, const Material& material)
-    : vert0_(vert0),
-      vert1_(vert0),
-      vert2_(vert0),
-      edge0_(vert1 - vert0),
-      edge1_(vert2 - vert1),
-      edge2_(vert0 - vert2),
-      center_(computeCentroid()),
+    : vert0_      (vert0),
+      vert1_      (vert0),
+      vert2_      (vert0),
+      edge0_      (vert1 - vert0),
+      edge1_      (vert2 - vert1),
+      edge2_      (vert0 - vert2),
+      center_     (computeCentroid()),
       planeNormal_(Math::normalize(Math::cross(edge0_, edge1_))) {
     assert(isValidTriangle(vert0, vert1, vert2));
     this->position_ = center_;
