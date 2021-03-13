@@ -4,17 +4,10 @@
 
 
 class StopWatch {
-private:
-    std::optional<double> startTime_;
-    std::optional<double> stopTime_;
-    
-    static double currentTime() { return omp_get_wtime(); }
-
 public:
     StopWatch()
         : startTime_(std::nullopt),
-          stopTime_ (std::nullopt)
-    {}
+          stopTime_ (std::nullopt) {}
 
     void reset() {
         startTime_ = std::nullopt;
@@ -48,5 +41,13 @@ public:
             return stopTime_.value() - startTime_.value();
         }
         return 0;
+    }
+
+private:
+    std::optional<double> startTime_;
+    std::optional<double> stopTime_;
+
+    static double currentTime() {
+        return omp_get_wtime();
     }
 };
