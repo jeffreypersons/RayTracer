@@ -25,9 +25,6 @@
 # Gallery
 *(click on below images to view full size in a seperate tab)*
 <p align="center">
-  <img src="https://raw.githubusercontent.com/jeffreypersons/Jeff-Images/master/ray-tracing-revamped/scene-front.png" alt="Example Scene_front-view" width="500"/>
-</p>
-<p align="center">
   <img src="https://raw.githubusercontent.com/jeffreypersons/Jeff-Images/master/ray-tracing-revamped/scene-front-top.png" alt="Example Scene_front-top-view" width="500"/>
 </p>
 <p align="center">
