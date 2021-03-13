@@ -45,3 +45,4 @@ private:
     RayTracer rayTracer_;
     FrameBuffer frameBuffer_;
 };
+ std::ostream& operator<<(std::ostream& os, const App& app);
