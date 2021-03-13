@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "StopWatch.h"
-#include "FrameBuffer.hpp"
+#include "FrameBuffer.h"
 #include "RayTracer.h"
 #include <iostream>
 

@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <assert.h>
 #include <string_view>
-#include "FrameBuffer.hpp"
+#include "FrameBuffer.h"
 
 
 namespace detail {
