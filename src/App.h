@@ -3,7 +3,7 @@
 #include "Color.hpp"
 #include "Camera.h"
 #include "Scene.h"
-#include "StopWatch.hpp"
+#include "StopWatch.h"
 #include "FrameBuffer.hpp"
 #include "RayTracer.h"
 #include <iostream>
