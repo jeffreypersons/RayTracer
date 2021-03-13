@@ -12,7 +12,7 @@ std::ostream& operator<<(std::ostream& os, const AppOptions& appOptions) {
            << "logInfo:" << appOptions.logInfo          << ","
            << "gamma:"   << appOptions.imageOutputGamma << ","
            << "file:\'"  << appOptions.imageOutputFile  << "\',"
-           << "size:("    << appOptions.imageOutputSize << ")}, "
+           << "size:("   << appOptions.imageOutputSize  << ")}, "
          << "RayTracing{"
            << "bias:"             << appOptions.rayTracingBias            << ","
            << "reflection-limit:" << appOptions.rayTracingReflectionLimit << ","
@@ -29,11 +29,11 @@ std::ostream& operator<<(std::ostream& os, const AppOptions& appOptions) {
 }
 
 App::App(Scene&& scene, const AppOptions& options)
-    : options_(options),
-      stopWatch_(),
-      scene_(std::move(scene)),
-      camera_(),
-      rayTracer_(),
+    : options_    (options),
+      stopWatch_  (),
+      scene_      (std::move(scene)),
+      camera_     (),
+      rayTracer_  (),
       frameBuffer_(options.imageOutputSize) {
     if (options_.logInfo) {
         std::cout << Text::padSides(" Configuring App ", '*', 80) << "\n";
@@ -63,10 +63,12 @@ void App::run() {
         rayTracer_.traceScene(camera_, scene_, frameBuffer_);
         stopWatch_.stop();
         std::cout << "finished in " << stopWatch_.elapsedTime() << " seconds" << "\n";
-
+        
+        std::cout << "Writing file started...";
+        stopWatch_.start();
         Files::writePpmWithGammaCorrection(frameBuffer_, options_.imageOutputFile, options_.imageOutputGamma);
-        std::cout << "Wrote to file \'"              << options_.imageOutputFile << "\' "
-                  << "with gamma correction set to " << options_.imageOutputGamma << "\n\n";
+        stopWatch_.stop();
+        std::cout << "finished in " << stopWatch_.elapsedTime() << " seconds" << "\n";
     } else {
         rayTracer_.traceScene(camera_, scene_, frameBuffer_);
         Files::writePpmWithGammaCorrection(frameBuffer_, options_.imageOutputFile, options_.imageOutputGamma);
