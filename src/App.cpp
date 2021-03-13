@@ -12,7 +12,7 @@ std::ostream& operator<<(std::ostream& os, const AppOptions& appOptions) {
            << "logInfo:" << appOptions.logInfo          << ","
            << "gamma:"   << appOptions.imageOutputGamma << ","
            << "file:\'"  << appOptions.imageOutputFile  << "\',"
-           << "size:("    << appOptions.imageOutputSize << ")}, "
+           << "size:("   << appOptions.imageOutputSize  << ")}, "
          << "RayTracing{"
            << "bias:"             << appOptions.rayTracingBias            << ","
            << "reflection-limit:" << appOptions.rayTracingReflectionLimit << ","
@@ -35,10 +35,11 @@ App::App(Scene&& scene, const AppOptions& options)
       camera_     (),
       rayTracer_  (),
       frameBuffer_(options.imageOutputSize) {
+    // preferably, we'd using a logging framework or custom logger,
+    // but writing directly console will suffice for this class for now
     if (options_.logInfo) {
         std::cout << Text::padSides(" Configuring App ", '*', 80) << "\n";
         std::cout << options_ << "\n\n";
-        std::cout << *this;
     }
     rayTracer_.setBias(options.rayTracingBias);
     rayTracer_.setMaxNumReflections(options.rayTracingReflectionLimit);
@@ -57,20 +58,24 @@ App::App(Scene&& scene, const AppOptions& options)
 
 void App::run() {
     if (options_.logInfo) {
-        std::cout << "\n" << Text::padSides(" Tracing `" + options_.imageOutputFile + "` ", '*', 80) << "\n";
+        std::cout << "\n" << Text::padSides(" Tracing `" + Files::fileName(options_.imageOutputFile) + "` ", '*', 80) << "\n";
 
         std::cout << "Tracing started...";
         stopWatch_.start();
         rayTracer_.traceScene(camera_, scene_, frameBuffer_);
         stopWatch_.stop();
         std::cout << "finished in " << stopWatch_.elapsedTime() << " seconds" << "\n";
+        
+        std::cout << "Writing file started...";
+        stopWatch_.start();
+        Files::writePpmWithGammaCorrection(options_.imageOutputFile, frameBuffer_, options_.imageOutputGamma);
+        stopWatch_.stop();
+        std::cout << "finished in " << stopWatch_.elapsedTime() << " seconds" << "\n";
 
-        Files::writePpmWithGammaCorrection(frameBuffer_, options_.imageOutputFile, options_.imageOutputGamma);
-        std::cout << "Wrote to file \'"              << options_.imageOutputFile << "\' "
-                  << "with gamma correction set to " << options_.imageOutputGamma << "\n\n";
+        std::cout << "output saved to filepath at " << Files::resolveAbsolutePath(options_.imageOutputFile) << "\n";
     } else {
         rayTracer_.traceScene(camera_, scene_, frameBuffer_);
-        Files::writePpmWithGammaCorrection(frameBuffer_, options_.imageOutputFile, options_.imageOutputGamma);
+        Files::writePpmWithGammaCorrection(options_.imageOutputFile, frameBuffer_, options_.imageOutputGamma);
     }
 }
 
