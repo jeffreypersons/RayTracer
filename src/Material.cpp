@@ -26,25 +26,25 @@ Material::Material(const Color& ambientColor, const Color& diffuseColor, const C
 
 Material::Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor,
                    float intrinsity, float reflectivity, float refractivity, float shininess)
-    : ambientColor_(ambientColor),
-      diffuseColor_(diffuseColor),
+    : ambientColor_ (ambientColor),
+      diffuseColor_ (diffuseColor),
       specularColor_(specularColor),
-      intrinsity_(intrinsity),
-      reflectivity_(reflectivity),
-      refractivity_(refractivity),
-      shininess_(shininess) {
+      intrinsity_   (intrinsity),
+      reflectivity_ (reflectivity),
+      refractivity_ (refractivity),
+      shininess_    (shininess) {
     validateWeights(intrinsity, reflectivity, refractivity);
     validateShininess(shininess);
 }
 
 void Material::setColors(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor) {
-    this->ambientColor_ = ambientColor;
-    this->diffuseColor_ = diffuseColor;
+    this->ambientColor_  = ambientColor;
+    this->diffuseColor_  = diffuseColor;
     this->specularColor_ = specularColor;
 }
 void Material::setWeights(float intrinsity, float reflectivity, float refractivity) {
     validateWeights(intrinsity, reflectivity, refractivity);
-    this->intrinsity_ = intrinsity;
+    this->intrinsity_   = intrinsity;
     this->reflectivity_ = reflectivity;
     this->refractivity_ = refractivity;
 }
@@ -89,6 +89,7 @@ void Material::validateShininess(float shininess) {
         throw std::invalid_argument("shininess must be greater than zero");
     }
 }
+
 
 std::ostream& operator<<(std::ostream& os, const Material& material) {
     os << "Material("
