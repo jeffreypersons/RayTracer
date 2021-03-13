@@ -16,11 +16,11 @@ void Scene::addSceneObject(Triangle&& object) {
 }
 
 const ILight& Scene::getLight(size_t index) const {
-    assert(index >= 0 && index < lights.size());
+    assert(index >= 0 && index < lights_.size());
     return *lights_[index];
 }
 const IObject& Scene::getObject(size_t index) const {
-    assert(index >= 0 && index < objects.size());
+    assert(index >= 0 && index < objects_.size());
     return *objects_[index];
 }
 size_t Scene::getNumLights() const {
