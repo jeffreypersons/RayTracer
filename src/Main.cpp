@@ -1,6 +1,5 @@
 #include "App.h"
 #include <iostream>
-#include <string>
 
 
 Scene createSimpleScene(const Vec3& localOrigin=Vec3::zero()) {
@@ -31,14 +30,14 @@ Scene createSimpleScene(const Vec3& localOrigin=Vec3::zero()) {
 int main() {
     AppOptions options;
     options.imageOutputFile           = "./scene.ppm";
-    options.imageOutputSize           = CommonResolutions::HD_1080p;
+    options.imageOutputSize           = CommonResolutions::HD_4K;
     options.rayTracingReflectionLimit = 3;
     options.skyBoxColor               = Palette::skyBlue;
     options.shadowColor               = Color(0.25f, 0.25f, 0.25f);
     options.cameraNearZ               = 0.50f;
-    options.cameraFieldOfView         = 120.0f;
-    options.viewTarget                = Vec3(0, 50,  0);
-    options.viewOffset                = Vec3(0,  0, 50);
+    options.cameraFieldOfView         = 130.0f;
+    options.viewTarget                = Vec3(0, 55,  0);
+    options.viewOffset                = Vec3(0, 15, 50);
 
     App app{ createSimpleScene(), options };
     app.run();
