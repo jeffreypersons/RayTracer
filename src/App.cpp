@@ -35,6 +35,8 @@ App::App(Scene&& scene, const AppOptions& options)
       camera_     (),
       rayTracer_  (),
       frameBuffer_(options.imageOutputSize) {
+    // preferably, we'd using a logging framework or custom logger,
+    // but writing directly console will suffice for this class for now
     if (options_.logInfo) {
         std::cout << Text::padSides(" Configuring App ", '*', 80) << "\n";
         std::cout << options_ << "\n\n";
@@ -69,6 +71,8 @@ void App::run() {
         Files::writePpmWithGammaCorrection(options_.imageOutputFile, frameBuffer_, options_.imageOutputGamma);
         stopWatch_.stop();
         std::cout << "finished in " << stopWatch_.elapsedTime() << " seconds" << "\n";
+
+        std::cout << "output saved to filepath at " << Files::resolveAbsolutePath(options_.imageOutputFile) << "\n";
     } else {
         rayTracer_.traceScene(camera_, scene_, frameBuffer_);
         Files::writePpmWithGammaCorrection(options_.imageOutputFile, frameBuffer_, options_.imageOutputGamma);

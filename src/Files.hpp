@@ -44,7 +44,8 @@ namespace Files {
     inline std::string fileExtension(const std::string filepath) {
         return std::filesystem::path(filepath).extension().string();
     }
-    inline std::string absolutePath(const std::string& filepath) {
+    // assumes give path exists - otherwise system error is thrown
+    inline std::string resolveAbsolutePath(const std::string& filepath) {
         return std::filesystem::canonical(filepath).string();
     }
 
