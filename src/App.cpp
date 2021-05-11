@@ -2,8 +2,8 @@
 #include "App.h"
 #include "Text.hpp"
 #include "Files.hpp"
-#include <iostream>
 #include <string>
+#include <iostream>
 
 
 std::ostream& operator<<(std::ostream& os, const AppOptions& appOptions) {

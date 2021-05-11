@@ -1,6 +1,6 @@
 #pragma once
-#include <iostream>
 #include "Math.hpp"
+#include <iostream>
 
 
 namespace detail {

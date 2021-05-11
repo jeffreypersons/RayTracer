@@ -1,6 +1,6 @@
 #include "Stopwatch.h"
-#include <omp.h>
 #include <optional>
+#include <omp.h>
 
 
 StopWatch::StopWatch()

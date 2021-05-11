@@ -1,9 +1,9 @@
 #pragma once
+#include "FrameBuffer.h"
 #include <fstream>
 #include <exception>
 #include <filesystem>
 #include <assert.h>
-#include "FrameBuffer.h"
 
 
 namespace detail {

@@ -1,9 +1,9 @@
 #pragma once
+#include <string>
 #include <ostream>
 #include <sstream>
 #include <iterator>
 #include <assert.h>
-#include <string.h>
 
 
 namespace Text {
