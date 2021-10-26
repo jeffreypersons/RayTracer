@@ -2,6 +2,9 @@
 #include <optional>
 
 
+/*
+Multiprocess compatible stopwatch for measuring wall clock time since last start.
+*/
 class StopWatch {
 public:
     StopWatch();
@@ -11,8 +14,6 @@ public:
     void stop();
     bool isRunning() const;
     bool isFinished() const;
-    
-    // compute time since start and now (or since time last stopped)
     double elapsedTime() const;
 
 private:

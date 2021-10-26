@@ -11,12 +11,14 @@ void StopWatch::reset() {
     startTime_ = std::nullopt;
     stopTime_  = std::nullopt;
 }
+
 void StopWatch::start() {
     if (!isRunning()) {
         startTime_ = currentTime();
         stopTime_  = std::nullopt;
     }
 }
+
 void StopWatch::stop() {
     if (isRunning()) {
         stopTime_ = currentTime();
@@ -30,7 +32,6 @@ bool StopWatch::isFinished() const {
     return startTime_.has_value() && stopTime_.has_value();
 }
 
-// compute time since start and now (or since time last stopped)
 double StopWatch::elapsedTime() const {
     if (isRunning()) {
         return currentTime() - startTime_.value();
