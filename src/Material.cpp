@@ -1,4 +1,4 @@
-#include "Material.h"
+#include "Material.hpp"
 #include "Math.hpp"
 #include "Color.hpp"
 #include <iostream>

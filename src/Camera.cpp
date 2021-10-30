@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "Camera.hpp"
 #include "Math.hpp"
 #include "Ray.hpp"
 

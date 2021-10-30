@@ -1,4 +1,4 @@
-#include "Lights.h"
+#include "Lights.hpp"
 #include "Math.hpp"
 #include "Color.hpp"
 

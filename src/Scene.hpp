@@ -1,6 +1,6 @@
 #pragma once
-#include "Lights.h"
-#include "Objects.h"
+#include "Lights.hpp"
+#include "Objects.hpp"
 #include <vector>
 
 

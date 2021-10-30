@@ -1,5 +1,5 @@
 #pragma once
-#include "FrameBuffer.h"
+#include "FrameBuffer.hpp"
 #include <fstream>
 #include <exception>
 #include <filesystem>

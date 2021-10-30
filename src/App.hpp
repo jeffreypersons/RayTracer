@@ -1,11 +1,11 @@
 #pragma once
 #include "Text.hpp"
 #include "Color.hpp"
-#include "Camera.h"
-#include "Scene.h"
-#include "StopWatch.h"
-#include "FrameBuffer.h"
-#include "RayTracer.h"
+#include "Camera.hpp"
+#include "Scene.hpp"
+#include "StopWatch.hpp"
+#include "FrameBuffer.hpp"
+#include "RayTracer.hpp"
 #include <iostream>
 
 

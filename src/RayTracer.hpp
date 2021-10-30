@@ -2,11 +2,11 @@
 #include "Math.hpp"
 #include "Ray.hpp"
 #include "Color.hpp"
-#include "Camera.h"
-#include "Lights.h"
-#include "Objects.h"
-#include "Scene.h"
-#include "FrameBuffer.h"
+#include "Camera.hpp"
+#include "Lights.hpp"
+#include "Objects.hpp"
+#include "Scene.hpp"
+#include "FrameBuffer.hpp"
 
 
 class RayTracer {

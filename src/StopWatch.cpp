@@ -1,4 +1,4 @@
-#include "Stopwatch.h"
+#include "Stopwatch.hpp"
 #include <optional>
 #include <omp.h>
 

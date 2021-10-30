@@ -1,4 +1,4 @@
-#include "Objects.h"
+#include "Objects.hpp"
 #include "Math.hpp"
 #include "Ray.hpp"
 #include <assert.h>

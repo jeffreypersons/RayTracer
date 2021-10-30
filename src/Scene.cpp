@@ -1,6 +1,6 @@
-#include "Scene.h"
-#include "Lights.h"
-#include "Objects.h"
+#include "Scene.hpp"
+#include "Lights.hpp"
+#include "Objects.hpp"
 #include <vector>
 #include <assert.h>
 
