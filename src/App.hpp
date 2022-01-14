@@ -56,4 +56,5 @@ private:
 public:
     friend std::ostream& operator<<(std::ostream& os, const App& app);
 };
+
 std::ostream& operator<<(std::ostream& os, const App& app);
