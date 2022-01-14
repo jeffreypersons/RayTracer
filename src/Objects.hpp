@@ -24,38 +24,40 @@ inline std::ostream& operator<<(std::ostream& os, const IObject& object) {
 }
 
 
+
 class Sphere final : public virtual IObject {
 public:
     Sphere(const Vec3& center, float radius, const Material& material);
-
-    Vec3  center() const;
-    float radius() const;
 
     virtual bool intersect(const Ray& ray, Intersection& result) const override;
     virtual std::string description() const override;
 
     bool contains(const Vec3& point) const;
 
+    Vec3  center() const;
+    float radius() const;
+
 private:
-    Vec3  center_;
+    Vec3 center_;
     float radius_;
 };
+
 
 
 class Triangle final : public virtual IObject {
 public:
     Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, const Material& material);
     
+    virtual bool intersect(const Ray& ray, Intersection& result) const override;
+    virtual std::string description() const override;
+
+    bool contains(const Vec3& point) const;
+
     Vec3 vert0()       const;
     Vec3 vert1()       const;
     Vec3 vert2()       const;
     Vec3 center()      const;
     Vec3 planeNormal() const;
-
-    virtual bool intersect(const Ray& ray, Intersection& result) const override;
-    virtual std::string description() const override;
-
-    bool contains(const Vec3& point) const;
     
 private:
     Vec3 vert0_;

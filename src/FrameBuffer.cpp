@@ -19,22 +19,28 @@ FrameBuffer::FrameBuffer(size_t width, size_t height)
     }
 }
 
-void FrameBuffer::setPixel(size_t i, const Color& color) noexcept {
-    assert((i >= 0 && i < bufferSize_));
-    pixels_[i] = color;
+size_t FrameBuffer::width() const {
+    return width_;
 }
-void FrameBuffer::setPixel(size_t row, size_t col, const Color& color) noexcept {
-    assert((row >= 0 && row < height_) && (col >= 0 && col < width_));
-    pixels_[width_ * row + col] = color;
+
+size_t FrameBuffer::height() const {
+    return height_;
 }
-Color FrameBuffer::getPixel(size_t i) const noexcept {
-    assert((i >= 0 && i < bufferSize_));
-    return pixels_[i];
+
+size_t FrameBuffer::numPixels() const {
+    return bufferSize_;
 }
-Color FrameBuffer::getPixel(size_t row, size_t col) const noexcept {
-    assert((row >= 0 && row < height_) && (col >= 0 && col < width_));
-    return pixels_[width_ * row + col];
+
+float FrameBuffer::aspectRatio() const {
+    return width_ / static_cast<float>(height_);
 }
+
+float FrameBuffer::megaPixels() const {
+    return Math::roundToNearestDigit(bufferSize_ / 1000000.00f, 2);
+}
+
+
+
 std::pair<size_t, size_t> FrameBuffer::getPixelRowCol(size_t i) const noexcept {
     assert((i >= 0 && i < bufferSize_));
     const size_t row = i / width_;
@@ -42,21 +48,28 @@ std::pair<size_t, size_t> FrameBuffer::getPixelRowCol(size_t i) const noexcept {
     return std::make_pair(row, col);
 }
 
-size_t FrameBuffer::width() const {
-    return width_;
+Color FrameBuffer::getPixel(size_t i) const noexcept {
+    assert((i >= 0 && i < bufferSize_));
+    return pixels_[i];
 }
-size_t FrameBuffer::height() const {
-    return height_;
+
+Color FrameBuffer::getPixel(size_t row, size_t col) const noexcept {
+    assert((row >= 0 && row < height_) && (col >= 0 && col < width_));
+    return pixels_[width_ * row + col];
 }
-size_t FrameBuffer::numPixels() const {
-    return bufferSize_;
+
+
+void FrameBuffer::setPixel(size_t i, const Color& color) noexcept {
+    assert((i >= 0 && i < bufferSize_));
+    pixels_[i] = color;
 }
-float FrameBuffer::aspectRatio() const {
-    return width_ / static_cast<float>(height_);
+
+void FrameBuffer::setPixel(size_t row, size_t col, const Color& color) noexcept {
+    assert((row >= 0 && row < height_) && (col >= 0 && col < width_));
+    pixels_[width_ * row + col] = color;
 }
-float FrameBuffer::megaPixels() const {
-    return Math::roundToNearestDigit(bufferSize_ / 1000000.00f, 2);
-}
+
+
 
 std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer) {
     os << "FrameBuffer("

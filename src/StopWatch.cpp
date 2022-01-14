@@ -7,6 +7,7 @@ StopWatch::StopWatch()
     : startTime_(std::nullopt),
       stopTime_ (std::nullopt) {}
 
+
 void StopWatch::reset() {
     startTime_ = std::nullopt;
     stopTime_  = std::nullopt;
@@ -25,9 +26,11 @@ void StopWatch::stop() {
     }
 }
 
+
 bool StopWatch::isRunning() const {
     return startTime_.has_value() && !stopTime_.has_value();
 }
+
 bool StopWatch::isFinished() const {
     return startTime_.has_value() && stopTime_.has_value();
 }
@@ -41,6 +44,7 @@ double StopWatch::elapsedTime() const {
     }
     return 0;
 }
+
 
 double StopWatch::currentTime() {
     return omp_get_wtime();

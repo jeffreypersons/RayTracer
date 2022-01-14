@@ -12,8 +12,9 @@ public:
     void reset();
     void start();
     void stop();
-    bool isRunning() const;
-    bool isFinished() const;
+
+    bool   isRunning()   const;
+    bool   isFinished()  const;
     double elapsedTime() const;
 
 private:

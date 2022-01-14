@@ -22,6 +22,8 @@ inline std::ostream& operator<<(std::ostream& os, const ILight& light) {
 }
 
 
+
+
 class PointLight final : public virtual ILight {
 public:
     PointLight(const Vec3& position, const Color& intensity);

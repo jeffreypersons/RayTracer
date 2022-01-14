@@ -10,6 +10,7 @@ struct Ray {
     constexpr Ray(const Vec3& origin, const Vec3& direction)
         : origin(origin), direction(direction) {}
 };
+
 inline std::ostream& operator<<(std::ostream& os, const Ray& ray) {
     os << "Ray("
          << "origin:("    << ray.origin    << "),"
@@ -18,7 +19,10 @@ inline std::ostream& operator<<(std::ostream& os, const Ray& ray) {
     return os;
 }
 
+
+
 class IObject;
+
 struct Intersection {
     Vec3 point;
     Vec3 normal;

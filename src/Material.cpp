@@ -37,42 +37,52 @@ Material::Material(const Color& ambientColor, const Color& diffuseColor, const C
     validateShininess(shininess);
 }
 
-void Material::setColors(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor) {
-    this->ambientColor_  = ambientColor;
-    this->diffuseColor_  = diffuseColor;
-    this->specularColor_ = specularColor;
-}
-void Material::setWeights(float intrinsity, float reflectivity, float refractivity) {
-    validateWeights(intrinsity, reflectivity, refractivity);
-    this->intrinsity_   = intrinsity;
-    this->reflectivity_ = reflectivity;
-    this->refractivity_ = refractivity;
-}
-void Material::setShininess(float shininess) {
-    validateShininess(shininess);
-    this->shininess_ = shininess;
-}
 
 Color Material::ambientColor() const {
     return ambientColor_;
 }
+
 Color Material::diffuseColor() const {
     return diffuseColor_;
 }
+
 Color Material::specularColor() const {
     return specularColor_;
 }
+
 float Material::intrinsity() const {
     return intrinsity_;
 }
+
 float Material::reflectivity() const {
     return reflectivity_;
 }
+
 float Material::refractivity() const {
     return refractivity_;
 }
+
 float Material::shininess() const {
     return shininess_;
+}
+
+
+void Material::setColors(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor) {
+    this->ambientColor_ = ambientColor;
+    this->diffuseColor_ = diffuseColor;
+    this->specularColor_ = specularColor;
+}
+
+void Material::setWeights(float intrinsity, float reflectivity, float refractivity) {
+    validateWeights(intrinsity, reflectivity, refractivity);
+    this->intrinsity_ = intrinsity;
+    this->reflectivity_ = reflectivity;
+    this->refractivity_ = refractivity;
+}
+
+void Material::setShininess(float shininess) {
+    validateShininess(shininess);
+    this->shininess_ = shininess;
 }
 
 
@@ -84,11 +94,13 @@ void Material::validateWeights(float intrinsity, float reflectivity, float refra
         throw std::invalid_argument("weights must be in range[0.0, 1.0] and sum to 1.0");
     }
 }
+
 void Material::validateShininess(float shininess) {
     if (shininess <= 0.00f) {
         throw std::invalid_argument("shininess must be greater than zero");
     }
 }
+
 
 std::ostream& operator<<(std::ostream& os, const Material& material) {
     os << "Material("

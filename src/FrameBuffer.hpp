@@ -18,12 +18,6 @@ namespace CommonResolutions {
 }
 
 class FrameBuffer {
-private:
-    size_t width_;
-    size_t height_;
-    size_t bufferSize_;
-    std::unique_ptr<Color[]> pixels_;
-    
 public:
     FrameBuffer()                         = delete;
     FrameBuffer(const FrameBuffer&)       = delete;
@@ -34,16 +28,24 @@ public:
     explicit FrameBuffer(const Vec2& dimensions);
     FrameBuffer(size_t width, size_t height);
     
-    void setPixel(size_t i, const Color& color) noexcept;
-    void setPixel(size_t row, size_t col, const Color& color) noexcept;
-    Color getPixel(size_t i) const noexcept;
-    Color getPixel(size_t row, size_t col) const noexcept;
-    std::pair<size_t, size_t> getPixelRowCol(size_t i) const noexcept;
-    
     size_t width()      const;
     size_t height()     const;
     size_t numPixels()  const;
     float aspectRatio() const;
     float megaPixels()  const;
+
+    Color getPixel(size_t i) const noexcept;
+    Color getPixel(size_t row, size_t col) const noexcept;
+    std::pair<size_t, size_t> getPixelRowCol(size_t i) const noexcept;
+
+    void setPixel(size_t i, const Color& color) noexcept;
+    void setPixel(size_t row, size_t col, const Color& color) noexcept;
+
+private:
+    size_t width_;
+    size_t height_;
+    size_t bufferSize_;
+    std::unique_ptr<Color[]> pixels_;
 };
+
 std::ostream& operator<<(std::ostream& os, const FrameBuffer& frameBuffer);

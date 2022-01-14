@@ -15,6 +15,7 @@ RayTracer::RayTracer()
       shadowColor_      (DEFAULT_SHADOW_COLOR),
       backgroundColor_  (DEFAULT_BACKGROUND_COLOR) {}
 
+
 // for each pixel in buffer shoot ray from camera position to its projected point on the image plane,
 // traceScene it through the scene and write computed color to buffer (dynamically scheduled in parallel using openMp)
 void RayTracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) const {
@@ -38,28 +39,36 @@ void RayTracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer
 float RayTracer::bias() const {
     return bias_;
 }
+
 size_t RayTracer::maxNumReflections() const {
     return maxNumReflections_;
 }
+
 Color RayTracer::shadowColor() const {
     return backgroundColor_;
 }
+
 Color RayTracer::backgroundColor() const {
     return backgroundColor_;
 }
 
+
 void RayTracer::setBias(float shadowBias) {
     this->bias_ = shadowBias;
 }
+
 void RayTracer::setMaxNumReflections(size_t maxNumReflections) {
     this->maxNumReflections_ = maxNumReflections;
 }
+
 void RayTracer::setShadowColor(const Color& shadowColor) {
     this->shadowColor_ = shadowColor;
 }
+
 void RayTracer::setBackgroundColor(const Color& backgroundColor) {
     this->backgroundColor_ = backgroundColor;
 }
+
 
 
 Color RayTracer::traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t depth=0) const {
@@ -114,6 +123,7 @@ bool RayTracer::findNearestIntersection(const Camera& camera, const Scene& scene
         return true;
     }
 }
+
 // check if there exists another object blocking light from reaching our hit-point
 bool RayTracer::isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const {
     const Ray shadowRay{
@@ -138,6 +148,7 @@ Color RayTracer::computeDiffuseColor(const Intersection& intersection, const ILi
     const float strengthAtLightAngle = Math::max(0.00f, Math::dot(intersection.normal, directionToLight));
     return strengthAtLightAngle * surfaceMaterial.diffuseColor();
 }
+
 Color RayTracer::computeSpecularColor(const Intersection& intersection, const ILight& light, const Camera& camera) const {
     const Vec3 directionToCam      = Math::direction(intersection.point, camera.position());
     const Vec3 halfwayVec          = Math::normalize(directionToCam + light.position());

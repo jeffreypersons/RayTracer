@@ -7,6 +7,7 @@
 
 
 namespace detail {
+
     inline std::ifstream openPpmFileForReading(const std::string& filepath) {
         if (std::filesystem::path(filepath).extension() != ".ppm") {
             throw std::runtime_error("Cannot read file \'" + filepath + "\' - does not end with .ppm");
@@ -21,6 +22,7 @@ namespace detail {
         }
         return ifs;
     }
+
     inline std::ofstream openPpmFileForWriting(const std::string& filepath) {
         if (std::filesystem::path(filepath).extension() != ".ppm") {
             throw std::runtime_error("Cannot write file \'" + filepath + "\' - does not end with .ppm");
@@ -34,16 +36,21 @@ namespace detail {
     }
 }
 
+
 namespace Files {
+
     inline bool pathExists(const std::string& filepath) {
         return std::filesystem::exists(filepath);
     }
+
     inline std::string fileName(const std::string& filepath) {
         return std::filesystem::path(filepath).filename().stem().string();
     }
+
     inline std::string fileExtension(const std::string filepath) {
         return std::filesystem::path(filepath).extension().string();
     }
+
     // assumes give path exists - otherwise system error is thrown
     inline std::string resolveAbsolutePath(const std::string& filepath) {
         return std::filesystem::canonical(filepath).string();
@@ -85,6 +92,7 @@ namespace Files {
                 << static_cast<unsigned char>(color.b * 255);
         }
     }
+
     // save framebuffer as an array of 256 rgb-colored pixels_, written to file at given location
     // note that the buffer stores colors relative to top left corner, while ppm is relative to the bottom left
     inline void writePpmWithGammaCorrection(const std::string& filepath, const FrameBuffer& frameBuffer,

@@ -10,6 +10,7 @@ PointLight::PointLight(const Vec3& position, const Color& intensity, float const
     this->position_  = position;
     this->intensity_ = intensity;
 };
+
 PointLight::PointLight(const Vec3& position, const Color& intensity)
     : attenuationConstant_ (DEFAULT_ATTENUATION_CONSTANT),
       attenuationLinear_   (DEFAULT_ATTENUATION_LINEAR),
@@ -17,6 +18,7 @@ PointLight::PointLight(const Vec3& position, const Color& intensity)
     this->position_ = position;
     this->intensity_ = intensity;
 }
+
 
 // compute intensity at given point according to inverse square law with respect to distance and attenuation coefficients
 Color PointLight::computeIntensityAtPoint(const Vec3& point) const {
@@ -26,6 +28,7 @@ Color PointLight::computeIntensityAtPoint(const Vec3& point) const {
     return intensity_ / 
         ((attenuationConstant_) + (attenuationLinear_ * distance) + (attenuationQuadratic_ * distanceSquared));
 }
+
 std::string PointLight::description() const {
     std::stringstream ss;
     ss << "PointLight("
@@ -39,12 +42,15 @@ std::string PointLight::description() const {
     return ss.str();
 }
 
+
 float PointLight::attenuationConstant() const {
     return attenuationConstant_;
 }
+
 float PointLight::attenuationLinear() const {
     return attenuationLinear_;
 }
+
 float PointLight::attenuationQuadratic() const {
     return attenuationConstant_;
 }

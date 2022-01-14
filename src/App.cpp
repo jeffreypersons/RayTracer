@@ -35,26 +35,31 @@ App::App(Scene&& scene, const AppOptions& options)
       camera_     (),
       rayTracer_  (),
       frameBuffer_(options.imageOutputSize) {
+
     // preferably, we'd using a logging framework or custom logger,
     // but writing directly console will suffice for this class for now
     if (options_.logInfo) {
         std::cout << Text::padSides(" Configuring App ", '*', 80) << "\n";
         std::cout << options_ << "\n\n";
     }
+
     rayTracer_.setBias(options.rayTracingBias);
     rayTracer_.setMaxNumReflections(options.rayTracingReflectionLimit);
     rayTracer_.setShadowColor(options.shadowColor);
     rayTracer_.setBackgroundColor(options.skyBoxColor);
+
     camera_.setNearClip(options.cameraNearZ);
     camera_.setFarClip(options.cameraFarZ);
     camera_.setAspectRatio(frameBuffer_.aspectRatio());
     camera_.setFieldOfView(options_.cameraFieldOfView);
     camera_.lookAtFrom(options_.viewTarget, options_.viewTarget + options_.viewOffset);
+
     if (options_.logInfo) {
         std::cout << Text::padSides(" Configuring App ", '*', 80) << "\n";
         std::cout << *this;
     }
 }
+
 
 void App::run() {
     if (options_.logInfo) {
@@ -78,6 +83,7 @@ void App::run() {
         Files::writePpmWithGammaCorrection(options_.imageOutputFile, frameBuffer_, options_.imageOutputGamma);
     }
 }
+
 
 inline std::ostream& operator<<(std::ostream& os, const App& app) {
     os << app.frameBuffer_ << "\n\n"

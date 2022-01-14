@@ -13,9 +13,9 @@ public:
     void lookAt(const Vec3& target);
     void lookAtFrom(const Vec3& target, const Vec3& position);
 
-    Vec3 viewportToWorld(const Vec3& point)   const;
-    Vec3 worldToViewport(const Vec3& point)   const;
-    bool isPointInFrustum(const Vec3& point)  const;
+    Vec3 viewportToWorld(const Vec3& point) const;
+    Vec3 worldToViewport(const Vec3& point) const;
+    bool isPointInFrustum(const Vec3& point) const;
     Ray viewportPointToRay(const Vec3& point) const;
     
     Vec3 position()               const;

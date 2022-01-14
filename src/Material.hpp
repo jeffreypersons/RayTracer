@@ -11,10 +11,6 @@ public:
     Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor,
              float intrinsity, float reflectivity, float refractivity, float shininess);
 
-    void setColors(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor);
-    void setWeights(float intrinsity, float reflectivity, float refractivity = 0.00f);
-    void setShininess(float shininess);
-
     Color ambientColor()  const;
     Color diffuseColor()  const;
     Color specularColor() const;
@@ -22,6 +18,10 @@ public:
     float reflectivity()  const;
     float refractivity()  const;
     float shininess()     const;
+
+    void setColors(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor);
+    void setWeights(float intrinsity, float reflectivity, float refractivity = 0.00f);
+    void setShininess(float shininess);
 
 private:
     Color ambientColor_;

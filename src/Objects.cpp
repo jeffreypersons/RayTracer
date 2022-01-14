@@ -12,13 +12,6 @@ Sphere::Sphere(const Vec3& center, float radius, const Material& material)
     this->material_ = material;
 }
 
-Vec3 Sphere::center() const {
-    return center_;
-}
-float Sphere::radius() const {
-    return radius_;
-}
-
 // given ray [X(t) = P + t] intersects sphere [| X – C | = r] IFF there exists
 // at least one real number t [t = - D.M +/- sqrt((D.M)^2 – ( |M|^2 – r^2 ))]
 // (that is, if above discriminant >= 0, then there exists a point along ray that also lies along sphere's surface)
@@ -44,6 +37,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& result) const {
     result.object = this;
     return true;
 }
+
 std::string Sphere::description() const {
     std::stringstream ss;
     ss << "Sphere("
@@ -54,11 +48,23 @@ std::string Sphere::description() const {
     return ss.str();
 }
 
+
 // recall, a point lies within or along a sphere if..
 // (Px - Cx)^2 + (Py - Cy)^2 + (Pz - Cz)^2 <= R^2
 bool Sphere::contains(const Vec3& point) const {
     return Math::magnitudeSquared(point - center_) <= Math::square(radius_);
 }
+
+
+Vec3 Sphere::center() const {
+    return center_;
+}
+
+float Sphere::radius() const {
+    return radius_;
+}
+
+
 
 
 Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, const Material& material)
@@ -73,21 +79,6 @@ Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, cons
     assert(isValidTriangle(vert0, vert1, vert2));
     this->position_ = center_;
     this->material_ = material;
-}
-Vec3 Triangle::vert0() const {
-    return vert0_;
-}
-Vec3 Triangle::vert1() const {
-    return vert1_;
-}
-Vec3 Triangle::vert2() const {
-    return vert2_;
-}
-Vec3 Triangle::center() const {
-    return center_;
-}
-Vec3 Triangle::planeNormal() const {
-    return planeNormal_;
 }
 
 // given ray intersects triangle IFF given ray [X(t) = P + tD] intersects the plane [P.n = k] in a way such that
@@ -106,6 +97,7 @@ bool Triangle::intersect(const Ray& ray, Intersection& result) const {
     }
     return false;
 }
+
 std::string Triangle::description() const {
     std::stringstream ss;
     ss << "Triangle("
@@ -117,6 +109,7 @@ std::string Triangle::description() const {
     return ss.str();
 }
 
+
 // recall, a point lies in a triangle if..
 // (e0 x(R – P0)).n > 0 & (e1 x(R – P1)).n > 0 & (e2 x(R – P2)).n > 0
 // aka R is always to the LEFT side of EVERY edge
@@ -127,11 +120,33 @@ bool Triangle::contains(const Vec3& point) const {
 }
 
 
+Vec3 Triangle::vert0() const {
+    return vert0_;
+}
+
+Vec3 Triangle::vert1() const {
+    return vert1_;
+}
+
+Vec3 Triangle::vert2() const {
+    return vert2_;
+}
+
+Vec3 Triangle::center() const {
+    return center_;
+}
+
+Vec3 Triangle::planeNormal() const {
+    return planeNormal_;
+}
+
+
 Vec3 Triangle::computeCentroid() const {
     return Vec3((vert0_.x + vert1_.x + vert2_.x) / 3.00f,
                 (vert0_.y + vert1_.y + vert2_.y) / 3.00f,
                 (vert0_.z + vert1_.z + vert2_.z) / 3.00f);
 }
+
 // recall that a triangle is formed if each side has a length smaller than the the sum of the other two
 bool Triangle::isValidTriangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2) {
     float a = Math::distance(vert0, vert1);
