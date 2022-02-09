@@ -1,5 +1,5 @@
 # RayTracer
- A simple ray tracer written from scratch in C++, with refraction, reflection, and more - developed from scratch using C++17 and OpenMp.
+A simple ray tracer written from scratch in C++, with multicore support, reflection, shadows, and more!
 
 ## Current Features
 * Parallelized tracing algorithm using OpenMp
