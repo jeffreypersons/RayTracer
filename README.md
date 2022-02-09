@@ -1,5 +1,5 @@
 # RayTracer
-A simple ray tracer written from scratch in C++, with multicore support, reflection, shadows, and more!
+A simple ray tracer written from scratch in C++, with multicore support, customizable camera, attenuation, alpha-beta correction, reflection, shadows, and more!
 
 ## Current Features
 * Parallelized tracing algorithm using OpenMp
