@@ -107,21 +107,14 @@ Ray RayTracer::reflectRay(const Ray& ray, const Intersection& intersection) cons
 
 bool RayTracer::findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const {
     float tClosest = Math::INF;
-    Intersection closestIntersection{};
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         Intersection intersection;
         if (scene.getObject(index).intersect(ray, intersection) && intersection.t < tClosest) {
             tClosest = intersection.t;
-            closestIntersection = intersection;
+            result = intersection;
         }
     }
-
-    if (closestIntersection.object == nullptr) {
-        return false;
-    } else {
-        result = closestIntersection;
-        return true;
-    }
+    return (result.object != nullptr);
 }
 
 // check if there exists another object blocking light from reaching our hit-point
