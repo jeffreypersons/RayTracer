@@ -6,6 +6,7 @@
 *.sln
 *.suo
 *.vcxproj*
+tags
 
 # Build Files
 *.exe
@@ -14,6 +15,8 @@ x64/
 bin/
 */Debug/*
 */Release/*
+Release/
+Debug/
 
 # Debug Files
 *.db*

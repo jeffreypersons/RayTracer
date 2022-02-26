@@ -1,6 +1,7 @@
 #pragma once
 #include <iomanip>
 #include <sstream>
+#include <cmath>
 #include <assert.h>
 
 
