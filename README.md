@@ -38,3 +38,12 @@ A simple ray tracer written from scratch in C++, with multicore support, customi
 <p align="center">
   <img src="https://raw.githubusercontent.com/jeffreypersons/Jeff-Images/master/scene.png" alt="Example Scene" width="500"/>
 </p>
+
+## Build & Run Instructions
+#CMake on Unix
+Build:
+`./build.sh`
+Build output goes to directory named after build type.  Can pass build type as an argument (e.g. `./build.sh Debug`)
+Run:
+`./Release/bin/App`
+
