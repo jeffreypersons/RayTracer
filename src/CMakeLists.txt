@@ -9,6 +9,10 @@ add_library(RayTracerCore
     StopWatch.cpp
 )
 target_include_directories(RayTracerCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(RayTracerCore PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
 
 add_executable(TraceScene
     Main.cpp

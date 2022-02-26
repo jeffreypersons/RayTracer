@@ -17,6 +17,8 @@ FetchContent_MakeAvailable(googletest)
 include(CTest)
 include(GoogleTest)
 
+find_package(OpenMP)
+
 add_subdirectory(src)
 add_subdirectory(tests)
 
