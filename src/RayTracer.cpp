@@ -101,7 +101,7 @@ Color RayTracer::traceRay(const Camera& camera, const Scene& scene, const Ray& r
 
 // reflect our ray using a slight direction offset to avoid infinite reflections
 Ray RayTracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
-    const Vec3 reflectedDirection = Math::reflect(-ray.direction, intersection.normal);
+    const Vec3 reflectedDirection = Math::reflect(ray.direction, intersection.normal);
     return Ray(intersection.point + (bias_ * intersection.normal), reflectedDirection);
 }
 
