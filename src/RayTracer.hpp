@@ -25,6 +25,9 @@ public:
     void setShadowColor(const Color& shadowColor);
     void setBackgroundColor(const Color& backgroundColor);
 
+    Ray reflectRay(const Ray& ray, const Intersection& intersection) const;
+    bool findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const;
+
 private:
     float bias_;
     size_t maxNumReflections_;
@@ -38,8 +41,6 @@ private:
 
     Color traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t depth) const;
 
-    Ray reflectRay(const Ray& ray, const Intersection& intersection) const;
-    bool findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const;
     bool isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const;
 
     Color computeDiffuseColor(const Intersection& intersection, const ILight& light) const;
