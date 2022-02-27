@@ -12,29 +12,61 @@ Sphere::Sphere(const Vec3& center, float radius, const Material& material)
     this->material_ = material;
 }
 
-// given ray [X(t) = P + t] intersects sphere [| X – C | = r] IFF there exists
-// at least one real number t [t = - D.M +/- sqrt((D.M)^2 – ( |M|^2 – r^2 ))]
-// (that is, if above discriminant >= 0, then there exists a point along ray that also lies along sphere's surface)
+// Ray: P_r = P_0 + d * t
+// Sphere: (P_s - P_c).(P_s - P_c) - r^2 = 0
+// Intersection: P_r == P_s
+//
+// (P_0 + d * t - P_c).(P_0 + d * t - P_c) - r^2 = 0
+// L := P_0 - P_c
+// (d * t + L).(d * t + L) - r^2 = 0
+// d.d * t^2 + 2 * d.L * t + L.L - r^2 = 0
+//
+// quadratic coefficients:
+// a = d.d
+// b = 2 * d.L
+// c = L.L - r^2
+//
+// t_intersect = -b +/- sqrt(b^2 - 4*a*c)
+//
 bool Sphere::intersect(const Ray& ray, Intersection& result) const {
-    const Vec3 M = ray.origin - this->position_;
-    const float dDotM = Math::dot(ray.direction, M);
-    const float discriminant = Math::square(dDotM) - (Math::magnitudeSquared(M) - Math::square(radius_));
+    const Vec3 L = ray.origin - this->position_;
+    // const float a = Math::dot(ray.direction, ray.direction); a == 1.0
+    const float b = 2.0f * Math::dot(ray.direction, L);
+    const float c = Math::dot(L, L) - Math::square(this->radius_);
+    const float discriminant = Math::square(b) - 4.0f * c;
+
     if (discriminant < 0.00f) {
         return false;
     }
 
     // we have an intersection, calculate our t, and plug it in to find our normal/intersect-point
-    float closestT;
+    float t1, t2;
     if (Math::isApproximately(discriminant, 0.00f)) {
-        closestT = -dDotM;
+        t1 = t2 = -b / 2.0f;
     } else {
         float sqrtOfDiscriminant = Math::squareRoot(discriminant);
-        closestT = Math::min(-dDotM + sqrtOfDiscriminant, -dDotM - sqrtOfDiscriminant);
+        t1 = (-b + sqrtOfDiscriminant) / 2.0f;
+        t2 = (-b - sqrtOfDiscriminant) / 2.0f;
     }
-    result.t      = closestT;
+
+    if (t1 < 0.00f && t2 < 0.00f) {
+        return false;
+    }
+
+    if (t1 < 0.00f) {
+        result.t = t2;
+    }
+    else if (t2 < 0.00f) {
+        result.t = t1;
+    }
+    else {
+        result.t = std::min(t1, t2);
+    }
+
     result.point  = ray.origin + ray.direction * result.t;
     result.normal = Math::direction(this->position_, result.point);
     result.object = this;
+
     return true;
 }
 
