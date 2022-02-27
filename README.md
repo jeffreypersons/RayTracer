@@ -1,6 +1,14 @@
 # RayTracer
 A simple ray tracer written from scratch in C++, with multicore support, customizable camera, attenuation, alpha-beta correction, reflection, shadows, and more!
 
+# Credits
+Primary author: Jeffrey Persons
+
+Additional Contributions by [@DerekMcBlane](https://github.com/derek-mcblane):
+* Bug Fixes: Fixed false positive sphere intersections, and leaky reflections that bled through
+* Infrastructure Improvements: Addition of test (gtest) and build systems (cmake)
+
+
 ## Current Features
 * Parallelized tracing algorithm using OpenMP
 * Perspective, axis aligned camera with lookAt functionality
