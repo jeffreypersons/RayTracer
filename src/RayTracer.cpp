@@ -26,7 +26,11 @@ void RayTracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer
     const float invHeight  = 1.00f / height;
     const Vec3 eyePosition = camera.position();
     const int numPixels    = static_cast<int>(frameBuffer.numPixels());
+#ifndef DEBUG
     #pragma omp for schedule(dynamic)
+#else
+    std::cout << "Not using OpenMP...";
+#endif
     for (int i = 0; i < numPixels; i++) {
         const auto [row, col] = frameBuffer.getPixelRowCol(i);
         const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, 0.00f };

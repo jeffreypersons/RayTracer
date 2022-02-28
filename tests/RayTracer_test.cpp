@@ -39,14 +39,9 @@ TEST(NearestIntersection, Simple)
 {
     Scene scene{};
     Camera camera{};
-    
-    Material reflectiveRed{};
-    reflectiveRed.setWeights(0.50f, 0.50f);
-    reflectiveRed.setColors(Palette::darkRed, Palette::red, Palette::orangeRed);
-    reflectiveRed.setShininess(15);
 
-    scene.addSceneObject(Sphere(Vec3(0.0f, 0.0f, 10.0f), 5.00f, reflectiveRed));
-    scene.addSceneObject(Sphere(Vec3(0.0f, 0.0f, 30.0f), 5.00f, reflectiveRed));
+    scene.addSceneObject(Sphere(Vec3(0.0f, 0.0f, 10.0f), 5.00f, Material()));
+    scene.addSceneObject(Sphere(Vec3(0.0f, 0.0f, 30.0f), 5.00f, Material()));
 
     Ray ray{{0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}};
 
@@ -65,12 +60,7 @@ TEST(NearestIntersection, Inside)
     Scene scene{};
     Camera camera{};
     
-    Material reflectiveRed{};
-    reflectiveRed.setWeights(0.50f, 0.50f);
-    reflectiveRed.setColors(Palette::darkRed, Palette::red, Palette::orangeRed);
-    reflectiveRed.setShininess(15);
-
-    scene.addSceneObject(Sphere(Vec3(0.0f, 0.0f, 0.0f), 5.00f, reflectiveRed));
+    scene.addSceneObject(Sphere(Vec3(0.0f, 0.0f, 0.0f), 5.00f, Material()));
 
     Ray ray{{0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}};
 

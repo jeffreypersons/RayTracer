@@ -7,14 +7,100 @@
 
 #include <iostream>
 
+TEST(TriangleContains, Yes2D)
+{
+    float L = 10.0f;
+    Vec3 v1{0.0f, 0.0f, 0.0f};
+    Vec3 v2{L,    0.0f, 0.0f};
+    Vec3 v3{L,    L,    0.0f};
+    Triangle triangle{v1, v2, v3, Material()};
+
+    EXPECT_TRUE(triangle.contains(Vec3(1.0f, 0.5f, 0.0f)));
+}
+
+TEST(TriangleContains, No2D)
+{
+    float L = 10.0f;
+    Vec3 v1{0.0f, 0.0f, 0.0f};
+    Vec3 v2{L,    0.0f, 0.0f};
+    Vec3 v3{L,    L,    0.0f};
+    Triangle triangle{v1, v2, v3, Material()};
+
+    EXPECT_FALSE(triangle.contains(Vec3(-1.0f, -1.0f, 0.0f)));
+}
+
+TEST(TriangleContains, Yes)
+{
+    float L = 10.0f;
+    Vec3 v1{0.0f, 0.0f, 0.0f};
+    Vec3 v2{L,    L,    0.0f};
+    Vec3 v3{L,    L,    L};
+    Triangle triangle{v1, v2, v3, Material()};
+
+    EXPECT_TRUE(triangle.contains(Vec3(0.5f, 0.25f, 0.25f)));
+}
+
+TEST(TriangleContains, No)
+{
+    float L = 10.0f;
+    Vec3 v1{0.0f, 0.0f, 0.0f};
+    Vec3 v2{L,    L,    0.0f};
+    Vec3 v3{L,    L,    L};
+    Triangle triangle{v1, v2, v3, Material()};
+
+    EXPECT_FALSE(triangle.contains(Vec3(-1.0f, -1.0f, -1.0f)));
+}
+
+TEST(TriangleContains, NoOneDimensionOutside)
+{
+    float L = 10.0f;
+    Vec3 v1{0.0f, 0.0f, 0.0f};
+    Vec3 v2{L,    L,    0.0f};
+    Vec3 v3{L,    L,    L};
+    Triangle triangle{v1, v2, v3, Material()};
+
+    EXPECT_FALSE(triangle.contains(Vec3(0.5f, 0.25f, -1.0f)));
+}
+
+TEST(Intersection, TriangleCCW)
+{
+    float L = 10.0f;
+    Vec3 v1{0.0f, 0.0f, 0.0f};
+    Vec3 v2{L,    0.0f, 0.0f};
+    Vec3 v3{L,    L,    0.0f};
+    Triangle obj{v1, v2, v3, Material()};
+
+    Ray ray{{0.0, 0.0, 10.0}, {0.0, 0.0, -1.0}};
+
+    Intersection intersection;
+    bool intersectionOccured = obj.intersect(ray, intersection);
+
+    EXPECT_NEAR(intersection.point.x, 0.0f, 0.1f);
+    EXPECT_NEAR(intersection.point.y, 0.0f, 0.1f);
+    EXPECT_NEAR(intersection.point.z, 0.0f, 0.1f);
+}
+
+TEST(Intersection, TriangleCW)
+{
+    float L = 10.0f;
+    Vec3 v1{0.0f, 0.0f, 0.0f};
+    Vec3 v2{L,    L,    0.0f};
+    Vec3 v3{L,    0.0f, 0.0f};
+    Triangle obj{v1, v2, v3, Material()};
+
+    Ray ray{{0.0, 0.0, 10.0}, {0.0, 0.0, -1.0}};
+
+    Intersection intersection;
+    bool intersectionOccured = obj.intersect(ray, intersection);
+
+    EXPECT_NEAR(intersection.point.x, 0.0f, 0.1f);
+    EXPECT_NEAR(intersection.point.y, 0.0f, 0.1f);
+    EXPECT_NEAR(intersection.point.z, 0.0f, 0.1f);
+}
+
 TEST(Intersection, Sphere)
 {
-    Material reflectiveRed{};
-    reflectiveRed.setWeights(0.10f, 0.90f);
-    reflectiveRed.setColors(Palette::darkRed, Palette::red, Palette::orangeRed);
-    reflectiveRed.setShininess(15);
-
-    Sphere obj{Vec3(0, 0, 0), 10.00f, reflectiveRed};
+    Sphere obj{Vec3(0, 0, 0), 10.00f, Material()};
     Ray ray{{-20.0, 0.0, 0.0}, {1.0, 0.0, 0.0}};
 
     Intersection intersection;
@@ -27,12 +113,7 @@ TEST(Intersection, Sphere)
 
 TEST(Intersection, SphereInner)
 {
-    Material reflectiveRed{};
-    reflectiveRed.setWeights(0.10f, 0.90f);
-    reflectiveRed.setColors(Palette::darkRed, Palette::red, Palette::orangeRed);
-    reflectiveRed.setShininess(15);
-
-    Sphere obj{Vec3(0, 0, 0), 10.00f, reflectiveRed};
+    Sphere obj{Vec3(0, 0, 0), 10.00f, Material()};
     Ray ray{{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}};
 
     Intersection intersection;
