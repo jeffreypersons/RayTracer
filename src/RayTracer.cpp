@@ -91,7 +91,7 @@ Color RayTracer::traceRay(const Camera& camera, const Scene& scene, const Ray& r
     Color nonReflectedColor = intersection.object->material().ambientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
        const ILight& light = scene.getLight(index);
-       //if (isInShadow(camera, intersection, light, scene)) { nonReflectedColor += shadowColor_; continue; }
+       if (isInShadow(camera, intersection, light, scene)) { nonReflectedColor += shadowColor_; continue; }
        Color diffuse  = computeDiffuseColor(intersection, light);
        Color specular = computeSpecularColor(intersection, light, camera);
        Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
