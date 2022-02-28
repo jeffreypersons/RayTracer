@@ -101,8 +101,8 @@ float Sphere::radius() const {
 
 Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, const Material& material)
     : vert0_      (vert0),
-      vert1_      (vert0),
-      vert2_      (vert0),
+      vert1_      (vert1),
+      vert2_      (vert2),
       edge0_      (vert1 - vert0),
       edge1_      (vert2 - vert1),
       edge2_      (vert0 - vert2),
@@ -119,6 +119,9 @@ Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, cons
 bool Triangle::intersect(const Ray& ray, Intersection& result) const {
     const float k = Math::dot(vert0_, planeNormal_);
     const float t = (k - Math::dot(ray.origin, planeNormal_)) / Math::dot(ray.direction, planeNormal_);
+    if (t < 0.0f) {
+        return false;
+    }
     const Vec3 pointIntersectingPlane = ray.origin + ray.direction * t;
     if (contains(pointIntersectingPlane)) {
         result.t      = t;
