@@ -18,21 +18,22 @@ bool sphereCollidesWithAnyOtherSpheres(const std::vector<Sphere>& spheres, const
 
 void addGround(Scene& scene) {
     Color groundColor = Palette::gray;
-    float groundIntrinsivity = 0.8;
+    float groundIntrinsivity = 0.7;
     float groundReflectivity = 1.0f - groundIntrinsivity;
     Material groundMaterial{};
     groundMaterial.setWeights(groundIntrinsivity, groundReflectivity);
     groundMaterial.setColors(groundColor, groundColor, groundColor);
     groundMaterial.setShininess(1);
 
-    Vec3 v11{-100.0f, 0.0f, -100.0f};
-    Vec3 v12{ 100.0f, 0.0f, -100.0f};
-    Vec3 v13{ 100.0f, 0.0f,  100.0f};
+    float L = 1000.0f;
+    Vec3 v11{-L, 0.0f, -L};
+    Vec3 v12{ L, 0.0f, -L};
+    Vec3 v13{ L, 0.0f,  L};
     scene.addSceneObject(Triangle(v11, v12, v13, groundMaterial));
 
-    Vec3 v21{-100.0f, 0.0f, -100.0f};
-    Vec3 v22{ 100.0f, 0.0f,  100.0f};
-    Vec3 v23{-100.0f, 0.0f,  100.0f};
+    Vec3 v21{-L, 0.0f, -L};
+    Vec3 v22{ L, 0.0f,  L};
+    Vec3 v23{-L, 0.0f,  L};
     scene.addSceneObject(Triangle(v21, v22, v23, groundMaterial));
 }
 

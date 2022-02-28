@@ -106,7 +106,8 @@ Color RayTracer::traceRay(const Camera& camera, const Scene& scene, const Ray& r
 // reflect our ray using a slight direction offset to avoid infinite reflections
 Ray RayTracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     const Vec3 reflectedDirection = Math::reflect(ray.direction, intersection.normal);
-    return Ray(intersection.point + (bias_ * intersection.normal), reflectedDirection);
+    const float biasDirection = ( Math::dot(intersection.normal, reflectedDirection) > 0 ) ? 1.0f : -1.0f;
+    return Ray(intersection.point + (bias_ * biasDirection * intersection.normal), reflectedDirection);
 }
 
 bool RayTracer::findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const {
