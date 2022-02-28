@@ -124,10 +124,9 @@ bool RayTracer::findNearestIntersection(const Camera& camera, const Scene& scene
 
 // check if there exists another object blocking light from reaching our hit-point
 bool RayTracer::isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const {
-    const Ray shadowRay{
-        intersection.point + (bias_ * intersection.normal),
-        Math::direction(intersection.point, light.position())
-    };
+    const Vec3 directionToLight = Math::direction(intersection.point, light.position());
+    const float biasDirection = ( Math::dot(intersection.normal, directionToLight) > 0 ) ? 1.0f : -1.0f;
+    const Ray shadowRay{ intersection.point + (bias_ * biasDirection * intersection.normal), directionToLight };
     const float distanceToLight = Math::distance(shadowRay.origin, light.position());
     for (size_t index = 0; index < scene.getNumObjects(); index++) {
         Intersection occlusion;
