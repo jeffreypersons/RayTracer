@@ -16,15 +16,7 @@ bool sphereCollidesWithAnyOtherSpheres(const std::vector<Sphere>& spheres, const
     return false;
 }
 
-void addGround(Scene& scene) {
-    Color groundColor = Palette::gray;
-    float groundIntrinsivity = 0.7;
-    float groundReflectivity = 1.0f - groundIntrinsivity;
-    Material groundMaterial{};
-    groundMaterial.setWeights(groundIntrinsivity, groundReflectivity);
-    groundMaterial.setColors(groundColor, groundColor, groundColor);
-    groundMaterial.setShininess(1);
-
+void addGround(Scene& scene, const Material& groundMaterial) {
     float L = 1000.0f;
     Vec3 v11{-L, 0.0f, -L};
     Vec3 v12{ L, 0.0f, -L};
@@ -35,6 +27,27 @@ void addGround(Scene& scene) {
     Vec3 v22{ L, 0.0f,  L};
     Vec3 v23{-L, 0.0f,  L};
     scene.addSceneObject(Triangle(v21, v22, v23, groundMaterial));
+}
+
+Scene createTriangleScene() {
+    Scene scene{};
+
+    Color color = Palette::gray;
+    float intrinsity = 0.8;
+    float reflectivity = 1.0f - intrinsity;
+    Material Material{};
+    Material.setWeights(intrinsity, reflectivity);
+    Material.setColors(color, color, color);
+    Material.setShininess(1);
+
+    float L = 10.0;
+
+    Vec3 v1{0.0f, 0.0f, 0.0f};
+    Vec3 v2{L,    0.0f, 0.0f};
+    Vec3 v3{L,    L,    0.0f};
+    scene.addSceneObject(Triangle(v1, v2, v3, Material));
+
+    return scene;
 }
 
 Scene createSimpleScene(const Vec3& localOrigin=Vec3::zero()) {
@@ -68,7 +81,7 @@ Scene createRandomFloatingScene() {
     std::random_device rd;  // Will be used to obtain a seed for the random number engine
     std::mt19937 gen{rd()}; // Standard mersenne_twister_engine seeded with rd()
     std::uniform_real_distribution<float> x_dis(-100.0, 100.0);
-    std::uniform_real_distribution<float> y_dis(0.0, 100.0);
+    std::uniform_real_distribution<float> y_dis(-100.0, 100.0);
     std::uniform_real_distribution<float> z_dis(10.0, 100.0);
     std::uniform_real_distribution<float> r_dis(1.0, 10.0);
     std::uniform_real_distribution<float> c_dis(0.0, 1.0);
@@ -116,9 +129,18 @@ Scene createRandomFloatingScene() {
 
 Scene createRandomGroundScene() {
     Scene scene{};
-    scene.addLight(PointLight(Vec3(0.0f, 0.0f, 0.0f), Palette::antiqueWhite));
+    scene.addLight(PointLight(Vec3(50.0f, 200.0f, -10.0f), Palette::antiqueWhite));
+    scene.addLight(PointLight(Vec3(-50.0f, 200.0f, -10.0f), Palette::antiqueWhite));
 
-    addGround(scene);
+    Color groundColor = Palette::gray;
+    float groundIntrinsivity = 0.85;
+    float groundReflectivity = 1.0f - groundIntrinsivity;
+    Material groundMaterial{};
+    groundMaterial.setWeights(groundIntrinsivity, groundReflectivity);
+    groundMaterial.setColors(groundColor, groundColor, groundColor);
+    groundMaterial.setShininess(1);
+
+    addGround(scene, groundMaterial);
 
     std::random_device rd;  // Will be used to obtain a seed for the random number engine
     std::mt19937 gen{rd()}; // Standard mersenne_twister_engine seeded with rd()
@@ -168,40 +190,36 @@ Scene createRandomGroundScene() {
     return scene;
 }
 
-Scene createTriangleScene() {
-    Scene scene{};
-
-    Color Color = Palette::gray;
-    float intrinsity = 0.8;
-    float reflectivity = 1.0f - intrinsity;
-    Material Material{};
-    Material.setWeights(intrinsity, reflectivity);
-    Material.setColors(Color, Color, Color);
-    Material.setShininess(1);
-
-    float L = 10.0;
-
-    Vec3 v1{0.0f, 0.0f, 0.0f};
-    Vec3 v2{L,    0.0f, 0.0f};
-    Vec3 v3{L,    L,    0.0f};
-    scene.addSceneObject(Triangle(v1, v2, v3, Material));
-
-    return scene;
-}
-
 Scene createSimpleGroundScene() {
     Scene scene{};
-    scene.addLight(PointLight(Vec3(0.0f, 0.0f, 0.0f), Palette::antiqueWhite));
+    scene.addLight(PointLight(Vec3(50.0f, 200.0f, -10.0f), Palette::antiqueWhite));
+    scene.addLight(PointLight(Vec3(-50.0f, 200.0f, -10.0f), Palette::antiqueWhite));
 
-    addGround(scene);
+    Color groundColor = Palette::darkGreen;
+    float groundIntrinsivity = 0.95;
+    float groundReflectivity = 1.0f - groundIntrinsivity;
+    Material groundMaterial{};
+    groundMaterial.setWeights(groundIntrinsivity, groundReflectivity);
+    groundMaterial.setColors(groundColor, groundColor, groundColor);
+    groundMaterial.setShininess(1);
+
+    addGround(scene, groundMaterial);
 
     Material reflectiveBlue{};
     reflectiveBlue.setWeights(0.50f, 0.50f);
     reflectiveBlue.setColors(Palette::darkBlue, Palette::blue, Palette::lightBlue);
     reflectiveBlue.setShininess(10);
 
-    float R = 30.0f;
-    scene.addSceneObject(Sphere(Vec3(0.0f, R, 0.0f), R, reflectiveBlue));
+    Material reflectiveRed{};
+    reflectiveRed.setWeights(0.50f, 0.50f);
+    reflectiveRed.setColors(Palette::darkRed, Palette::red, Palette::orangeRed);
+    reflectiveRed.setShininess(10);
+
+    float R;
+    R = 30.0f;
+    scene.addSceneObject(Sphere(Vec3(-1.5f*R, R, 0.0f), R, reflectiveBlue));
+    R = 20.0f;
+    scene.addSceneObject(Sphere(Vec3(1.5f*R, R, 0.0f), R, reflectiveRed));
 
     return scene;
 }
@@ -209,12 +227,12 @@ Scene createSimpleGroundScene() {
 int main() {
     AppOptions options;
     options.imageOutputFile           = "./scene.ppm";
-    options.imageOutputSize           = CommonResolutions::HD_4K;
+    options.imageOutputSize           = CommonResolutions::HD_8K;
     options.rayTracingReflectionLimit = 4;
     options.skyBoxColor               = Palette::skyBlue;
-    options.shadowColor               = Color(0.25f, 0.25f, 0.25f);
+    options.shadowColor               = Color(0.125f, 0.125f, 0.125f);
     options.viewTarget                = Vec3(0, 0, 0);
-    options.viewOffset                = Vec3(0, 30, 150);
+    options.viewOffset                = Vec3(0, 50, 150);
 
     App app{ createRandomGroundScene(), options };
     app.run();
