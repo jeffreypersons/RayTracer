@@ -81,30 +81,34 @@ Color RayTracer::traceRay(const Camera& camera, const Scene& scene, const Ray& r
         return backgroundColor_;
     }
 
-    Color reflectedColor{ 0.00, 0.00, 0.00 };
+    Color reflectedColor = {0.0f, 0.0f, 0.0f};
     if (depth < maxNumReflections_ && intersection.object->material().reflectivity() > 0.00f) {
         reflectedColor = traceRay(camera, scene, reflectRay(ray, intersection), depth + 1);
     }
     
-    // todo: will need to adjust lighting model for weakening (or not summing) reflection values according to 'strength' of each shadow,
-    //       and also a better way to include reflection from background (sky) without overpowering everything
     Color nonReflectedColor = intersection.object->material().ambientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
         const ILight& light = scene.getLight(index);
+        Color diffuse  = computeDiffuseColor(intersection, light);
+        Color specular = computeSpecularColor(intersection, light, camera);
+        Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
+        nonReflectedColor += lightIntensityAtPoint * (diffuse + specular);
+    }
+
+
+    // blend intrinsic and reflected color using our light and intersected object
+    Color blendedColor = (intersection.object->material().intrinsity()   * nonReflectedColor) + 
+                         (intersection.object->material().reflectivity() * reflectedColor);
+
+    // shadows
+    for (size_t index = 0; index < scene.getNumLights(); index++) {
+        const ILight& light = scene.getLight(index);
         if (isInShadow(camera, intersection, light, scene)) {
-            nonReflectedColor -= shadowColor_;
-        }
-        else {
-            Color diffuse  = computeDiffuseColor(intersection, light);
-            Color specular = computeSpecularColor(intersection, light, camera);
-            Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
-            nonReflectedColor += lightIntensityAtPoint * (diffuse + specular);
+            blendedColor -= shadowColor_;
         }
     }
     
-    // blend intrinsic and reflected color using our light and intersected object
-    return (intersection.object->material().intrinsity()   * nonReflectedColor) + 
-           (intersection.object->material().reflectivity() * reflectedColor);
+    return blendedColor;
 }
 
 // reflect our ray using a slight direction offset to avoid infinite reflections
