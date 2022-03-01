@@ -90,12 +90,16 @@ Color RayTracer::traceRay(const Camera& camera, const Scene& scene, const Ray& r
     //       and also a better way to include reflection from background (sky) without overpowering everything
     Color nonReflectedColor = intersection.object->material().ambientColor();
     for (size_t index = 0; index < scene.getNumLights(); index++) {
-       const ILight& light = scene.getLight(index);
-       if (isInShadow(camera, intersection, light, scene)) { nonReflectedColor += shadowColor_; continue; }
-       Color diffuse  = computeDiffuseColor(intersection, light);
-       Color specular = computeSpecularColor(intersection, light, camera);
-       Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
-       nonReflectedColor += lightIntensityAtPoint * (diffuse + specular);
+        const ILight& light = scene.getLight(index);
+        if (isInShadow(camera, intersection, light, scene)) {
+            nonReflectedColor -= shadowColor_;
+        }
+        else {
+            Color diffuse  = computeDiffuseColor(intersection, light);
+            Color specular = computeSpecularColor(intersection, light, camera);
+            Color lightIntensityAtPoint = light.computeIntensityAtPoint(intersection.point);
+            nonReflectedColor += lightIntensityAtPoint * (diffuse + specular);
+        }
     }
     
     // blend intrinsic and reflected color using our light and intersected object
