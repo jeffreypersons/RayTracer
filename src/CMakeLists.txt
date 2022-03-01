@@ -17,6 +17,7 @@ endif()
 add_executable(TraceScene
     Main.cpp
     App.cpp
+    Files.cpp
 )
 target_link_libraries(TraceScene PRIVATE RayTracerCore)
 
