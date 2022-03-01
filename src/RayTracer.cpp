@@ -26,7 +26,11 @@ void RayTracer::traceScene(const Camera& camera, const Scene& scene, FrameBuffer
     const float invHeight  = 1.00f / height;
     const Vec3 eyePosition = camera.position();
     const int numPixels    = static_cast<int>(frameBuffer.numPixels());
+#ifndef DEBUG
     #pragma omp for schedule(dynamic)
+#else
+    std::cout << "Not using OpenMP...";
+#endif
     for (int i = 0; i < numPixels; i++) {
         const auto [row, col] = frameBuffer.getPixelRowCol(i);
         const Vec3 viewportPosition{ (col + 0.50f) * invWidth, (row + 0.50f) * invHeight, 0.00f };
@@ -102,7 +106,8 @@ Color RayTracer::traceRay(const Camera& camera, const Scene& scene, const Ray& r
 // reflect our ray using a slight direction offset to avoid infinite reflections
 Ray RayTracer::reflectRay(const Ray& ray, const Intersection& intersection) const {
     const Vec3 reflectedDirection = Math::reflect(ray.direction, intersection.normal);
-    return Ray(intersection.point + (bias_ * intersection.normal), reflectedDirection);
+    const float biasDirection = ( Math::dot(intersection.normal, reflectedDirection) > 0 ) ? 1.0f : -1.0f;
+    return Ray(intersection.point + (bias_ * biasDirection * intersection.normal), reflectedDirection);
 }
 
 bool RayTracer::findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const {
