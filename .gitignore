@@ -6,7 +6,9 @@
 *.sln
 *.suo
 *.vcxproj*
+.cache/
 tags
+compile_commands.json
 
 # Build Files
 *.exe
