@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.15.0)
 
 project(RayTracer VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 20)
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+endif()
 
 add_compile_definitions(
   $<$<CONFIG:DEBUG>:DEBUG>
