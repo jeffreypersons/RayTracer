@@ -176,27 +176,27 @@ namespace Math {
     inline constexpr float DEG_TO_RAD      = PI / 180.00f;
 
     inline float sin(float degrees) {
-        return std::sinf(DEG_TO_RAD * degrees);
+        return std::sin(DEG_TO_RAD * degrees);
     }
 
     inline float cos(float degrees) {
-        return std::cosf(DEG_TO_RAD * degrees);
+        return std::cos(DEG_TO_RAD * degrees);
     }
 
     inline float tan(float degrees) {
-        return std::tanf(DEG_TO_RAD * degrees);
+        return std::tan(DEG_TO_RAD * degrees);
     }
 
     inline float asin(float ratio) {
-        return RAD_TO_DEG * std::asinf(ratio);
+        return RAD_TO_DEG * std::asin(ratio);
     }
 
     inline float acos(float ratio) {
-        return RAD_TO_DEG * std::acosf(ratio);
+        return RAD_TO_DEG * std::acos(ratio);
     }
 
     inline float atan(float ratio) {
-        return RAD_TO_DEG * std::atanf(ratio);
+        return RAD_TO_DEG * std::atan(ratio);
     }
 
     inline constexpr float radToDeg(float radians) {
@@ -209,11 +209,11 @@ namespace Math {
 
 
     inline float pow(float a, float b) {
-        return std::powf(a, b);
+        return std::pow(a, b);
     }
 
     inline float squareRoot(float a) {
-        return std::sqrtf(a);
+        return std::sqrt(a);
     }
 
     inline constexpr float square(float a) {
