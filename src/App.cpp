@@ -1,4 +1,3 @@
-#pragma once
 #include "App.hpp"
 #include "Text.hpp"
 #include "Files.hpp"
