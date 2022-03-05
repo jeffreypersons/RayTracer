@@ -1,4 +1,3 @@
-#pragma once
 #include "Files.hpp"
 #include "FrameBuffer.hpp"
 #include <fstream>
