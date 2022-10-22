@@ -15,6 +15,7 @@ compile_commands.json
 x86/
 x64/
 bin/
+build/
 */Debug/*
 */Release/*
 Release/
