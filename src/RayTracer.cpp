@@ -49,7 +49,7 @@ size_t RayTracer::maxNumReflections() const {
 }
 
 Color RayTracer::shadowColor() const {
-    return backgroundColor_;
+    return shadowColor_;
 }
 
 Color RayTracer::backgroundColor() const {
@@ -57,8 +57,8 @@ Color RayTracer::backgroundColor() const {
 }
 
 
-void RayTracer::setBias(float shadowBias) {
-    this->bias_ = shadowBias;
+void RayTracer::setBias(float bias) {
+    this->bias_ = bias;
 }
 
 void RayTracer::setMaxNumReflections(size_t maxNumReflections) {
