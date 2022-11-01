@@ -3,6 +3,7 @@ add_library(RayTracerCore
     FrameBuffer.cpp
     Lights.cpp
     Material.cpp
+    LightIncidence.cpp
     Objects.cpp
     RayTracer.cpp
     Scene.cpp

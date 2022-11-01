@@ -65,6 +65,7 @@ bool Sphere::intersect(const Ray& ray, Intersection& result) const {
 
     result.point  = ray.origin + ray.direction * result.t;
     result.normal = Math::direction(this->position_, result.point);
+    result.normal *= (Math::dot(result.normal, ray.direction) > 0) ? -1.0f : 1.0f;
     result.object = this;
 
     return true;
@@ -115,7 +116,7 @@ Triangle::Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, cons
 
 // given ray intersects triangle IFF given ray [X(t) = P + tD] intersects the plane [P.n = k] in a way such that
 // our intersection point is always to the LEFT side of EVERY edge
-// (aka our plane intersection point @[t = (k – P.n)/(D.n)] lies in between our triangle vertices)
+// (aka our plane intersection point @[t = (k ï¿½ P.n)/(D.n)] lies in between our triangle vertices)
 bool Triangle::intersect(const Ray& ray, Intersection& result) const {
     const float k = Math::dot(vert0_, planeNormal_);
     const float t = (k - Math::dot(ray.origin, planeNormal_)) / Math::dot(ray.direction, planeNormal_);
@@ -126,7 +127,7 @@ bool Triangle::intersect(const Ray& ray, Intersection& result) const {
     if (contains(pointIntersectingPlane)) {
         result.t      = t;
         result.point  = pointIntersectingPlane;
-        result.normal = planeNormal_;
+        result.normal = (Math::dot(ray.origin, planeNormal_) > 0.0f ? 1.0f : -1.0f) * planeNormal_;
         result.object = this;
         return true;
     }
@@ -146,7 +147,7 @@ std::string Triangle::description() const {
 
 
 // recall, a point lies in a triangle if..
-// (e0 x(R – P0)).n > 0 & (e1 x(R – P1)).n > 0 & (e2 x(R – P2)).n > 0
+// (e0 x(R ï¿½ P0)).n > 0 & (e1 x(R ï¿½ P1)).n > 0 & (e2 x(R ï¿½ P2)).n > 0
 // aka R is always to the LEFT side of EVERY edge
 bool Triangle::contains(const Vec3& point) const {
     return (Math::dot(planeNormal_, Math::cross(edge0_, (point - vert0_))) > 0.00f) &&

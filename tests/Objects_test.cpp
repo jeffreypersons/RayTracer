@@ -80,6 +80,9 @@ TEST(Intersection, TriangleCCW)
     EXPECT_NEAR(intersection.point.x, L/2.0f, 0.1f);
     EXPECT_NEAR(intersection.point.y, L/4.0f, 0.1f);
     EXPECT_NEAR(intersection.point.z, 0.0f, 0.1f);
+    EXPECT_NEAR(intersection.normal.x, 0.0f, 0.1f);
+    EXPECT_NEAR(intersection.normal.y, 0.0f, 0.1f);
+    EXPECT_NEAR(intersection.normal.z, -1.0f, 0.1f);
 }
 
 TEST(Intersection, TriangleCW)
@@ -100,6 +103,9 @@ TEST(Intersection, TriangleCW)
     EXPECT_NEAR(intersection.point.x, L/2.0f, 0.1f);
     EXPECT_NEAR(intersection.point.y, L/4.0f, 0.1f);
     EXPECT_NEAR(intersection.point.z, 0.0f, 0.1f);
+    EXPECT_NEAR(intersection.normal.x, 0.0f, 0.1f);
+    EXPECT_NEAR(intersection.normal.y, 0.0f, 0.1f);
+    EXPECT_NEAR(intersection.normal.z, -1.0f, 0.1f);
 }
 
 TEST(Intersection, TriangleRayPointingAway)

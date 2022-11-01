@@ -16,7 +16,7 @@ public:
     void traceScene(const Camera& camera, const Scene& scene, FrameBuffer& frameBuffer) const;
 
     float  bias()              const;
-    size_t maxNumReflections() const;
+    size_t maxNumIncidences()  const;
     Color  shadowColor()       const;
     Color  backgroundColor()   const;
 
@@ -25,22 +25,22 @@ public:
     void setShadowColor(const Color& shadowColor);
     void setBackgroundColor(const Color& backgroundColor);
 
-    Ray reflectRay(const Ray& ray, const Intersection& intersection) const;
+    void biasRayInDirection(Ray& ray, const Vec3& direction) const;
     bool findNearestIntersection(const Camera& camera, const Scene& scene, const Ray& ray, Intersection& result) const;
 
 private:
     float bias_;
-    size_t maxNumReflections_;
+    size_t maxIncidences_;
     Color shadowColor_;
     Color backgroundColor_;
 
     static constexpr float  DEFAULT_BIAS = 1e-02f;
-    static constexpr size_t DEFAULT_MAX_NUM_REFLECTIONS = 3;
+    static constexpr size_t DEFAULT_MAX_NUM_INCIDENCES = 3;
     static constexpr Color  DEFAULT_SHADOW_COLOR     { 0.125f, 0.125f, 0.125f };
     static constexpr Color  DEFAULT_BACKGROUND_COLOR { 0.500f, 0.500f, 0.500f };
 
-    Color traceRay(const Camera& camera, const Scene& scene, const Ray& ray, size_t depth) const;
-
+    Color traceRay(const Camera& camera, const Scene& scene, const IObject* fromObject, const Ray& ray, size_t depth=0) const;
+    
     bool isInShadow(const Camera& camera, const Intersection& intersection, const ILight& light, const Scene& scene) const;
 
     Color computeDiffuseColor(const Intersection& intersection, const ILight& light) const;
