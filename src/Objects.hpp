@@ -10,7 +10,7 @@ public:
     virtual ~IObject() = default;
     virtual bool intersect(const Ray& ray, Intersection& result) const = 0;
     virtual std::string description() const = 0;
-    
+
     constexpr const Vec3&     position() const { return position_; }
     constexpr const Material& material() const { return material_; }
 
@@ -47,7 +47,7 @@ private:
 class Triangle final : public virtual IObject {
 public:
     Triangle(const Vec3& vert0, const Vec3& vert1, const Vec3& vert2, const Material& material);
-    
+
     virtual bool intersect(const Ray& ray, Intersection& result) const override;
     virtual std::string description() const override;
 
@@ -58,7 +58,7 @@ public:
     Vec3 vert2()       const;
     Vec3 center()      const;
     Vec3 planeNormal() const;
-    
+
 private:
     Vec3 vert0_;
     Vec3 vert1_;

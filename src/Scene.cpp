@@ -5,6 +5,10 @@
 #include <assert.h>
 
 
+void Scene::addAmbientLight(Color&& ambientLightColor) {
+    ambientLightColor_ = std::move(ambientLightColor);
+}
+
 void Scene::addLight(PointLight&& light) {
     lights_.push_back(std::make_unique<PointLight>(std::move(light)));
 }
@@ -18,6 +22,9 @@ void Scene::addSceneObject(Triangle&& object) {
 }
 
 
+const Color& Scene::getAmbientLightColor() const {
+    return ambientLightColor_;
+}
 
 const ILight& Scene::getLight(size_t index) const {
     assert(index >= 0 && index < lights_.size());

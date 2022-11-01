@@ -1,4 +1,3 @@
-#pragma once
 #include "FrameBuffer.hpp"
 #include "Math.hpp"
 #include "Color.hpp"

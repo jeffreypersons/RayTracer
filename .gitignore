@@ -6,13 +6,16 @@
 *.sln
 *.suo
 *.vcxproj*
+.cache/
 tags
+compile_commands.json
 
 # Build Files
 *.exe
 x86/
 x64/
 bin/
+build/
 */Debug/*
 */Release/*
 Release/

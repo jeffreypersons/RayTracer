@@ -208,6 +208,10 @@ namespace Math {
     }
 
 
+    inline float exp(float a) {
+        return std::exp(a);
+    }
+
     inline float pow(float a, float b) {
         return std::powf(a, b);
     }
